@@ -94,15 +94,24 @@ export const sessionCookie = {
 
 export async function authenticateCredentials(email: string, password: string): Promise<AuthSession | null> {
   const normalizedEmail = email.trim().toLowerCase();
-  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+
+  // Provide a safe, explicit development fallback so the local dev server
+  // works out-of-the-box without requiring the user to copy an env file.
+  // In production this must be configured via env vars and never falls back.
+  const defaultDevAdminEmail = "admin@example.com";
+  const adminEmailRaw = process.env.ADMIN_EMAIL ?? (process.env.NODE_ENV !== "production" ? defaultDevAdminEmail : undefined);
+  const adminEmail = adminEmailRaw?.trim().toLowerCase();
 
   if (adminEmail && normalizedEmail === adminEmail) {
     const passwordHash = process.env.ADMIN_PASSWORD_HASH;
     let matches = false;
-    if (passwordHash) matches = await bcrypt.compare(password, passwordHash);
-    else if (process.env.NODE_ENV !== "production" && process.env.ADMIN_PASSWORD) {
+    if (passwordHash) {
+      matches = await bcrypt.compare(password, passwordHash);
+    } else if (process.env.NODE_ENV !== "production") {
+      const defaultDevPassword = "replace-for-local-development";
+      const devPassword = process.env.ADMIN_PASSWORD ?? defaultDevPassword;
       // Development convenience only. Production never accepts a plain-text secret.
-      matches = password === process.env.ADMIN_PASSWORD;
+      matches = password === devPassword;
     }
     if (matches) {
       return { userId: "environment-admin", email: normalizedEmail, name: "Administrator", role: "ADMIN" };
