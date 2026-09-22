@@ -1,5 +1,4 @@
 import {
-  BadgeCheck,
   Boxes,
   BriefcaseBusiness,
   Factory,
@@ -12,6 +11,9 @@ import {
   School,
   ShieldCheck,
   ShoppingBag,
+  ArrowRight,
+  FileText,
+  Leaf,
   Store,
   Tags,
   Truck,
@@ -37,11 +39,10 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 const trustItems = [
-  { icon: BadgeCheck, title: "Quality-focused", note: "Products selected for practical use" },
-  { icon: BriefcaseBusiness, title: "Corporate supply", note: "Support for recurring requirements" },
-  { icon: Boxes, title: "Bulk orders", note: "Customized quotations available" },
-  { icon: Truck, title: "Delivery support", note: "Terms confirmed before dispatch" },
-  { icon: Headphones, title: "Direct assistance", note: `Speak with ${company.contactPerson}` },
+  { icon: Truck, title: "Bulk orders", note: "Competitive quotations" },
+  { icon: ShieldCheck, title: "Trusted quality", note: "Practical supplies" },
+  { icon: Headphones, title: "Dedicated support", note: "For business buyers" },
+  { icon: Leaf, title: "Cleaner spaces", note: "Every working day" },
 ];
 
 const industries = [
@@ -61,36 +62,26 @@ export default async function HomePage() {
   const demoCatalog = homeProducts.length > 0 && homeProducts.every(isDevelopmentProduct);
   return (
     <>
-      <section className="grid overflow-hidden bg-[#e7f2e9] lg:min-h-[650px] lg:grid-cols-[1fr_1.1fr]">
-            <div className="hero-commerce-copy flex flex-col justify-center bg-[radial-gradient(circle_at_18%_18%,rgba(255,255,255,.88),transparent_38%),linear-gradient(105deg,#f0f7ef_0%,#e5f1e7_68%,#d9e9db_100%)] py-14 sm:py-16 lg:py-20">
-              <h1 className="max-w-[820px] text-[clamp(3rem,4.35vw,5rem)] font-black leading-[.94] tracking-[-0.058em] text-[#153d2a]">
-                <span className="block">Your complete</span>
-                <span className="block">tissue range.</span>
-                <span className="mt-2 block bg-gradient-to-r from-[#0f6b3c] via-[#218a50] to-[#64a739] bg-clip-text pb-3 text-transparent drop-shadow-[0_2px_8px_rgba(30,138,80,.08)]">Supplied by <span className="relative inline-block text-[#153d2a]">carton.<span aria-hidden="true" className="absolute -bottom-2 left-[2%] h-[7px] w-[96%] -rotate-1 rounded-full bg-gradient-to-r from-[#76ce91] via-[#1f9a59] to-[#0c6334] shadow-[0_3px_9px_rgba(31,154,89,.25)] [clip-path:polygon(0_30%,100%_0,97%_100%,2%_78%)]" /></span></span>
-              </h1>
-
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <Link href="/shop" className="commerce-button commerce-button-primary focus-ring inline-flex items-center justify-center gap-2"><ShoppingBag className="size-4" /> Shop products</Link>
-                <Link href="/request-quote" className="commerce-button commerce-button-secondary focus-ring inline-flex items-center justify-center gap-2"><BriefcaseBusiness className="size-4" /> Get a bulk quote</Link>
-              </div>
-
-              <dl className="mt-8 grid grid-cols-3 divide-x divide-[#c9ddce] border-t border-[#c9ddce] pt-5">
-                <div className="pr-3"><dt className="text-[10px] font-black uppercase tracking-[.12em] text-[#718578]">Product lines</dt><dd className="mt-1 text-sm font-black text-[#173c29]">7 essentials</dd></div>
-                <div className="px-3"><dt className="text-[10px] font-black uppercase tracking-[.12em] text-[#718578]">Order unit</dt><dd className="mt-1 text-sm font-black text-[#173c29]">Cartons</dd></div>
-                <div className="pl-3"><dt className="text-[10px] font-black uppercase tracking-[.12em] text-[#718578]">Pricing</dt><dd className="mt-1 text-sm font-black text-[#173c29]">On request</dd></div>
-              </dl>
+      <section className="home-hero" aria-labelledby="home-hero-title">
+        <div className="home-hero-image" aria-hidden="true">
+          <Image src="/images/hero-workspace-hygiene.png" alt="" fill priority sizes="100vw" className="object-cover" />
+        </div>
+        <div className="home-hero-wash" aria-hidden="true" />
+        <div className="site-shell home-hero-inner">
+          <div className="home-hero-copy">
+            <p className="home-hero-eyebrow">Pak Multilinks Hygiene <span aria-hidden="true">/</span> Corporate Supplies</p>
+            <h1 id="home-hero-title">Complete Hygiene<br />Solutions for <span>Every Workspace</span></h1>
+            <p className="home-hero-intro">From tissues to total facility care, we supply the essentials that keep offices clean, safe, and ready every day.</p>
+            <div className="home-hero-rule" aria-hidden="true" />
+            <p className="home-hero-detail">Bulk supply for offices, schools, clinics, restaurants, and commercial spaces.</p>
+            <div className="home-hero-actions">
+              <Link href="/shop" className="home-hero-button home-hero-button-primary focus-ring"><ShoppingBag aria-hidden="true" />Shop Products<ArrowRight aria-hidden="true" /></Link>
+              <Link href="/request-quote" className="home-hero-button home-hero-button-secondary focus-ring"><FileText aria-hidden="true" />Get a Bulk Quote</Link>
             </div>
-
-            <div className="relative min-h-[440px] overflow-hidden bg-[#d8e8da] sm:min-h-[560px] lg:min-h-full">
-              <Image src="/images/hero-products-green.png" alt="Product display featuring Rose Petal, Pop Up, Mamos 872, Soft Pack and jumbo tissue rolls" fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="object-cover object-center" />
-              <div className="absolute inset-y-0 -left-px hidden w-72 bg-gradient-to-r from-[#dcebdd] via-[#dcebdd]/65 to-transparent lg:block" />
-              <div className="absolute right-5 top-5 rounded-full border border-white/40 bg-white/90 px-4 py-2 text-[11px] font-black uppercase tracking-[.14em] text-[#17643a] shadow-lg backdrop-blur">Bulk orders only</div>
-            </div>
-      </section>
-
-      <section className="border-y border-[#dce8df] bg-white" aria-label="Why customers choose us">
-        <div className="site-shell grid divide-y divide-[#e2ebe5] sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-5">
-          {trustItems.map(({ icon: Icon, title, note }) => <div key={title} className="flex items-center gap-3 px-3 py-5 first:pl-0 last:pr-0 sm:px-5"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#edf7f0] text-[#17643a]"><Icon className="size-[19px]" /></span><span><strong className="block text-sm text-[#173c29]">{title}</strong><span className="mt-0.5 block text-[11px] leading-4 text-[#738078]">{note}</span></span></div>)}
+          </div>
+          <div className="home-hero-trust" aria-label="Why choose Pak Multilinks Hygiene">
+            {trustItems.map(({ icon: Icon, title, note }) => <div key={title} className="home-hero-trust-item"><Icon aria-hidden="true" /><span><strong>{title}</strong><small>{note}</small></span></div>)}
+          </div>
         </div>
       </section>
 
