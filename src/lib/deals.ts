@@ -32,7 +32,7 @@ export async function listPublicDeals(): Promise<PublicDealBanner[]> {
     const rows = await db.dealBanner.findMany({
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
     });
-    return rows
+    const active = rows
       .filter((row) => row.isActive)
       .map((row) => ({
         id: row.id,
@@ -41,6 +41,7 @@ export async function listPublicDeals(): Promise<PublicDealBanner[]> {
         alt: row.alt || row.title,
         linkUrl: row.linkUrl || "/shop",
       }));
+    return active.length > 0 ? active : defaultDealBanners;
   } catch {
     return defaultDealBanners;
   }

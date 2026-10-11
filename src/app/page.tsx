@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/catalog/product-card";
 import { TrustedPartners } from "@/components/home/trusted-partners";
 import { DealsSlider } from "@/components/home/deals-slider";
-import { MobileHomeExperience } from "@/components/home/mobile-home-experience";
 import { listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
 import { company } from "@/lib/company";
 import { listPublicDeals } from "@/lib/deals";
@@ -19,15 +18,8 @@ export default async function HomePage() {
   const roots = categories.filter(category => !category.parentId);
   return (
     <>
-      {/* MOBILE-FIRST VIEW (Optimized specifically for mobile customer journey) */}
-      <div className="block md:hidden">
-        <MobileHomeExperience products={products} categories={categories} />
-      </div>
-
-      {/* DESKTOP VIEW (Kept pristine and undisturbed as requested) */}
-      <div className="hidden md:block">
-        <DealsSlider deals={deals} />
-        <TrustedPartners />
+      <DealsSlider deals={deals} />
+      <TrustedPartners />
         <div className="border-y border-line bg-surface">
           <div className="site-shell grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {[
@@ -109,7 +101,6 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-      </div>
     </>
   );
 }
