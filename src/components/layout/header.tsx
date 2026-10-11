@@ -177,76 +177,6 @@ export function Header() {
     <>
       <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-24 rounded-lg bg-surface px-4 py-2 text-sm font-bold text-accent shadow-xl focus:translate-y-0">Skip to content</a>
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
-        <div className="hidden bg-canvas text-secondary md:block border-b border-line/60">
-          <div className="site-shell flex min-h-10 items-center justify-between gap-3 text-[11px] font-semibold sm:text-xs py-1">
-            {/* Left: Social Media Icons */}
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="hidden lg:inline text-[11px] text-muted">Follow:</span>
-              <a
-                href="https://www.facebook.com/pakmultilinks"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary hover:text-[#1877F2] transition p-1"
-                aria-label="Pak Multilinks on Facebook"
-                title="Facebook"
-              >
-                <Facebook className="size-3.5" />
-              </a>
-              <a
-                href="https://www.instagram.com/pakmultilinks"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary hover:text-[#E4405F] transition p-1"
-                aria-label="Pak Multilinks on Instagram"
-                title="Instagram"
-              >
-                <Instagram className="size-3.5" />
-              </a>
-              <a
-                href="https://www.linkedin.com/company/pakmultilinks"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-secondary hover:text-[#0A66C2] transition p-1"
-                aria-label="Pak Multilinks on LinkedIn"
-                title="LinkedIn"
-              >
-                <Linkedin className="size-3.5" />
-              </a>
-            </div>
-
-            {/* Center: Announcement */}
-            <Link
-              href="/rate-list"
-              className="announcement-marquee min-w-0 flex-1 overflow-hidden px-2 text-center hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-            >
-              <span className="block truncate">{runtimeDetails.announcement}</span>
-            </Link>
-
-            {/* Right: WhatsApp Buttons for Zohair Ahmed & Bilal Shah */}
-            <div className="flex items-center gap-2 shrink-0">
-              <a
-                href="https://wa.me/923006917385?text=Hi%20Zohair%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#114b2f] dark:text-[#25D366] px-2.5 py-1 text-[11px] font-semibold transition border border-[#25D366]/35"
-                title="Chat with Zohair Ahmed on WhatsApp (+92 300 6917 385)"
-              >
-                <WhatsAppIcon className="size-3 text-[#25D366]" />
-                <span className="whitespace-nowrap">Zohair Ahmed</span>
-              </a>
-              <a
-                href="https://wa.me/923258166829?text=Hi%20Bilal%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#114b2f] dark:text-[#25D366] px-2.5 py-1 text-[11px] font-semibold transition border border-[#25D366]/35"
-                title="Chat with Bilal Shah on WhatsApp (+92 325 8166 829)"
-              >
-                <WhatsAppIcon className="size-3 text-[#25D366]" />
-                <span className="whitespace-nowrap">Bilal Shah</span>
-              </a>
-            </div>
-          </div>
-        </div>
 
         <div className="site-shell flex h-16 items-center gap-1 md:h-[86px] md:gap-3 lg:gap-7">
           <button type="button" className="focus-ring -ml-2 grid size-11 shrink-0 place-items-center rounded-xl text-accent lg:hidden" onClick={() => mobileDialogRef.current?.showModal()} aria-label="Open navigation menu" aria-haspopup="dialog">
@@ -324,53 +254,53 @@ export function Header() {
                   href="https://wa.me/923006917385?text=Hi%20Zohair%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 py-2.5 text-xs font-bold text-[#114b2f] dark:text-[#25D366]"
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface py-2.5 text-xs font-bold text-accent transition hover:border-action hover:bg-surface-soft"
                 >
-                  <WhatsAppIcon className="size-3.5 text-[#25D366]" />
+                  <WhatsAppIcon className="size-3.5 text-action" />
                   <span>Zohair Ahmed</span>
                 </a>
                 <a
                   href="https://wa.me/923258166829?text=Hi%20Bilal%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 py-2.5 text-xs font-bold text-[#114b2f] dark:text-[#25D366]"
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface py-2.5 text-xs font-bold text-accent transition hover:border-action hover:bg-surface-soft"
                 >
-                  <WhatsAppIcon className="size-3.5 text-[#25D366]" />
+                  <WhatsAppIcon className="size-3.5 text-action" />
                   <span>Bilal Shah</span>
                 </a>
               </div>
             </div>
 
             {/* Mobile Social Links */}
-            <div className="mt-4 flex items-center justify-center gap-4 py-2 border-y border-line">
+            <div className="mt-4 flex items-center justify-center gap-6 py-3 border-y border-line text-muted">
               <a
                 href="https://www.facebook.com/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-[#1877F2]"
+                className="flex items-center gap-1.5 text-xs font-semibold text-secondary transition hover:text-accent"
                 aria-label="Facebook"
               >
-                <Facebook className="size-4 text-[#1877F2]" />
+                <Facebook className="size-4" />
                 <span>Facebook</span>
               </a>
               <a
                 href="https://www.instagram.com/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-[#E4405F]"
+                className="flex items-center gap-1.5 text-xs font-semibold text-secondary transition hover:text-accent"
                 aria-label="Instagram"
               >
-                <Instagram className="size-4 text-[#E4405F]" />
+                <Instagram className="size-4" />
                 <span>Instagram</span>
               </a>
               <a
                 href="https://www.linkedin.com/company/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-[#0A66C2]"
+                className="flex items-center gap-1.5 text-xs font-semibold text-secondary transition hover:text-accent"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="size-4 text-[#0A66C2]" />
+                <Linkedin className="size-4" />
                 <span>LinkedIn</span>
               </a>
             </div>

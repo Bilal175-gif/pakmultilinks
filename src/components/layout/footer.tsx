@@ -36,7 +36,7 @@ export function Footer() {
                 href={company.facebookUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-line bg-surface-soft px-3 py-1.5 text-xs font-bold text-info transition hover:bg-surface-soft"
+                className="inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-bold text-accent transition hover:border-action hover:bg-surface-soft"
                 aria-label="Follow Pak Multilinks on Facebook"
               >
                 <svg className="size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
