@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { ChevronDown, Facebook, Instagram, Linkedin, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +16,14 @@ import { ThemeSwitch } from "@/components/theme/theme-switch";
 
 import { BrandMark } from "./brand-mark";
 import { CategoryNavigation } from "./category-navigation";
+
+function WhatsAppIcon({ className = "size-3.5" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.884 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.747.953 3.71 1.456 5.711 1.456h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
 
 const nav = [
   { href: "/", label: "Home" },
@@ -169,12 +177,74 @@ export function Header() {
     <>
       <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-24 rounded-lg bg-surface px-4 py-2 text-sm font-bold text-accent shadow-xl focus:translate-y-0">Skip to content</a>
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "md:-translate-y-full" : "translate-y-0"}`}>
-        <div className="hidden bg-canvas text-secondary md:block">
-          <div className="site-shell flex min-h-10 items-center justify-between gap-4 text-[11px] font-semibold sm:text-xs">
-            <Link href="/request-quote" className="announcement-marquee min-w-0 flex-1 overflow-hidden py-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
+        <div className="hidden bg-canvas text-secondary md:block border-b border-line/60">
+          <div className="site-shell flex min-h-10 items-center justify-between gap-3 text-[11px] font-semibold sm:text-xs py-1">
+            {/* Left: Social Media Icons */}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="hidden lg:inline text-[11px] text-muted">Follow:</span>
+              <a
+                href="https://www.facebook.com/pakmultilinks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary hover:text-[#1877F2] transition p-1"
+                aria-label="Pak Multilinks on Facebook"
+                title="Facebook"
+              >
+                <Facebook className="size-3.5" />
+              </a>
+              <a
+                href="https://www.instagram.com/pakmultilinks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary hover:text-[#E4405F] transition p-1"
+                aria-label="Pak Multilinks on Instagram"
+                title="Instagram"
+              >
+                <Instagram className="size-3.5" />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/pakmultilinks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-secondary hover:text-[#0A66C2] transition p-1"
+                aria-label="Pak Multilinks on LinkedIn"
+                title="LinkedIn"
+              >
+                <Linkedin className="size-3.5" />
+              </a>
+            </div>
+
+            {/* Center: Announcement */}
+            <Link
+              href="/rate-list"
+              className="announcement-marquee min-w-0 flex-1 overflow-hidden px-2 text-center hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
               <span className="block truncate">{runtimeDetails.announcement}</span>
             </Link>
-            <a className="shrink-0 text-accent hover:underline" href={`tel:${company.phoneHref}`}><span className="hidden sm:inline">Zohair Ahmed · </span>Call {company.phone}</a>
+
+            {/* Right: WhatsApp Buttons for Zohair Ahmed & Bilal Shah */}
+            <div className="flex items-center gap-2 shrink-0">
+              <a
+                href="https://wa.me/923006917385?text=Hi%20Zohair%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#114b2f] dark:text-[#25D366] px-2.5 py-1 text-[11px] font-semibold transition border border-[#25D366]/35"
+                title="Chat with Zohair Ahmed on WhatsApp (+92 300 6917 385)"
+              >
+                <WhatsAppIcon className="size-3 text-[#25D366]" />
+                <span className="whitespace-nowrap">Zohair Ahmed</span>
+              </a>
+              <a
+                href="https://wa.me/923258166829?text=Hi%20Bilal%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#114b2f] dark:text-[#25D366] px-2.5 py-1 text-[11px] font-semibold transition border border-[#25D366]/35"
+                title="Chat with Bilal Shah on WhatsApp (+92 325 8166 829)"
+              >
+                <WhatsAppIcon className="size-3 text-[#25D366]" />
+                <span className="whitespace-nowrap">Bilal Shah</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -246,21 +316,65 @@ export function Header() {
             </nav>
             <p className="mb-2 mt-6 px-3 text-xs font-extrabold uppercase tracking-[0.14em] text-muted">Shop categories</p>
             <CategoryNavigation categories={navigationCategories} mobile onNavigate={() => mobileDialogRef.current?.close()} />
-            {company.facebookUrl && (
+            {/* Mobile WhatsApp Quick Buttons */}
+            <div className="mt-6 space-y-2">
+              <p className="px-3 text-xs font-extrabold uppercase tracking-[0.14em] text-muted">Direct WhatsApp</p>
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href="https://wa.me/923006917385?text=Hi%20Zohair%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 py-2.5 text-xs font-bold text-[#114b2f] dark:text-[#25D366]"
+                >
+                  <WhatsAppIcon className="size-3.5 text-[#25D366]" />
+                  <span>Zohair Ahmed</span>
+                </a>
+                <a
+                  href="https://wa.me/923258166829?text=Hi%20Bilal%2C%20I%20am%20inquiring%20about%20Pak%20Multilinks%20wholesale%20supplies"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 py-2.5 text-xs font-bold text-[#114b2f] dark:text-[#25D366]"
+                >
+                  <WhatsAppIcon className="size-3.5 text-[#25D366]" />
+                  <span>Bilal Shah</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Mobile Social Links */}
+            <div className="mt-4 flex items-center justify-center gap-4 py-2 border-y border-line">
               <a
-                href={company.facebookUrl}
+                href="https://www.facebook.com/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 flex items-center justify-center gap-2 rounded-xl border border-line bg-surface-soft py-3 text-xs font-bold text-info transition hover:bg-surface-soft"
-                aria-label="Visit Facebook Page"
+                className="flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-[#1877F2]"
+                aria-label="Facebook"
               >
-                <svg className="size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                <span>Follow on Facebook</span>
+                <Facebook className="size-4 text-[#1877F2]" />
+                <span>Facebook</span>
               </a>
-            )}
-            <Link href="/request-quote" onClick={() => mobileDialogRef.current?.close()} className="commerce-button commerce-button-primary mt-3 flex min-h-12 items-center justify-center rounded-xl bg-action px-4 text-sm font-extrabold text-white">Request bulk quote</Link>
+              <a
+                href="https://www.instagram.com/pakmultilinks"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-[#E4405F]"
+                aria-label="Instagram"
+              >
+                <Instagram className="size-4 text-[#E4405F]" />
+                <span>Instagram</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/pakmultilinks"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-[#0A66C2]"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="size-4 text-[#0A66C2]" />
+                <span>LinkedIn</span>
+              </a>
+            </div>
+            <Link href="/request-quote" onClick={() => mobileDialogRef.current?.close()} className="commerce-button commerce-button-primary mt-4 flex min-h-12 items-center justify-center rounded-xl bg-action px-4 text-sm font-extrabold text-white">Request bulk quote</Link>
           </div>
       </dialog>
 
