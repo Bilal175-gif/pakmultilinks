@@ -292,21 +292,7 @@ export function CatalogExplorer({
 
   return (
     <>
-      {hideHero && <section className="catalog-heading catalog-category-heading border-b border-line bg-surface"><div className="mx-auto max-w-[1500px] px-4 py-7 sm:px-6 lg:px-8"><nav aria-label="Breadcrumb" className="mb-3 flex items-center gap-2 text-xs font-semibold text-muted"><Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/shop">Shop</Link><span aria-hidden="true">/</span><span aria-current="page">{title}</span></nav><h1 className="font-serif text-2xl font-normal tracking-tight text-content sm:text-3xl">{title}</h1><p className="mt-2 max-w-3xl text-sm leading-6 text-accent">{description}</p></div></section>}
-      {!hideHero && <section className="catalog-heading border-b border-line bg-canvas">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-xs font-semibold text-muted"><Link href="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">Shop</span></nav>
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">
-            {eyebrow}
-          </p>
-          <h1 className="mt-3 max-w-4xl font-serif text-3xl font-normal tracking-tight text-content sm:text-4xl">
-            {title}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-accent sm:text-lg">
-            {description}
-          </p>
-        </div>
-      </section>}
+      <h1 className="sr-only">{title}</h1>
 
       <section className="catalog-body bg-surface py-8 sm:py-12">
         <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
