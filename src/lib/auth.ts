@@ -102,7 +102,13 @@ export async function authenticateCredentials(email: string, password: string): 
   const adminEmailRaw = process.env.ADMIN_EMAIL ?? (process.env.NODE_ENV !== "production" ? defaultDevAdminEmail : undefined);
   const adminEmail = adminEmailRaw?.trim().toLowerCase();
 
-  if (adminEmail && normalizedEmail === adminEmail) {
+  const isEmailMatch =
+    Boolean(adminEmail) &&
+    (normalizedEmail === adminEmail ||
+      (adminEmail?.includes("pakmultilink") &&
+        normalizedEmail.replace("pakmultilinks@", "pakmultilink@") === adminEmail.replace("pakmultilinks@", "pakmultilink@")));
+
+  if (isEmailMatch) {
     const passwordHash = process.env.ADMIN_PASSWORD_HASH;
     let matches = false;
     if (passwordHash) {
