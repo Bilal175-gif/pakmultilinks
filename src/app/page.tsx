@@ -110,21 +110,21 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-        <section className="border-y border-line bg-canvas py-14 sm:py-20">
-          <div className="site-shell grid gap-8 md:grid-cols-2 md:items-center">
-            <div>
-              <p className="text-xs uppercase tracking-[.12em] text-muted">For your business</p>
-              <h2 className="mt-4 max-w-lg font-serif text-3xl leading-tight text-content sm:text-4xl">
-                A well-stocked workplace.<br />One less thing to worry about.
-              </h2>
+        <section className="border-t border-line bg-canvas py-12 sm:py-16">
+          <div className="site-shell">
+            <div className="mb-8 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[.14em] text-muted">Complete Catalog</p>
+                <h2 className="mt-2 font-serif text-3xl text-content sm:text-4xl">All Wholesale Products</h2>
+              </div>
+              <span className="text-xs font-semibold text-secondary">
+                {products.length} products available
+              </span>
             </div>
-            <div className="max-w-md md:ml-auto">
-              <p className="text-sm leading-7 text-secondary">
-                From offices and restaurants to schools and clinics, we help you arrange the everyday supplies your team needs. Send us your quantities for a quotation.
-              </p>
-              <Link href="/corporate-orders" className="commerce-button commerce-button-primary mt-6">
-                Explore business supply<ArrowRight className="size-4" />
-              </Link>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+              {products.map(product => (
+                <ProductCard key={product.id} product={product} headingLevel="h3" />
+              ))}
             </div>
           </div>
         </section>
