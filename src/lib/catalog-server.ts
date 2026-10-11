@@ -43,9 +43,58 @@ type PublicProductRow = Prisma.ProductGetPayload<{
   select: typeof publicProductSelect;
 }>;
 
+function inferProductTaxonomy(name: string, currentCategory: { name: string; slug: string; parent?: { slug: string } | null }) {
+  if (currentCategory.slug !== "general" && currentCategory.slug !== "uncategorized" && currentCategory.parent?.slug) {
+    return {
+      category: currentCategory.name,
+      categorySlug: currentCategory.slug,
+      parentCategorySlug: currentCategory.parent.slug,
+    };
+  }
+
+  const lower = name.toLowerCase();
+
+  // Tissue & Paper subcategories
+  if (lower.includes("pop up") || lower.includes("popup") || lower.includes("essential") || lower.includes("perfumed") || lower.includes("facial") || lower.includes("ciblure") || lower.includes("luxury")) {
+    return { category: "Facial Tissues", categorySlug: "facial-tissues", parentCategorySlug: "tissue-paper-products" };
+  }
+  if (lower.includes("pocket pack") || lower.includes("party pack") || lower.includes("soft") || lower.includes("flu pack") || lower.includes("party white")) {
+    return { category: "Soft Pack Tissues", categorySlug: "soft-pack-tissues", parentCategorySlug: "tissue-paper-products" };
+  }
+  if (lower.includes("roll") || lower.includes("maxob") || lower.includes("toilet") || lower.includes("mambo") || lower.includes("jumbo roll")) {
+    return { category: "Tissue Rolls", categorySlug: "tissue-rolls", parentCategorySlug: "tissue-paper-products" };
+  }
+  if (lower.includes("napkin") || lower.includes("towel") || lower.includes("zzoop")) {
+    return { category: "Paper Napkins", categorySlug: "paper-napkins", parentCategorySlug: "tissue-paper-products" };
+  }
+
+  // Washroom & Personal care
+  if (lower.includes("hand wash") || lower.includes("handwash") || lower.includes("soap") || lower.includes("dispenser") || lower.includes("tiki") || lower.includes("freshener") || lower.includes("antiseptic")) {
+    return { category: "Hand Wash & Hygiene", categorySlug: "hand-wash", parentCategorySlug: "washroom-supplies" };
+  }
+
+  // Cleaning Products
+  if (lower.includes("cleaner") || lower.includes("harpic") || lower.includes("phenyl") || lower.includes("glint") || lower.includes("vim") || lower.includes("detergent") || lower.includes("bonus") || lower.includes("mop") || lower.includes("wiper") || lower.includes("broom") || lower.includes("brush") || lower.includes("sponge") || lower.includes("cloth") || lower.includes("sweep")) {
+    return { category: "Floor & Surface Care", categorySlug: "floor-surface-care", parentCategorySlug: "cleaning-products" };
+  }
+
+  // Disposable Items
+  if (lower.includes("plate") || lower.includes("cup") || lower.includes("cutlery") || lower.includes("garbage") || lower.includes("glove") || lower.includes("foil") || lower.includes("cling") || lower.includes("container") || lower.includes("wipe")) {
+    return { category: "Disposable Items", categorySlug: "disposable-items", parentCategorySlug: "disposable-items" };
+  }
+
+  return {
+    category: "Facial Tissues",
+    categorySlug: "facial-tissues",
+    parentCategorySlug: "tissue-paper-products",
+  };
+}
+
 function mapProduct(row: PublicProductRow): Product {
   const images = row.images.map((image) => image.url).filter(Boolean);
   const image = images[0] || "";
+  const taxonomy = inferProductTaxonomy(row.name, row.category);
+
   return {
     id: row.id,
     slug: row.slug,
@@ -64,10 +113,10 @@ function mapProduct(row: PublicProductRow): Product {
     featured: row.featured,
     bestSeller: row.bestSeller,
     bulkPricing: row.bulkPricing,
-    category: row.category.name,
-    categorySlug: row.category.slug,
-    parentCategorySlug: row.category.parent?.slug,
-    brand: row.brand?.name || "Unbranded",
+    category: taxonomy.category,
+    categorySlug: taxonomy.categorySlug,
+    parentCategorySlug: taxonomy.parentCategorySlug,
+    brand: row.brand?.name || "Pak Multilinks",
     image,
     imageAlt: row.images.find((item) => item.url === image)?.alt || row.name,
     gallery: images,
@@ -126,6 +175,13 @@ export async function listPublicCategories(): Promise<Category[]> {
         updatedAt: true,
       },
     });
+
+    // If database only has a single generic category without subcategories, provide the rich curated taxonomy
+    const hasSubcategories = rows.some((row) => row.parentId !== null);
+    if (rows.length <= 1 || !hasSubcategories) {
+      return developmentCategories;
+    }
+
     return rows.map((row) => ({
       id: row.id,
       parentId: row.parentId,
