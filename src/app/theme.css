@@ -38,31 +38,31 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --canvas: #101914;
-  --surface: #18241d;
-  --surface-soft: #1d2c23;
-  --surface-hover: #293d30;
-  --content: #e9f2e9;
-  --secondary: #c4d6c7;
-  --muted: #a1b5a6;
-  --accent: #8bdaa5;
-  --accent-soft: #223b2b;
-  --line: #314739;
-  --line-strong: #506b58;
-  --action: #246e46;
-  --action-hover: #2d8053;
-  --disabled: #2d3b32;
-  --warning: #f0cf89;
-  --warning-soft: #352d1d;
-  --warning-line: #655335;
-  --danger: #ffa6ae;
-  --danger-soft: #3b2328;
-  --danger-line: #724049;
-  --info: #99c4ff;
-  --info-soft: #223044;
-  --focus: #97dfad;
-  --image-surface: #25372a;
-  --hero-tint: #1a3021;
+  --canvas: #0b0f14;
+  --surface: #121820;
+  --surface-soft: #17222c;
+  --surface-hover: #1e2c38;
+  --content: #f8fafc;
+  --secondary: #cbd5e1;
+  --muted: #94a3b8;
+  --accent: #22c55e;
+  --accent-soft: #143522;
+  --line: #22303e;
+  --line-strong: #334556;
+  --action: #16a34a;
+  --action-hover: #15803d;
+  --disabled: #1e293b;
+  --warning: #fbbf24;
+  --warning-soft: #2e2410;
+  --warning-line: #5c4316;
+  --danger: #f87171;
+  --danger-soft: #37171a;
+  --danger-line: #6e252c;
+  --info: #38bdf8;
+  --info-soft: #102a3a;
+  --focus: #4ade80;
+  --image-surface: #141d26;
+  --hero-tint: #0d1e15;
 }
 
 @theme inline {

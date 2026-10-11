@@ -37,6 +37,33 @@ export default async function HomePage() {
             ))}
           </div>
         </div>
+        <div className="border-b border-line bg-surface-soft py-3 sm:py-4">
+          <div className="site-shell flex flex-wrap items-center justify-between gap-3 text-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-accent">
+                2026 Reference
+              </span>
+              <p className="font-medium text-content">
+                Official Wholesale Rate List & Product Reference (52 Verified Items)
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <a
+                href="/rate-list.pdf"
+                download="Pak-Multilinks-Official-Rate-List.pdf"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#114b2f] px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-[#17643a] transition"
+              >
+                Download PDF
+              </a>
+              <Link
+                href="/rate-list"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3.5 py-1.5 text-xs font-semibold text-content hover:bg-surface-hover transition"
+              >
+                View Rate List <ArrowRight className="size-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
         <section className="site-shell py-12 sm:py-16">
           <div className="mb-7 flex items-end justify-between gap-4">
             <div>
