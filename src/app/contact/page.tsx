@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BadgeCheck, Mail, MapPin, Navigation, Phone, UserRound } from "lucide-react";
+import { Mail, MapPin, Navigation, Phone } from "lucide-react";
 import Link from "next/link";
 
 import { company, contacts } from "@/lib/company";
@@ -14,19 +14,57 @@ export default function ContactPage() {
     <section className="py-12 sm:py-16">
       <div className="site-shell">
         <h1 className="sr-only">Contact {company.name}</h1>
-        <div className="grid gap-5 lg:grid-cols-2">
-          {contacts.map((contact) => (
-            <article key={contact.email} className={`relative overflow-hidden rounded-[2rem] border bg-surface p-6 shadow-[0_10px_35px_rgba(21,65,42,.06)] sm:p-8 ${contact.primary ? "border-line-strong ring-4 ring-focus" : "border-line"}`}>
-              {contact.primary ? <span className="absolute right-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-action px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide text-white"><BadgeCheck className="size-3.5" /> Primary contact</span> : null}
-              <span className="grid size-12 place-items-center rounded-2xl bg-surface-soft text-accent"><UserRound className="size-5" /></span>
-              <h2 className="mt-5 text-2xl font-black text-content">{contact.name}</h2>
-              <p className="mt-1 text-sm font-bold text-accent">{contact.designation}</p>
-              <div className="mt-6 space-y-3 border-t border-line pt-5">
-                {contact.phones.map((phone) => <a key={phone.href} href={`tel:${phone.href}`} className="flex items-center gap-3 text-sm font-extrabold text-accent hover:underline"><Phone className="size-4 shrink-0" />{phone.label}</a>)}
-                <a href={`mailto:${contact.email}`} className="flex items-center gap-3 break-all text-sm font-semibold text-accent hover:text-accent hover:underline"><Mail className="size-4 shrink-0" />{contact.email}</a>
-              </div>
-            </article>
-          ))}
+        <div className="grid gap-6 md:grid-cols-2">
+          {contacts.map((contact) => {
+            const cardImg = contact.name.includes("Zohair")
+              ? "/images/contact/zohair-ahmed-card.png"
+              : "/images/contact/bilal-shah-card.png";
+            const primaryPhone = contact.phones[0]?.href || "";
+            const whatsappNumber = contact.name.includes("Zohair") ? "923006917385" : "923258166829";
+
+            return (
+              <article
+                key={contact.email}
+                className="group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-4 shadow-[0_10px_35px_rgba(21,65,42,.06)] transition-all duration-300 hover:border-action/40 hover:shadow-xl sm:p-5"
+              >
+                <div className="overflow-hidden rounded-[1.4rem] border border-line/60 bg-white shadow-sm transition-transform duration-300 group-hover:scale-[1.01]">
+                  <img
+                    src={cardImg}
+                    alt={`${contact.name} - Pak Multilinks Hygiene Visiting Card`}
+                    className="h-auto w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 px-1 pt-1">
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`https://wa.me/${whatsappNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366]/10 px-3 py-1.5 text-xs font-bold text-[#128C7E] transition hover:bg-[#25D366] hover:text-white"
+                    >
+                      WhatsApp
+                    </a>
+                    {primaryPhone && (
+                      <a
+                        href={`tel:${primaryPhone}`}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-surface-soft px-3 py-1.5 text-xs font-bold text-accent transition hover:bg-action hover:text-white"
+                      >
+                        <Phone className="size-3" /> Call
+                      </a>
+                    )}
+                  </div>
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-accent hover:underline"
+                  >
+                    <Mail className="size-3" /> {contact.email}
+                  </a>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         <section className="mt-5 overflow-hidden rounded-[2rem] border border-line bg-surface shadow-[0_10px_35px_rgba(21,65,42,.06)]" aria-labelledby="office-location-title">
