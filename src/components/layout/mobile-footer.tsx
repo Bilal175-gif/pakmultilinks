@@ -7,7 +7,7 @@ export function MobileFooter() {
     <footer className="mobile-footer md:hidden">
       <div className="mb-3 flex items-center justify-center gap-3"><span>Appearance</span><ThemeSwitch /></div>
       <nav aria-label="Store information" className="flex flex-wrap justify-center gap-x-5">
-        <Link href="/about">About us</Link><Link href="/contact">Help & contact</Link><Link href="/account">My account</Link>
+        <Link href="/rate-list">Rate list</Link><Link href="/about">About us</Link><Link href="/contact">Help & contact</Link><Link href="/account">My account</Link>
       </nav>
       <details className="group">
         <summary className="mx-auto flex min-h-11 w-fit cursor-pointer list-none items-center gap-1.5">More information <ChevronDown size={14} className="transition-transform group-open:rotate-180" /></summary>

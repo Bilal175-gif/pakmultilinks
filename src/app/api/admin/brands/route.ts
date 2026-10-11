@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     const brand = await requireDatabase().brand.create({ data: { ...data, logoUrl: data.logoUrl || null } });
     revalidatePath("/");
     revalidatePath("/shop");
+    revalidatePath("/rate-list");
     return NextResponse.json({ brand: serialize(brand) }, { status: 201, headers: noStoreHeaders });
   } catch (error) {
     return apiFailure(error);

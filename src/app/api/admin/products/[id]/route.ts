@@ -61,6 +61,7 @@ export async function PATCH(request: NextRequest, context: Context) {
     await deleteBlobs(removedUrls);
     revalidatePath("/");
     revalidatePath("/shop");
+    revalidatePath("/rate-list");
     revalidatePath(`/product/${product.slug}`);
     return NextResponse.json({ product: serialize(product) }, { headers: noStoreHeaders });
   } catch (error) {

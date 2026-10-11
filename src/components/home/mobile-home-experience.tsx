@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronRight, PackageCheck, Search, UserRound } from "lucide-react";
+import { ArrowRight, ChevronRight, PackageCheck, Search } from "lucide-react";
 
-import { ThemeSwitch } from "@/components/theme/theme-switch";
 import { ProductCard } from "@/components/catalog/product-card";
 import { categoryArtwork, mobileCategories } from "@/lib/catalog-visuals";
 import type { Category, Product } from "@/lib/types";
@@ -17,12 +16,6 @@ export function MobileHomeExperience({ products, categories }: { products: Produ
 
   return (
     <div className={styles.home}>
-      <div className={styles.welcome}>
-        <Image src="/images/pak-multilinks-logo.png" alt="Pak Multilinks Hygiene" width={2039} height={771} sizes="150px" className={`${styles.logo} brand-logo`} />
-        <div className="flex items-center gap-2"><ThemeSwitch compact />
-        <Link href="/account" className={`${styles.account} focus-ring`} aria-label="Your account"><UserRound size={21} strokeWidth={1.7} /></Link></div>
-      </div>
-
       <form action="/shop" role="search" className={styles.search}>
         <Search size={20} aria-hidden="true" />
         <label htmlFor="mobile-home-search" className="sr-only">Search products</label>
@@ -36,7 +29,7 @@ export function MobileHomeExperience({ products, categories }: { products: Produ
           <p className={styles.eyebrow}>Everyday, in good supply</p>
           <h1 id="mobile-home-title">Stock up.<br />Stress less.</h1>
           <p className={styles.heroDescription}>Hygiene essentials,<br />by the carton.</p>
-          <Link href="/shop" className={`${styles.heroAction} focus-ring`}>Shop essentials <ArrowRight size={16} /></Link>
+          <Link href="/shop" className={`${styles.heroAction} commerce-button commerce-button-primary focus-ring`}>Shop essentials <ArrowRight size={16} /></Link>
         </div>
       </section>
 
@@ -58,7 +51,7 @@ export function MobileHomeExperience({ products, categories }: { products: Produ
       <section className={styles.section} aria-labelledby="mobile-products-title">
         <div className={styles.sectionHeading}>
           <h2 id="mobile-products-title">Everyday essentials</h2>
-          <Link href="/shop" className="focus-ring">View all <ChevronRight size={16} /></Link>
+          <Link href="/rate-list" className="focus-ring">Rate list <ChevronRight size={16} /></Link>
         </div>
         {featured.length > 0 ? <div className={styles.products}>
           {featured.map(product => <ProductCard key={product.id} product={product} headingLevel="h3" />)}

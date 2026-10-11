@@ -23,7 +23,7 @@ export function QuantitySelector({
   const incrementDisabled = disabled || (typeof max === "number" && value >= max);
 
   return (
-    <div className="inline-flex items-center rounded-xl border border-line bg-surface shadow-sm">
+    <div className="inline-flex items-center border border-line bg-surface">
       <button
         type="button"
         aria-label={`Decrease ${label.toLowerCase()}`}

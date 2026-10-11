@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const populatedCategorySlugs = new Set(
     verifiedProducts.map((product) => product.categorySlug),
   );
-  const routes = ["", "/shop", "/corporate-orders", "/request-quote", "/about", "/contact", "/privacy", "/terms", "/returns"];
+  const routes = ["", "/shop", "/rate-list", "/corporate-orders", "/request-quote", "/about", "/contact", "/privacy", "/terms", "/returns"];
   return [
     ...routes.map((route) => ({ url: absoluteUrl(route || "/"), changeFrequency: route === "" || route === "/shop" ? "weekly" as const : "monthly" as const, priority: route === "" ? 1 : route === "/shop" ? .9 : .6 })),
     ...categories.filter((category) => populatedCategorySlugs.has(category.slug)).map((category) => ({ url: absoluteUrl(`/shop/${category.slug}`), ...(category.updatedAt ? { lastModified: category.updatedAt } : {}), changeFrequency: "weekly" as const, priority: .7 })),

@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
     });
     revalidatePath("/");
     revalidatePath("/shop");
+    revalidatePath("/rate-list");
     revalidatePath(`/product/${product.slug}`);
     return NextResponse.json({ product: serialize(product) }, { status: 201, headers: noStoreHeaders });
   } catch (error) {

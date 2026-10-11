@@ -16,7 +16,7 @@ export function RouteShell({ children }: Readonly<{ children: React.ReactNode }>
   const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
 
   if (isAdminRoute) {
-    return <main id="main-content">{children}</main>;
+    return <div id="main-content">{children}</div>;
   }
 
   return (

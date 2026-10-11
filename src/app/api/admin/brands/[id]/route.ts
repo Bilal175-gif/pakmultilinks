@@ -23,6 +23,7 @@ export async function PATCH(request: NextRequest, context: Context) {
     }
     revalidatePath("/");
     revalidatePath("/shop");
+    revalidatePath("/rate-list");
     return NextResponse.json({ brand: serialize(brand) }, { headers: noStoreHeaders });
   } catch (error) {
     return apiFailure(error);

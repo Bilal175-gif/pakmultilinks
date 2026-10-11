@@ -24,6 +24,7 @@
   --info: #2563a5;
   --info-soft: #edf3fc;
   --focus: #26794a;
+  --control-radius: 0px;
   --image-surface: #f4f6f0;
   --hero-tint: #e8f0e2;
   --forest: #114b2f;
@@ -91,11 +92,11 @@
   --color-image-surface: var(--image-surface);
 }
 
-.theme-switch { position: relative; display: inline-flex; flex-shrink: 0; align-items: center; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--content); }
+.theme-switch { position: relative; display: inline-flex; flex-shrink: 0; align-items: center; min-height: 44px; border: 1px solid var(--line); border-radius: var(--control-radius); background: var(--surface); color: var(--content); }
 .theme-switch-icon { position: absolute; left: 12px; pointer-events: none; color: var(--accent); }
 .theme-switch select { min-height: 44px; min-width: 112px; padding: 8px 12px 8px 36px; border: 0; border-radius: inherit; background: transparent; color: inherit; font-size: 14px; cursor: pointer; }
 .theme-switch select:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-.theme-switch-compact { width: 44px; height: 44px; border-radius: 50%; }
+.theme-switch-compact { width: 44px; height: 44px; }
 .theme-switch-compact select { position: absolute; inset: 0; min-width: 0; width: 100%; padding: 0; opacity: 0; }
 .theme-switch-compact:focus-within { outline: 2px solid var(--focus); outline-offset: 3px; }
 .theme-switch-icon > svg { display: none; }
