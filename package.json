@@ -13,7 +13,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:local": "node scripts/local-database.mjs",
-    "test:admin": "node scripts/verify-admin.mjs"
+    "test:admin": "node scripts/verify-admin.mjs",
+    "test:storefront": "playwright test"
   },
   "dependencies": {
     "@prisma/client": "6.12.0",
@@ -29,6 +30,7 @@
     "zod": "^4.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",

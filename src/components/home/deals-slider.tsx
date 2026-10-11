@@ -35,7 +35,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
   }
   if (!deals.length) return null;
 
-  return <section className="w-full border-b border-neutral-200 bg-[#f4f3ee]" aria-label="Featured offers">
+  return <section className="w-full border-b border-line bg-canvas" aria-label="Featured offers">
     <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
     <div role="region" aria-roledescription="carousel" aria-label="Current deals" className="relative isolate aspect-[3/4] w-full overflow-hidden md:aspect-[16/9]"
       onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -45,14 +45,14 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
       {deals.map((deal, index) => <Link key={deal.id} href={deal.linkUrl} aria-hidden={index !== active} tabIndex={index === active ? 0 : -1}
         className={`absolute inset-0 flex flex-col transition-transform duration-700 ease-out motion-reduce:transition-none ${index === active ? "z-10 translate-x-0" : index > active ? "pointer-events-none translate-x-full" : "pointer-events-none -translate-x-full"}`}>
         <div className="relative aspect-[16/9] w-full shrink-0 md:absolute md:inset-0 md:aspect-auto"><Image src={deal.imageUrl} alt={deal.alt} fill preload={index === 0} unoptimized={deal.imageUrl.startsWith("https://")} sizes="100vw" className="object-cover object-center" /></div>
-        <div className="flex flex-1 flex-col justify-center px-6 py-5 text-[#23372d] md:hidden"><p className="text-[10px] uppercase tracking-[.16em] text-neutral-500">Tissue & hygiene essentials</p><h2 className="mt-3 font-serif text-[clamp(24px,7vw,36px)] leading-tight">{deal.title}</h2><p className="mt-3 max-w-md text-sm leading-6 text-neutral-600">Everyday supplies for your home and workplace. Explore our range or arrange a bulk order.</p><span className="mt-5 w-fit border-b border-[#23372d] pb-1 text-sm font-medium">Shop the collection →</span></div>
+        <div className="flex flex-1 flex-col justify-center px-6 py-5 text-accent md:hidden"><p className="text-[10px] uppercase tracking-[.16em] text-muted">Tissue & hygiene essentials</p><h2 className="mt-3 font-serif text-[clamp(24px,7vw,36px)] leading-tight">{deal.title}</h2><p className="mt-3 max-w-md text-sm leading-6 text-secondary">Everyday supplies for your home and workplace. Explore our range or arrange a bulk order.</p><span className="mt-5 w-fit border-b border-focus pb-1 text-sm font-medium">Shop the collection →</span></div>
         <span className="sr-only md:not-sr-only md:hidden">{deal.title}</span>
       </Link>)}
     </div>
-    {deals.length > 1 && <div className="flex items-center justify-center gap-1 bg-white py-2" aria-label="Offer controls">
-      <button type="button" onClick={() => select(active - 1)} aria-label="Previous offer" className="focus-ring grid size-11 place-items-center text-[#263f31]"><ChevronLeft className="size-5" /></button>
-      {deals.map((deal, index) => <button key={deal.id} type="button" onClick={() => select(index)} aria-label={`Show ${deal.title}`} aria-current={index === active ? "true" : undefined} className="focus-ring grid size-11 place-items-center"><span className={`h-2 rounded-full ${index === active ? "w-6 bg-[#263f31]" : "w-2 bg-neutral-300"}`} /></button>)}
-      <button type="button" onClick={() => select(active + 1)} aria-label="Next offer" className="focus-ring grid size-11 place-items-center text-[#263f31]"><ChevronRight className="size-5" /></button>
+    {deals.length > 1 && <div className="flex items-center justify-center gap-1 bg-surface py-2" aria-label="Offer controls">
+      <button type="button" onClick={() => select(active - 1)} aria-label="Previous offer" className="focus-ring grid size-11 place-items-center text-accent"><ChevronLeft className="size-5" /></button>
+      {deals.map((deal, index) => <button key={deal.id} type="button" onClick={() => select(index)} aria-label={`Show ${deal.title}`} aria-current={index === active ? "true" : undefined} className="focus-ring grid size-11 place-items-center"><span className={`h-2 rounded-full ${index === active ? "w-6 bg-action" : "w-2 bg-disabled"}`} /></button>)}
+      <button type="button" onClick={() => select(active + 1)} aria-label="Next offer" className="focus-ring grid size-11 place-items-center text-accent"><ChevronRight className="size-5" /></button>
     </div>}
   </section>;
 }

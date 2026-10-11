@@ -187,7 +187,7 @@ export function ProductEditor({
     type = "text",
     min = 0,
   ) => (
-    <label className="block text-sm font-semibold text-slate-700">
+    <label className="block text-sm font-semibold text-secondary">
       {label}
       <input
         type={type}
@@ -214,7 +214,7 @@ export function ProductEditor({
   return (
     <form onSubmit={submit} className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
       <div className="flex items-center justify-between gap-3 lg:col-span-2">
-        <Link href="/admin/products" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-emerald-800">
+        <Link href="/admin/products" className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-accent">
           <ArrowLeft className="size-4" /> Products
         </Link>
         <button disabled={disabled || pending || uploading} className={buttonClass}>
@@ -223,22 +223,22 @@ export function ProductEditor({
         </button>
       </div>
 
-      {message && <p role="alert" className="rounded-xl bg-red-50 p-4 text-sm text-red-800 lg:col-span-2">{message}</p>}
+      {message && <p role="alert" className="rounded-xl bg-danger-soft p-4 text-sm text-danger lg:col-span-2">{message}</p>}
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
         <h2 className="mb-5 font-bold">Product information</h2>
         <div className="grid gap-5 sm:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-700">Name<input value={value.name} onChange={(event) => setSlugFromName(event.target.value)} disabled={disabled} required className={inputClass} /></label>
+          <label className="block text-sm font-semibold text-secondary">Name<input value={value.name} onChange={(event) => setSlugFromName(event.target.value)} disabled={disabled} required className={inputClass} /></label>
           {field("Slug", "slug")}
           {field("SKU", "sku")}
-          <label className="block text-sm font-semibold text-slate-700">Status<select value={value.status} onChange={(event) => set("status", event.target.value as EditableProduct["status"])} disabled={disabled} className={inputClass}><option value="DRAFT">Draft</option><option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option></select></label>
-          <label className="block text-sm font-semibold text-slate-700 sm:col-span-2">Short description<textarea value={value.shortDescription} onChange={(event) => set("shortDescription", event.target.value)} disabled={disabled} className={textareaClass} maxLength={300} /></label>
-          <label className="block text-sm font-semibold text-slate-700 sm:col-span-2">Full description<textarea value={value.description} onChange={(event) => set("description", event.target.value)} disabled={disabled} className={textareaClass} required maxLength={5000} /></label>
+          <label className="block text-sm font-semibold text-secondary">Status<select value={value.status} onChange={(event) => set("status", event.target.value as EditableProduct["status"])} disabled={disabled} className={inputClass}><option value="DRAFT">Draft</option><option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option></select></label>
+          <label className="block text-sm font-semibold text-secondary sm:col-span-2">Short description<textarea value={value.shortDescription} onChange={(event) => set("shortDescription", event.target.value)} disabled={disabled} className={textareaClass} maxLength={300} /></label>
+          <label className="block text-sm font-semibold text-secondary sm:col-span-2">Full description<textarea value={value.description} onChange={(event) => set("description", event.target.value)} disabled={disabled} className={textareaClass} required maxLength={5000} /></label>
         </div>
       </section>
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
-        <div className="mb-5"><h2 className="font-bold">Carton pricing & inventory</h2><p className="mt-1 text-xs text-slate-500">Prices are in PKR per carton. Clear sale price to end a discount; turn off “Price on request” to publish a price.</p></div>
+        <div className="mb-5"><h2 className="font-bold">Carton pricing & inventory</h2><p className="mt-1 text-xs text-muted">Prices are in PKR per carton. Clear sale price to end a discount; turn off “Price on request” to publish a price.</p></div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {field("Carton price (PKR)", "price", "number")}
           {field("Sale price per carton", "salePrice", "number")}
@@ -247,7 +247,7 @@ export function ProductEditor({
           {field("Available stock (cartons)", "stock", "number")}
           {field("Low-stock alert (cartons)", "lowStockThreshold", "number")}
         </div>
-        <div className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm"><span className="text-neutral-500">Customer sees </span><strong>{value.priceOnRequest ? "Price on request" : `Rs ${(value.salePrice ?? value.price).toLocaleString("en-PK")} / carton`}</strong>{!value.priceOnRequest && value.unitsPerCarton > 0 && <span className="ml-3 text-xs text-neutral-500">Rs {((value.salePrice ?? value.price) / value.unitsPerCarton).toFixed(2)} per unit</span>}{value.salePrice !== null && value.price > 0 && <span className="ml-3 text-xs text-neutral-500">{Math.round((1 - value.salePrice / value.price) * 100)}% discount</span>}</div>
+        <div className="mt-5 rounded-lg border border-line bg-surface-soft p-4 text-sm"><span className="text-muted">Customer sees </span><strong>{value.priceOnRequest ? "Price on request" : `Rs ${(value.salePrice ?? value.price).toLocaleString("en-PK")} / carton`}</strong>{!value.priceOnRequest && value.unitsPerCarton > 0 && <span className="ml-3 text-xs text-muted">Rs {((value.salePrice ?? value.price) / value.unitsPerCarton).toFixed(2)} per unit</span>}{value.salePrice !== null && value.price > 0 && <span className="ml-3 text-xs text-muted">{Math.round((1 - value.salePrice / value.price) * 100)}% discount</span>}</div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {([
             ["priceOnRequest", "Price on request"],
@@ -256,7 +256,7 @@ export function ProductEditor({
             ["bulkPricing", "Bulk pricing"],
             ["allowBackorder", "Allow order requests"],
           ] as const).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-sm font-semibold"><input type="checkbox" checked={value[key]} onChange={(event) => set(key, event.target.checked)} disabled={disabled} className="size-4 accent-emerald-800" />{label}</label>
+            <label key={key} className="flex items-center gap-3 rounded-xl border border-line p-3 text-sm font-semibold"><input type="checkbox" checked={value[key]} onChange={(event) => set(key, event.target.checked)} disabled={disabled} className="size-4 accent-focus" />{label}</label>
           ))}
         </div>
       </section>
@@ -264,33 +264,33 @@ export function ProductEditor({
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-2 lg:row-span-2 ${message ? "lg:row-start-3" : "lg:row-start-2"}`}>
         <h2 className="mb-5 font-bold">Organization</h2>
         <div className="grid gap-5">
-          <label className="block text-sm font-semibold text-slate-700">Category<select value={value.categoryId} onChange={(event) => set("categoryId", event.target.value)} disabled={disabled} required className={inputClass}><option value="">Select a category</option>{categories.map((option) => <option key={option.id} value={option.id}>{option.parentId ? `${categories.find(parent => parent.id === option.parentId)?.name || "Category"} / ` : ""}{option.name}</option>)}</select></label>
-          <label className="block text-sm font-semibold text-slate-700">Brand<select value={value.brandId || ""} onChange={(event) => set("brandId", event.target.value || null)} disabled={disabled} className={inputClass}><option value="">No brand / unbranded</option>{brands.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}</select></label>
+          <label className="block text-sm font-semibold text-secondary">Category<select value={value.categoryId} onChange={(event) => set("categoryId", event.target.value)} disabled={disabled} required className={inputClass}><option value="">Select a category</option>{categories.map((option) => <option key={option.id} value={option.id}>{option.parentId ? `${categories.find(parent => parent.id === option.parentId)?.name || "Category"} / ` : ""}{option.name}</option>)}</select></label>
+          <label className="block text-sm font-semibold text-secondary">Brand<select value={value.brandId || ""} onChange={(event) => set("brandId", event.target.value || null)} disabled={disabled} className={inputClass}><option value="">No brand / unbranded</option>{brands.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}</select></label>
         </div>
       </section>
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
         <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
-          <div><h2 className="font-bold">Product media</h2><p className="mt-1 text-xs leading-5 text-slate-500">Optional. JPG, PNG or WebP; maximum 5 MB each and 12 images per product. The first image is primary.</p></div>
-          <div className="flex gap-2"><button type="button" disabled={disabled || value.images.length >= 12} onClick={() => set("images", [...value.images, { url: "", alt: value.name }])} className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold text-slate-700"><Plus className="size-4" />Add URL</button><button type="button" disabled={disabled || uploading || value.images.length >= 12} onClick={() => fileInputRef.current?.click()} className="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-800 px-3 text-sm font-bold text-white disabled:opacity-50">{uploading ? <LoaderCircle className="size-4 animate-spin" /> : <Upload className="size-4" />}{uploading ? "Uploading…" : "Upload"}</button></div>
+          <div><h2 className="font-bold">Product media</h2><p className="mt-1 text-xs leading-5 text-muted">Optional. JPG, PNG or WebP; maximum 5 MB each and 12 images per product. The first image is primary.</p></div>
+          <div className="flex gap-2"><button type="button" disabled={disabled || value.images.length >= 12} onClick={() => set("images", [...value.images, { url: "", alt: value.name }])} className="inline-flex h-10 items-center gap-2 rounded-xl border border-line px-3 text-sm font-bold text-secondary"><Plus className="size-4" />Add URL</button><button type="button" disabled={disabled || uploading || value.images.length >= 12} onClick={() => fileInputRef.current?.click()} className="inline-flex h-10 items-center gap-2 rounded-xl bg-action px-3 text-sm font-bold text-white disabled:opacity-50">{uploading ? <LoaderCircle className="size-4 animate-spin" /> : <Upload className="size-4" />}{uploading ? "Uploading…" : "Upload"}</button></div>
         </div>
         <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={(event) => event.target.files && uploadFiles(event.target.files)} />
-        <button type="button" disabled={disabled || uploading || value.images.length >= 12} onClick={() => fileInputRef.current?.click()} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); uploadFiles(event.dataTransfer.files); }} className="mb-4 flex min-h-28 w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 text-center transition hover:border-emerald-600 hover:bg-emerald-50/40 disabled:cursor-not-allowed disabled:opacity-60"><Upload className="size-6 text-emerald-700" /><span className="mt-2 text-sm font-bold text-slate-800">Drop product images here or browse</span><span className="mt-1 text-xs text-slate-500">Images remain unpublished until this product is saved.</span></button>
+        <button type="button" disabled={disabled || uploading || value.images.length >= 12} onClick={() => fileInputRef.current?.click()} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); uploadFiles(event.dataTransfer.files); }} className="mb-4 flex min-h-28 w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line-strong bg-surface-soft px-4 text-center transition hover:border-focus hover:bg-accent-soft/40 disabled:cursor-not-allowed disabled:opacity-60"><Upload className="size-6 text-accent" /><span className="mt-2 text-sm font-bold text-content">Drop product images here or browse</span><span className="mt-1 text-xs text-muted">Images remain unpublished until this product is saved.</span></button>
         <div className="space-y-3">
           {value.images.map((image, index) => (
-            <div key={`${image.url}-${index}`} className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-3 md:grid-cols-[112px_minmax(0,1fr)_auto] md:items-center">
-              <div className="relative grid aspect-square place-items-center overflow-hidden rounded-xl bg-slate-100 text-slate-400">{image.url ? <Image src={image.url} alt="" fill unoptimized={image.url.startsWith("https://")} sizes="112px" className="object-contain p-2" /> : <ImageIcon className="size-8" />}{index === 0 && <span className="absolute left-2 top-2 rounded-full bg-emerald-800 px-2 py-1 text-[10px] font-bold text-white">Primary</span>}</div>
-              <div className="grid gap-3"><label className="text-xs font-bold text-slate-600">Image URL<input value={image.url} required onChange={(event) => updateImage(index, { url: event.target.value })} placeholder="/uploads/products/... or HTTPS URL" className={inputClass} /></label><label className="text-xs font-bold text-slate-600">Alt text<input value={image.alt} maxLength={160} onChange={(event) => updateImage(index, { alt: event.target.value })} placeholder="Describe the product image" className={inputClass} /></label></div>
-              <div className="flex flex-wrap gap-1 md:w-24 md:justify-end"><button type="button" disabled={index === 0} onClick={() => moveImage(index, 0)} title="Make primary" aria-label={`Make image ${index + 1} primary`} className="grid size-10 place-items-center rounded-lg text-amber-700 hover:bg-amber-50 disabled:opacity-30"><Star className="size-4" /></button><button type="button" disabled={index === 0} onClick={() => moveImage(index, index - 1)} title="Move up" aria-label={`Move image ${index + 1} up`} className="grid size-10 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 disabled:opacity-30"><ArrowUp className="size-4" /></button><button type="button" disabled={index === value.images.length - 1} onClick={() => moveImage(index, index + 1)} title="Move down" aria-label={`Move image ${index + 1} down`} className="grid size-10 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 disabled:opacity-30"><ArrowDown className="size-4" /></button><button type="button" onClick={() => set("images", value.images.filter((_, imageIndex) => imageIndex !== index))} title="Remove" aria-label={`Remove image ${index + 1}`} className="grid size-10 place-items-center rounded-lg text-red-700 hover:bg-red-50"><Trash2 className="size-4" /></button></div>
+            <div key={`${image.url}-${index}`} className="grid gap-4 rounded-2xl border border-line bg-surface p-3 md:grid-cols-[112px_minmax(0,1fr)_auto] md:items-center">
+              <div className="relative grid aspect-square place-items-center overflow-hidden rounded-xl bg-surface-soft text-muted">{image.url ? <Image src={image.url} alt="" fill unoptimized={image.url.startsWith("https://")} sizes="112px" className="object-contain p-2" /> : <ImageIcon className="size-8" />}{index === 0 && <span className="absolute left-2 top-2 rounded-full bg-action px-2 py-1 text-[10px] font-bold text-white">Primary</span>}</div>
+              <div className="grid gap-3"><label className="text-xs font-bold text-secondary">Image URL<input value={image.url} required onChange={(event) => updateImage(index, { url: event.target.value })} placeholder="/uploads/products/... or HTTPS URL" className={inputClass} /></label><label className="text-xs font-bold text-secondary">Alt text<input value={image.alt} maxLength={160} onChange={(event) => updateImage(index, { alt: event.target.value })} placeholder="Describe the product image" className={inputClass} /></label></div>
+              <div className="flex flex-wrap gap-1 md:w-24 md:justify-end"><button type="button" disabled={index === 0} onClick={() => moveImage(index, 0)} title="Make primary" aria-label={`Make image ${index + 1} primary`} className="grid size-10 place-items-center rounded-lg text-warning hover:bg-warning-soft disabled:opacity-30"><Star className="size-4" /></button><button type="button" disabled={index === 0} onClick={() => moveImage(index, index - 1)} title="Move up" aria-label={`Move image ${index + 1} up`} className="grid size-10 place-items-center rounded-lg text-secondary hover:bg-surface-soft disabled:opacity-30"><ArrowUp className="size-4" /></button><button type="button" disabled={index === value.images.length - 1} onClick={() => moveImage(index, index + 1)} title="Move down" aria-label={`Move image ${index + 1} down`} className="grid size-10 place-items-center rounded-lg text-secondary hover:bg-surface-soft disabled:opacity-30"><ArrowDown className="size-4" /></button><button type="button" onClick={() => set("images", value.images.filter((_, imageIndex) => imageIndex !== index))} title="Remove" aria-label={`Remove image ${index + 1}`} className="grid size-10 place-items-center rounded-lg text-danger hover:bg-danger-soft"><Trash2 className="size-4" /></button></div>
             </div>
           ))}
-          {!value.images.length && <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center"><ImageIcon className="mx-auto size-7 text-slate-400" /><p className="mt-2 text-sm font-semibold text-slate-600">No product images</p><p className="mt-1 text-xs text-slate-500">The storefront will display a clean “Image coming soon” placeholder.</p></div>}
+          {!value.images.length && <div className="rounded-2xl border border-dashed border-line p-6 text-center"><ImageIcon className="mx-auto size-7 text-muted" /><p className="mt-2 text-sm font-semibold text-secondary">No product images</p><p className="mt-1 text-xs text-muted">The storefront will display a clean “Image coming soon” placeholder.</p></div>}
         </div>
       </section>
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
-        <div className="mb-5 flex items-center justify-between"><div><h2 className="font-bold">Specifications</h2><p className="text-xs text-slate-500">Flexible details such as ply, sheet count, size, or material.</p></div><button type="button" disabled={disabled || value.attributes.length >= 30} onClick={() => set("attributes", [...value.attributes, { name: "", value: "" }])} className="inline-flex items-center gap-1 text-sm font-bold text-emerald-800"><Plus className="size-4" />Add</button></div>
-        <div className="space-y-3">{value.attributes.map((attribute, index) => <div key={index} className="grid gap-3 rounded-xl bg-slate-50 p-3 sm:grid-cols-[1fr_2fr_auto]"><input aria-label={`Specification ${index + 1} name`} placeholder="Ply / sheet count" value={attribute.name} onChange={(event) => set("attributes", value.attributes.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item))} className={inputClass.replace("mt-1.5 ", "")} /><input aria-label={`Specification ${index + 1} value`} placeholder="Verified value" value={attribute.value} onChange={(event) => set("attributes", value.attributes.map((item, itemIndex) => itemIndex === index ? { ...item, value: event.target.value } : item))} className={inputClass.replace("mt-1.5 ", "")} /><button type="button" onClick={() => set("attributes", value.attributes.filter((_, itemIndex) => itemIndex !== index))} className="grid size-11 place-items-center rounded-xl text-red-700 hover:bg-red-50"><Trash2 className="size-4" /></button></div>)}</div>
+        <div className="mb-5 flex items-center justify-between"><div><h2 className="font-bold">Specifications</h2><p className="text-xs text-muted">Flexible details such as ply, sheet count, size, or material.</p></div><button type="button" disabled={disabled || value.attributes.length >= 30} onClick={() => set("attributes", [...value.attributes, { name: "", value: "" }])} className="inline-flex items-center gap-1 text-sm font-bold text-accent"><Plus className="size-4" />Add</button></div>
+        <div className="space-y-3">{value.attributes.map((attribute, index) => <div key={index} className="grid gap-3 rounded-xl bg-surface-soft p-3 sm:grid-cols-[1fr_2fr_auto]"><input aria-label={`Specification ${index + 1} name`} placeholder="Ply / sheet count" value={attribute.name} onChange={(event) => set("attributes", value.attributes.map((item, itemIndex) => itemIndex === index ? { ...item, name: event.target.value } : item))} className={inputClass.replace("mt-1.5 ", "")} /><input aria-label={`Specification ${index + 1} value`} placeholder="Verified value" value={attribute.value} onChange={(event) => set("attributes", value.attributes.map((item, itemIndex) => itemIndex === index ? { ...item, value: event.target.value } : item))} className={inputClass.replace("mt-1.5 ", "")} /><button type="button" onClick={() => set("attributes", value.attributes.filter((_, itemIndex) => itemIndex !== index))} className="grid size-11 place-items-center rounded-xl text-danger hover:bg-danger-soft"><Trash2 className="size-4" /></button></div>)}</div>
       </section>
     </form>
   );

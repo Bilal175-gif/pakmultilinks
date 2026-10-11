@@ -9,7 +9,7 @@ import type { CustomerDetails, Order } from "@/lib/types";
 import { createReference, formatPrice } from "@/lib/utils";
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100";
+  "mt-2 w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-sm text-content outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus";
 
 const fallbackStatus = (status: number) =>
   status === 404 || status === 501;
@@ -167,10 +167,10 @@ export function CheckoutForm() {
 
   if (cart.length === 0) {
     return (
-      <section className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-12">
-        <PackageCheck aria-hidden="true" className="mx-auto size-12 text-emerald-700" />
-        <h2 className="mt-4 text-2xl font-bold text-slate-950">Your cart is empty</h2>
-        <p className="mt-2 text-slate-600">Add products before starting checkout.</p>
+      <section className="rounded-3xl border border-line bg-surface p-8 text-center shadow-sm sm:p-12">
+        <PackageCheck aria-hidden="true" className="mx-auto size-12 text-accent" />
+        <h2 className="mt-4 text-2xl font-bold text-content">Your cart is empty</h2>
+        <p className="mt-2 text-secondary">Add products before starting checkout.</p>
         <Link href="/shop" className="commerce-button commerce-button-primary mt-6 inline-flex items-center">
           Browse products
         </Link>
@@ -181,71 +181,71 @@ export function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
       <div className="space-y-6">
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="delivery-heading">
+        <section className="rounded-3xl border border-line bg-surface p-5 shadow-sm sm:p-7" aria-labelledby="delivery-heading">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-800"><Building2 aria-hidden="true" className="size-5" /></span>
+            <span className="grid size-10 place-items-center rounded-xl bg-accent-soft text-accent"><Building2 aria-hidden="true" className="size-5" /></span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Step 1</p>
-              <h2 id="delivery-heading" className="text-xl font-bold text-slate-950">Contact and delivery details</h2>
+              <p className="text-xs font-semibold uppercase tracking-wide text-accent">Step 1</p>
+              <h2 id="delivery-heading" className="text-xl font-bold text-content">Contact and delivery details</h2>
             </div>
           </div>
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            <label className="text-sm font-semibold text-slate-800">Full name <span aria-hidden="true" className="text-red-600">*</span>
+            <label className="text-sm font-semibold text-content">Full name <span aria-hidden="true" className="text-danger">*</span>
               <input className={inputClass} name="fullName" autoComplete="name" required maxLength={100} />
             </label>
-            <label className="text-sm font-semibold text-slate-800">Phone <span aria-hidden="true" className="text-red-600">*</span>
-              <input className={inputClass} name="phone" type="tel" inputMode="tel" autoComplete="tel" required maxLength={20} pattern="[+0-9][0-9 ()-]{7,19}" placeholder="03XX XXXXXXX" />
+            <label className="text-sm font-semibold text-content">Phone <span aria-hidden="true" className="text-danger">*</span>
+              <input className={inputClass} name="phone" type="tel" inputMode="tel" autoComplete="tel" required maxLength={20} pattern="[+0-9][0-9 \(\)\-]{7,19}" placeholder="03XX XXXXXXX" />
             </label>
-            <label className="text-sm font-semibold text-slate-800">Email <span aria-hidden="true" className="text-red-600">*</span>
+            <label className="text-sm font-semibold text-content">Email <span aria-hidden="true" className="text-danger">*</span>
               <input className={inputClass} name="email" type="email" autoComplete="email" required maxLength={160} />
             </label>
-            <label className="text-sm font-semibold text-slate-800">Company / organization <span aria-hidden="true" className="text-red-600">*</span>
+            <label className="text-sm font-semibold text-content">Company / organization <span aria-hidden="true" className="text-danger">*</span>
               <input className={inputClass} name="companyName" autoComplete="organization" required maxLength={160} />
             </label>
-            <label className="text-sm font-semibold text-slate-800">NTN <span className="font-normal text-slate-500">(optional)</span><input className={inputClass} name="ntn" maxLength={30} /></label>
-            <label className="text-sm font-semibold text-slate-800">Province / territory <span aria-hidden="true" className="text-red-600">*</span>
+            <label className="text-sm font-semibold text-content">NTN <span className="font-normal text-muted">(optional)</span><input className={inputClass} name="ntn" maxLength={30} /></label>
+            <label className="text-sm font-semibold text-content">Province / territory <span aria-hidden="true" className="text-danger">*</span>
               <select className={inputClass} name="province" autoComplete="address-level1" required defaultValue="">
                 <option value="" disabled>Select province or territory</option>
                 <option>Punjab</option><option>Sindh</option><option>Khyber Pakhtunkhwa</option><option>Balochistan</option><option>Islamabad Capital Territory</option><option>Gilgit-Baltistan</option><option>Azad Jammu and Kashmir</option>
               </select>
             </label>
-            <label className="text-sm font-semibold text-slate-800">City <span aria-hidden="true" className="text-red-600">*</span>
+            <label className="text-sm font-semibold text-content">City <span aria-hidden="true" className="text-danger">*</span>
               <input className={inputClass} name="city" autoComplete="address-level2" required maxLength={100} />
             </label>
-            <label className="text-sm font-semibold text-slate-800 sm:col-span-2">Full address <span aria-hidden="true" className="text-red-600">*</span>
+            <label className="text-sm font-semibold text-content sm:col-span-2">Full address <span aria-hidden="true" className="text-danger">*</span>
               <textarea className={`${inputClass} min-h-28 resize-y`} name="address" autoComplete="street-address" required maxLength={500} />
             </label>
-            <label className="text-sm font-semibold text-slate-800">Postal code <span className="font-normal text-slate-500">(optional)</span>
+            <label className="text-sm font-semibold text-content">Postal code <span className="font-normal text-muted">(optional)</span>
               <input className={inputClass} name="postalCode" autoComplete="postal-code" maxLength={20} placeholder="e.g. 54000" />
             </label>
-            <label className="text-sm font-semibold text-slate-800 sm:col-span-2">Order notes <span className="font-normal text-slate-500">(optional)</span>
+            <label className="text-sm font-semibold text-content sm:col-span-2">Order notes <span className="font-normal text-muted">(optional)</span>
               <textarea className={`${inputClass} min-h-24 resize-y`} name="notes" maxLength={1000} placeholder="Access instructions, preferred contact time, or other requirements" />
             </label>
           </div>
         </section>
 
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7" aria-labelledby="payment-heading">
+        <section className="rounded-3xl border border-line bg-surface p-5 shadow-sm sm:p-7" aria-labelledby="payment-heading">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-emerald-50 text-emerald-800"><LockKeyhole aria-hidden="true" className="size-5" /></span>
+            <span className="grid size-10 place-items-center rounded-xl bg-accent-soft text-accent"><LockKeyhole aria-hidden="true" className="size-5" /></span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Step 2</p>
-              <h2 id="payment-heading" className="text-xl font-bold text-slate-950">Payment method</h2>
+              <p className="text-xs font-semibold uppercase tracking-wide text-accent">Step 2</p>
+              <h2 id="payment-heading" className="text-xl font-bold text-content">Payment method</h2>
             </div>
           </div>
           <div className="mt-5 space-y-3">
-            <label className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 transition cursor-pointer">
-              <input type="radio" name="paymentMethod" value="Cash on Delivery" defaultChecked className="accent-emerald-800" />
+            <label className="flex items-center gap-3 rounded-xl border border-line p-4 has-[:checked]:border-focus has-[:checked]:bg-accent-soft transition cursor-pointer">
+              <input type="radio" name="paymentMethod" value="Cash on Delivery" defaultChecked className="accent-focus" />
               <div>
-                <p className="font-semibold text-slate-900">Cash on Delivery</p>
-                <p className="text-xs text-slate-500">Pay when your order arrives</p>
+                <p className="font-semibold text-content">Cash on Delivery</p>
+                <p className="text-xs text-muted">Pay when your order arrives</p>
               </div>
             </label>
             {bankTransferEnabled && (
-              <label className="flex items-center gap-3 rounded-xl border border-slate-200 p-4 has-[:checked]:border-emerald-600 has-[:checked]:bg-emerald-50 transition cursor-pointer">
-                <input type="radio" name="paymentMethod" value="Bank Transfer" className="accent-emerald-800" />
+              <label className="flex items-center gap-3 rounded-xl border border-line p-4 has-[:checked]:border-focus has-[:checked]:bg-accent-soft transition cursor-pointer">
+                <input type="radio" name="paymentMethod" value="Bank Transfer" className="accent-focus" />
                 <div>
-                  <p className="font-semibold text-slate-900">Bank Transfer</p>
-                  <p className="text-xs text-slate-500">Transfer before dispatch</p>
+                  <p className="font-semibold text-content">Bank Transfer</p>
+                  <p className="text-xs text-muted">Transfer before dispatch</p>
                 </div>
               </label>
             )}
@@ -254,29 +254,29 @@ export function CheckoutForm() {
 
       </div>
 
-      <aside className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-28">
-        <h2 className="text-xl font-bold text-slate-950">Review order</h2>
-        <ul className="mt-5 space-y-4 border-b border-slate-200 pb-5">
+      <aside className="rounded-3xl border border-line bg-surface p-6 shadow-sm lg:sticky lg:top-28">
+        <h2 className="text-xl font-bold text-content">Review order</h2>
+        <ul className="mt-5 space-y-4 border-b border-line pb-5">
           {cart.map(({ product, quantity }) => (
             <li key={product.id} className="flex justify-between gap-4 text-sm">
-              <span className="text-slate-600"><span className="font-medium text-slate-900">{product.name}</span> × {quantity} carton{quantity === 1 ? "" : "s"}</span>
-              <span className="shrink-0 font-semibold text-slate-950">{product.priceOnRequest ? "Quote required" : formatPrice((product.salePrice ?? product.price) * quantity)}</span>
+              <span className="text-secondary"><span className="font-medium text-content">{product.name}</span> × {quantity} carton{quantity === 1 ? "" : "s"}</span>
+              <span className="shrink-0 font-semibold text-content">{product.priceOnRequest ? "Quote required" : formatPrice((product.salePrice ?? product.price) * quantity)}</span>
             </li>
           ))}
         </ul>
         <dl className="mt-5 space-y-4 text-sm">
-          <div className="flex justify-between gap-3"><dt className="text-slate-600">Carton pricing</dt><dd className="font-bold text-slate-950">{hasQuotePricing ? "Final quote required" : formatPrice(subtotal)}</dd></div>
-          <div className="flex justify-between gap-3"><dt className="text-slate-600">Delivery charge</dt><dd className="max-w-40 text-right font-semibold text-amber-700">Confirmed after review</dd></div>
-          <div className="flex justify-between gap-3 border-t border-slate-200 pt-4"><dt className="font-bold text-slate-950">Final payable total</dt><dd className="font-bold text-slate-950">To be confirmed</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-secondary">Carton pricing</dt><dd className="font-bold text-content">{hasQuotePricing ? "Final quote required" : formatPrice(subtotal)}</dd></div>
+          <div className="flex justify-between gap-3"><dt className="text-secondary">Delivery charge</dt><dd className="max-w-40 text-right font-semibold text-warning">Confirmed after review</dd></div>
+          <div className="flex justify-between gap-3 border-t border-line pt-4"><dt className="font-bold text-content">Final payable total</dt><dd className="font-bold text-content">To be confirmed</dd></div>
         </dl>
-        <p className="mt-4 rounded-xl bg-amber-50 p-3 text-xs leading-5 text-amber-900">Delivery coverage, charges, stock and the final total are not assumed. We will confirm them before fulfilment.</p>
-        {error ? <div className="mt-4 flex gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert"><AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />{error}</div> : null}
-        <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-slate-600"><input type="checkbox" required className="mt-1 accent-emerald-800" /><span>I confirm that these details are correct and agree to the <Link href="/terms" className="font-semibold text-emerald-800 hover:underline">terms and conditions</Link>.</span></label>
+        <p className="mt-4 rounded-xl bg-warning-soft p-3 text-xs leading-5 text-warning">Delivery coverage, charges, stock and the final total are not assumed. We will confirm them before fulfilment.</p>
+        {error ? <div className="mt-4 flex gap-2 rounded-xl border border-danger-line bg-danger-soft p-3 text-sm text-danger" role="alert"><AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />{error}</div> : null}
+        <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-secondary"><input type="checkbox" required className="mt-1 accent-focus" /><span>I confirm that these details are correct and agree to the <Link href="/terms" className="font-semibold text-accent hover:underline">terms and conditions</Link>.</span></label>
         <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-5 inline-flex w-full items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-60">
           {submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Submitting request…</> : <><LockKeyhole aria-hidden="true" className="size-4" /> Submit bulk order request</>}
         </button>
-        <p className="mt-3 text-center text-xs leading-5 text-slate-500">This does not process an online payment.</p>
-        <Link href="/cart" className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-emerald-800 hover:underline"><ArrowLeft aria-hidden="true" className="size-4" /> Return to cart</Link>
+        <p className="mt-3 text-center text-xs leading-5 text-muted">This does not process an online payment.</p>
+        <Link href="/cart" className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-accent hover:underline"><ArrowLeft aria-hidden="true" className="size-4" /> Return to cart</Link>
       </aside>
     </form>
   );

@@ -26,6 +26,10 @@ export function SalesContactProvider({ children }: { children: ReactNode }) {
   return <SalesContactContext.Provider value={number}>{children}</SalesContactContext.Provider>;
 }
 
+export function useSalesContactNumber() {
+  return useContext(SalesContactContext);
+}
+
 export function SalesContactLink({ product, quantity, children = "WhatsApp to order", className = "" }: {
   product?: Product; quantity?: number; children?: ReactNode; className?: string;
 }) {

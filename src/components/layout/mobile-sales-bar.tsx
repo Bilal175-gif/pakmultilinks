@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { Home, LayoutGrid, MessageCircle, Phone, ShoppingBag } from "lucide-react";
 import { useStore } from "@/components/providers/store-provider";
 import { company } from "@/lib/company";
-import { buildDirectWhatsAppUrl } from "@/lib/category-meta";
+import { useSalesContactNumber } from "@/components/commerce/sales-contact";
 
 export function MobileSalesBar() {
   const pathname = usePathname();
   const { itemCount } = useStore();
+  const whatsapp = useSalesContactNumber();
   const isShop = pathname === "/shop" || pathname.startsWith("/shop/") || pathname.startsWith("/product/") || pathname === "/search";
   const isCart = pathname === "/cart" || pathname === "/checkout" || pathname === "/order-confirmation";
 
@@ -21,10 +22,10 @@ export function MobileSalesBar() {
       <Link href="/shop" aria-current={isShop ? "page" : undefined} className="mobile-nav-item focus-ring">
         <span className="mobile-nav-icon"><LayoutGrid size={21} strokeWidth={1.8} aria-hidden="true" /></span><span>Catalog</span>
       </Link>
-      <a href={buildDirectWhatsAppUrl()} target="_blank" rel="noreferrer" className="mobile-nav-item mobile-nav-whatsapp focus-ring" aria-label="Chat on WhatsApp">
+      <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent("Hello Pak Multilinks, I need help with products and bulk pricing.")}`} target="_blank" rel="noreferrer" className="mobile-nav-item mobile-nav-whatsapp focus-ring" aria-label="Chat on WhatsApp">
         <span className="mobile-nav-icon"><MessageCircle size={22} strokeWidth={1.8} aria-hidden="true" /></span><span>WhatsApp</span>
       </a>
-      <Link href="/cart" aria-current={isCart ? "page" : undefined} className="mobile-nav-item focus-ring" aria-label={`Cart, ${itemCount} cartons`}>
+      <Link href="/cart" aria-current={isCart ? "page" : undefined} className="mobile-nav-item focus-ring" aria-label={`Cart, ${itemCount} ${itemCount === 1 ? "carton" : "cartons"}`}>
         <span className="mobile-nav-icon"><ShoppingBag size={21} strokeWidth={1.8} aria-hidden="true" />{itemCount > 0 && <span className="mobile-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>}</span><span>Cart</span>
       </Link>
       <a href={`tel:${company.phoneHref}`} className="mobile-nav-item focus-ring" aria-label="Call sales">

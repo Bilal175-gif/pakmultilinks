@@ -9,7 +9,7 @@ import { ProductPurchase } from "@/components/catalog/product-purchase";
 import { getPrice, products as developmentProducts } from "@/lib/catalog";
 import { getPublicProduct, isDevelopmentProduct, listPublicProducts } from "@/lib/catalog-server";
 import { breadcrumbStructuredData, cleanDescription, getSiteOrigin, safeJsonLd } from "@/lib/seo";
-import { formatPrice, minimumCartons } from "@/lib/utils";
+import { formatProductPrice, minimumCartons } from "@/lib/utils";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -116,7 +116,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const developmentProduct = isDevelopmentProduct(product);
 
   return (
-    <div className="product-page bg-white">
+    <div className="product-page bg-surface">
       {!developmentProduct && (
         <script
           type="application/ld+json"
@@ -128,11 +128,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <div className="mx-auto max-w-7xl px-4 pb-14 pt-5 sm:px-6 sm:pb-20 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-7 overflow-x-auto pb-1">
-          <ol className="flex min-w-max items-center gap-1.5 text-sm text-[#64756a]">
+          <ol className="flex min-w-max items-center gap-1.5 text-sm text-secondary">
             <li>
               <Link
                 href="/"
-                className="rounded-sm hover:text-[#17643a] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+                className="rounded-sm hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 Home
               </Link>
@@ -143,7 +143,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <li>
               <Link
                 href="/shop"
-                className="rounded-sm hover:text-[#17643a] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+                className="rounded-sm hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 Shop
               </Link>
@@ -154,7 +154,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <li>
               <Link
                 href={`/shop/${product.categorySlug}`}
-                className="rounded-sm hover:text-[#17643a] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+                className="rounded-sm hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 {product.category}
               </Link>
@@ -162,7 +162,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <li aria-hidden="true">
               <ChevronRight className="size-3.5" />
             </li>
-            <li className="max-w-56 truncate font-semibold text-[#354f40]" aria-current="page">
+            <li className="max-w-56 truncate font-semibold text-accent" aria-current="page">
               {product.name}
             </li>
           </ol>
@@ -175,37 +175,37 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="flex flex-wrap gap-2">
               <Link
                 href={`/shop/${product.categorySlug}`}
-                className="rounded-full bg-[#e9f4eb] px-3 py-1 text-xs font-extrabold uppercase tracking-[0.12em] text-[#2c7047] transition hover:bg-[#dcecdf] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+                className="rounded-full bg-surface-soft px-3 py-1 text-xs font-extrabold uppercase tracking-[0.12em] text-accent transition hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 {product.category}
               </Link>
               {product.bestSeller && (
-                <span className="rounded-full bg-[#fff4d9] px-3 py-1 text-xs font-extrabold text-[#775a06]">
+                <span className="rounded-full bg-warning-soft px-3 py-1 text-xs font-extrabold text-warning">
                   Best seller
                 </span>
               )}
               {product.featured && (
-                <span className="rounded-full bg-[#eef1f6] px-3 py-1 text-xs font-extrabold text-[#4b596d]">
+                <span className="rounded-full bg-surface-soft px-3 py-1 text-xs font-extrabold text-info">
                   Featured
                 </span>
               )}
             </div>
 
-            <h1 className="mt-4 font-serif text-3xl font-normal leading-tight tracking-tight text-[#153b28] sm:text-4xl">
+            <h1 className="mt-4 font-serif text-3xl font-normal leading-tight tracking-tight text-content sm:text-4xl">
               {product.name}
             </h1>
-            <p className="mt-4 text-sm leading-7 text-[#5b6d61]">
+            <p className="mt-4 text-sm leading-7 text-secondary">
               {product.shortDescription}
             </p>
 
-            <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 border-y border-[#e0e9e2] py-4 text-sm">
+            <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 border-y border-line py-4 text-sm">
               <div className="flex gap-2">
-                <dt className="text-[#75827a]">SKU</dt>
-                <dd className="font-bold text-[#294b36]">{product.sku}</dd>
+                <dt className="text-muted">SKU</dt>
+                <dd className="font-bold text-accent">{product.sku}</dd>
               </div>
               <div className="flex gap-2">
-                <dt className="text-[#75827a]">Brand</dt>
-                <dd className="font-bold text-[#294b36]">{product.brand}</dd>
+                <dt className="text-muted">Brand</dt>
+                <dd className="font-bold text-accent">{product.brand}</dd>
               </div>
             </dl>
 
@@ -216,23 +216,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         <section className="mt-14 grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,.85fr)] lg:gap-8" aria-labelledby="product-information-heading">
-          <div className="rounded-md border border-[#dce8df] bg-white p-6 sm:p-8">
+          <div className="rounded-md border border-line bg-surface p-6 sm:p-8">
             <div className="flex items-center gap-3">
-              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-[#eaf4ec] text-[#17643a]">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-surface-soft text-accent">
                 <PackageCheck className="size-5" aria-hidden="true" />
               </span>
-              <h2 id="product-information-heading" className="text-xl font-semibold tracking-tight text-[#173c29]">
+              <h2 id="product-information-heading" className="text-xl font-semibold tracking-tight text-content">
                 Product information
               </h2>
             </div>
-            <p className="mt-5 leading-8 text-[#5d6d63]">{product.description}</p>
+            <p className="mt-5 leading-8 text-secondary">{product.description}</p>
 
             {product.bulkPricing && (
-              <div className="mt-7 flex items-start gap-3 rounded-md bg-[#f2f7ef] p-4">
-                <Building2 className="mt-0.5 size-5 shrink-0 text-[#277144]" aria-hidden="true" />
+              <div className="mt-7 flex items-start gap-3 rounded-md bg-surface-soft p-4">
+                <Building2 className="mt-0.5 size-5 shrink-0 text-accent" aria-hidden="true" />
                 <div>
-                  <p className="font-bold text-[#294d36]">Corporate supply support</p>
-                  <p className="mt-1 text-sm leading-6 text-[#627168]">
+                  <p className="font-bold text-accent">Corporate supply support</p>
+                  <p className="mt-1 text-sm leading-6 text-secondary">
                     This product is supplied by carton. Packing, minimum quantity, wholesale pricing and delivery are confirmed before fulfilment.
                   </p>
                 </div>
@@ -240,32 +240,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
             )}
           </div>
 
-          <div className="rounded-md border border-[#dce8df] bg-white p-6 sm:p-8">
+          <div className="rounded-md border border-line bg-surface p-6 sm:p-8">
             <div className="flex items-center gap-3">
-              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-[#eaf4ec] text-[#17643a]">
+              <span className="inline-flex size-10 items-center justify-center rounded-xl bg-surface-soft text-accent">
                 <Tag className="size-5" aria-hidden="true" />
               </span>
-              <h2 className="text-xl font-semibold tracking-tight text-[#173c29]">
+              <h2 className="text-xl font-semibold tracking-tight text-content">
                 Specifications
               </h2>
             </div>
-            <dl className="mt-5 divide-y divide-[#e6ece8]">
+            <dl className="mt-5 divide-y divide-line">
               {product.attributes.map((attribute) => (
                 <div
                   key={`${attribute.name}-${attribute.value}`}
                   className="grid grid-cols-[minmax(100px,.75fr)_minmax(0,1.25fr)] gap-4 py-3.5 text-sm"
                 >
-                  <dt className="font-semibold text-[#68776e]">{attribute.name}</dt>
-                  <dd className="text-right font-bold text-[#294d36]">{attribute.value}</dd>
+                  <dt className="font-semibold text-secondary">{attribute.name}</dt>
+                  <dd className="text-right font-bold text-accent">{attribute.value}</dd>
                 </div>
               ))}
               <div className="grid grid-cols-[minmax(100px,.75fr)_minmax(0,1.25fr)] gap-4 py-3.5 text-sm">
-                <dt className="font-semibold text-[#68776e]">Category</dt>
-                <dd className="text-right font-bold text-[#294d36]">{product.category}</dd>
+                <dt className="font-semibold text-secondary">Category</dt>
+                <dd className="text-right font-bold text-accent">{product.category}</dd>
               </div>
               <div className="grid grid-cols-[minmax(100px,.75fr)_minmax(0,1.25fr)] gap-4 py-3.5 text-sm">
-                <dt className="font-semibold text-[#68776e]">Current price</dt>
-                <dd className="text-right font-bold text-[#294d36]">{formatPrice(getPrice(product))}</dd>
+                <dt className="font-semibold text-secondary">Current price</dt>
+                <dd className="text-right font-bold text-accent">{formatProductPrice(product)}</dd>
               </div>
             </dl>
           </div>
@@ -275,16 +275,16 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <section className="mt-16" aria-labelledby="related-products-heading">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.17em] text-[#34764c]">
+                <p className="text-xs font-extrabold uppercase tracking-[0.17em] text-accent">
                   Complete your supply list
                 </p>
-                <h2 id="related-products-heading" className="mt-2 text-3xl font-extrabold tracking-[-0.035em] text-[#173c29]">
+                <h2 id="related-products-heading" className="mt-2 text-3xl font-extrabold tracking-[-0.035em] text-content">
                   Related products
                 </h2>
               </div>
               <Link
                 href={`/shop/${product.categorySlug}`}
-                className="w-fit rounded-sm text-sm font-extrabold text-[#17643a] underline decoration-[#a0bda8] underline-offset-4 hover:decoration-[#17643a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+                className="w-fit rounded-sm text-sm font-extrabold text-accent underline decoration-line-strong underline-offset-4 hover:decoration-line-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 View {product.category}
               </Link>

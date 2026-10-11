@@ -1,30 +1,13 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import { company } from "@/lib/company";
+import { useSalesContactNumber } from "./sales-contact";
 import { formatPrice } from "@/lib/utils";
 import { useStore } from "@/components/providers/store-provider";
 
 export function WhatsAppOrderLink() {
   const { cart, subtotal } = useStore();
-  const [whatsapp, setWhatsapp] = useState(company.whatsapp);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("/api/settings/public", { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: unknown) => {
-        if (!payload || typeof payload !== "object" || !("settings" in payload)) return;
-        const settings = (payload as { settings?: unknown }).settings;
-        if (!settings || typeof settings !== "object") return;
-        const value = (settings as { whatsapp?: unknown }).whatsapp;
-        const digits = typeof value === "string" ? value.replace(/\D/g, "") : "";
-        setWhatsapp(/^\d{10,15}$/.test(digits) ? digits : "");
-      })
-      .catch(() => undefined);
-    return () => controller.abort();
-  }, []);
+  const whatsapp = useSalesContactNumber();
 
   if (!whatsapp || cart.length === 0) return null;
 
@@ -47,7 +30,7 @@ export function WhatsAppOrderLink() {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="commerce-button commerce-button-secondary inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-700 px-5 py-3 text-sm font-semibold text-emerald-800 transition hover:bg-emerald-50"
+      className="commerce-button commerce-button-secondary inline-flex w-full items-center justify-center gap-2 rounded-xl border border-focus px-5 py-3 text-sm font-semibold text-accent transition hover:bg-accent-soft"
     >
       <MessageCircle aria-hidden="true" className="size-4" />
       Ask about this order on WhatsApp

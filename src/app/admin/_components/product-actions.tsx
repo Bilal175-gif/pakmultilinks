@@ -24,8 +24,8 @@ export function ProductActions({ id, disabled }: { id: string; disabled: boolean
 
   return (
     <div className="flex justify-end gap-1">
-      <Link href={`/admin/products/${id}`} className="rounded-lg p-2 text-slate-500 hover:bg-emerald-50 hover:text-emerald-800" aria-label="Edit product"><Edit3 className="size-4" /></Link>
-      <button onClick={archive} disabled={disabled || pending} className="rounded-lg p-2 text-slate-500 hover:bg-red-50 hover:text-red-700 disabled:opacity-40" aria-label="Archive product">{pending ? <LoaderCircle className="size-4 animate-spin" /> : <Archive className="size-4" />}</button>
+      <Link href={`/admin/products/${id}`} className="rounded-lg p-2 text-muted hover:bg-accent-soft hover:text-accent" aria-label="Edit product"><Edit3 className="size-4" /></Link>
+      <button onClick={archive} disabled={disabled || pending} className="rounded-lg p-2 text-muted hover:bg-danger-soft hover:text-danger disabled:opacity-40" aria-label="Archive product">{pending ? <LoaderCircle className="size-4 animate-spin" /> : <Archive className="size-4" />}</button>
     </div>
   );
 }

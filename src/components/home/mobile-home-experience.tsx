@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronRight, PackageCheck, Search, UserRound } from "lucide-react";
 
+import { ThemeSwitch } from "@/components/theme/theme-switch";
 import { ProductCard } from "@/components/catalog/product-card";
 import { categoryArtwork, mobileCategories } from "@/lib/catalog-visuals";
 import type { Category, Product } from "@/lib/types";
@@ -17,8 +18,9 @@ export function MobileHomeExperience({ products, categories }: { products: Produ
   return (
     <div className={styles.home}>
       <div className={styles.welcome}>
-        <Image src="/images/pak-multilinks-logo.png" alt="Pak Multilinks Hygiene" width={2039} height={771} sizes="150px" className={styles.logo} />
-        <Link href="/account" className={`${styles.account} focus-ring`} aria-label="Your account"><UserRound size={21} strokeWidth={1.7} /></Link>
+        <Image src="/images/pak-multilinks-logo.png" alt="Pak Multilinks Hygiene" width={2039} height={771} sizes="150px" className={`${styles.logo} brand-logo`} />
+        <div className="flex items-center gap-2"><ThemeSwitch compact />
+        <Link href="/account" className={`${styles.account} focus-ring`} aria-label="Your account"><UserRound size={21} strokeWidth={1.7} /></Link></div>
       </div>
 
       <form action="/shop" role="search" className={styles.search}>

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { themeInitializationScript } from "@/lib/theme";
 import { RouteShell } from "@/components/layout/route-shell";
 import { company } from "@/lib/company";
 import { getSiteOrigin, isPublicSiteConfigured, localBusinessStructuredData, safeJsonLd, websiteStructuredData } from "@/lib/seo";
@@ -41,5 +43,5 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, view
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const structuredData = [localBusinessStructuredData(), websiteStructuredData()];
-  return <html lang="en-PK" data-scroll-behavior="smooth"><body><RouteShell>{children}</RouteShell><Script id="site-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }} /><GoogleAnalytics /></body></html>;
+  return <html lang="en-PK" data-scroll-behavior="smooth" suppressHydrationWarning><head><script id="theme-init" dangerouslySetInnerHTML={{ __html: themeInitializationScript }} /></head><body><ThemeProvider><RouteShell>{children}</RouteShell></ThemeProvider><Script id="site-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }} /><GoogleAnalytics /></body></html>;
 }

@@ -56,16 +56,16 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   }
 
   return (
-    <div className="product-purchase rounded-3xl border border-[#dce8df] bg-white p-5 shadow-[0_16px_50px_rgba(21,65,42,0.08)] sm:p-7">
+    <div className="product-purchase rounded-3xl border border-line bg-surface p-5 shadow-[0_16px_50px_rgba(21,65,42,0.08)] sm:p-7">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-3xl font-extrabold tracking-[-0.03em] text-[#173c29]">
+          <p className="text-3xl font-extrabold tracking-[-0.03em] text-accent">
             {formatProductPrice(product)}
           </p>
           {hasSale && (
-            <p className="mt-1 text-sm text-[#76847b]">
+            <p className="mt-1 text-sm text-muted">
               <span className="line-through">{formatPrice(product.price)}</span>{" "}
-              <span className="ml-1 font-bold text-[#17643a]">Sale price</span>
+              <span className="ml-1 font-bold text-accent">Sale price</span>
             </p>
           )}
         </div>
@@ -78,23 +78,23 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
         />
       </div>
 
-      <div className="my-6 h-px bg-[#e5ece7]" />
+      <div className="my-6 h-px bg-surface-soft" />
 
-      <div className="grid gap-2 rounded-2xl bg-[#f1f7f0] p-4 text-sm text-[#365643] sm:grid-cols-2"><p><strong>Supply unit:</strong> Carton</p><p><strong>Packing:</strong> {cartonPacking(product)}</p><p><strong>Minimum order:</strong> {minimum} carton{minimum === 1 ? "" : "s"}</p><p><strong>Selected:</strong> {product.unitsPerCarton > 0 ? `${quantity * product.unitsPerCarton} pieces in ` : ""}{quantity} carton{quantity === 1 ? "" : "s"}</p></div>
+      <div className="grid gap-2 rounded-2xl bg-surface-soft p-4 text-sm text-accent sm:grid-cols-2"><p><strong>Supply unit:</strong> Carton</p><p><strong>Packing:</strong> {cartonPacking(product)}</p><p><strong>Minimum order:</strong> {minimum} carton{minimum === 1 ? "" : "s"}</p><p><strong>Selected:</strong> {product.unitsPerCarton > 0 ? `${quantity * product.unitsPerCarton} pieces in ` : ""}{quantity} carton{quantity === 1 ? "" : "s"}</p></div>
 
-      <div className="my-6 h-px bg-[#e5ece7]" />
+      <div className="my-6 h-px bg-surface-soft" />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
         <div>
-          <label htmlFor="product-quantity" className="mb-2 block text-sm font-bold text-[#284f38]">
+          <label htmlFor="product-quantity" className="mb-2 block text-sm font-bold text-accent">
             Cartons
           </label>
-          <div className="inline-grid grid-cols-[44px_56px_44px] overflow-hidden rounded-xl border border-[#c9d8cd] bg-white">
+          <div className="inline-grid grid-cols-[44px_56px_44px] overflow-hidden rounded-xl border border-line bg-surface">
             <button
               type="button"
               onClick={() => setSafeQuantity(quantity - 1)}
               disabled={quantity <= minimum || isUnavailable}
-              className="inline-flex min-h-11 items-center justify-center text-[#315b41] transition hover:bg-[#eff6f1] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#17643a] disabled:cursor-not-allowed disabled:text-[#a6afa9]"
+              className="inline-flex min-h-11 items-center justify-center text-accent transition hover:bg-surface-soft focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:text-muted"
               aria-label="Decrease cartons"
             >
               <Minus className="size-4" aria-hidden="true" />
@@ -107,13 +107,13 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
               value={quantity}
               disabled={isUnavailable}
               onChange={(event) => setSafeQuantity(Number(event.target.value) || 1)}
-              className="min-h-11 w-full border-x border-[#d8e2db] text-center text-sm font-bold text-[#173c29] outline-none focus:z-10 focus:ring-2 focus:ring-inset focus:ring-[#17643a] disabled:bg-[#f5f6f5]"
+              className="min-h-11 w-full border-x border-line text-center text-sm font-bold text-accent outline-none focus:z-10 focus:ring-2 focus:ring-inset focus:ring-focus disabled:bg-surface-soft"
             />
             <button
               type="button"
               onClick={() => setSafeQuantity(quantity + 1)}
               disabled={quantity >= maxQuantity || isUnavailable}
-              className="inline-flex min-h-11 items-center justify-center text-[#315b41] transition hover:bg-[#eff6f1] focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#17643a] disabled:cursor-not-allowed disabled:text-[#a6afa9]"
+              className="inline-flex min-h-11 items-center justify-center text-accent transition hover:bg-surface-soft focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus disabled:cursor-not-allowed disabled:text-muted"
               aria-label="Increase cartons"
             >
               <Plus className="size-4" aria-hidden="true" />
@@ -126,7 +126,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             type="button"
             onClick={handleAdd}
             disabled={isUnavailable}
-            className="commerce-button commerce-button-secondary inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-[#a8b3ac] disabled:text-[#8b9690]"
+            className="commerce-button commerce-button-secondary inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-line disabled:text-muted"
           >
             {added ? <Check className="size-4" /> : <ShoppingCart className="size-4" />}
             {isUnavailable ? "Unavailable" : added ? "Added to cart" : "Add to cart"}
@@ -135,7 +135,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             type="button"
             onClick={handleBuyNow}
             disabled={isUnavailable}
-            className="commerce-button commerce-button-primary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-[#a8b3ac] disabled:bg-[#a8b3ac]"
+            className="commerce-button commerce-button-primary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-line disabled:bg-disabled"
           >
             Buy now
           </button>
@@ -147,7 +147,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
         <SalesContactLink
           product={product}
           quantity={quantity}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#1ebc56] active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-action px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-action-hover active:scale-[0.98]"
         >
           WhatsApp to Order / Get Bulk Price
         </SalesContactLink>
@@ -158,19 +158,19 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
       </p>
 
       {product.bulkPricing && (
-        <div className="mt-6 rounded-2xl border border-[#d5e5d9] bg-[#f1f7f0] p-4">
+        <div className="mt-6 rounded-2xl border border-line bg-surface-soft p-4">
           <div className="flex items-start gap-3">
-            <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#17643a] shadow-sm">
+            <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-surface text-accent shadow-sm">
               <FileText className="size-4" aria-hidden="true" />
             </span>
             <div>
-              <p className="font-bold text-[#244b35]">Ordering for your business?</p>
-              <p className="mt-1 text-sm leading-6 text-[#607166]">
+              <p className="font-bold text-accent">Ordering for your business?</p>
+              <p className="mt-1 text-sm leading-6 text-secondary">
                 Ask for volume pricing and a supply plan matched to your requirements.
               </p>
               <Link
                 href={`/request-quote?product=${encodeURIComponent(product.slug)}`}
-                className="mt-3 inline-flex rounded-sm text-sm font-extrabold text-[#17643a] underline decoration-[#9bbfa5] underline-offset-4 hover:decoration-[#17643a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+                className="mt-3 inline-flex rounded-sm text-sm font-extrabold text-accent underline decoration-line-strong underline-offset-4 hover:decoration-line-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
               >
                 Request a bulk quotation
               </Link>
@@ -179,8 +179,8 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
         </div>
       )}
 
-      <p className="mt-5 flex items-start gap-2 text-xs leading-5 text-[#69786f]">
-        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#32754b]" aria-hidden="true" />
+      <p className="mt-5 flex items-start gap-2 text-xs leading-5 text-secondary">
+        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
         Stock is checked before order confirmation. Delivery charges and timing are confirmed
         during checkout.
       </p>

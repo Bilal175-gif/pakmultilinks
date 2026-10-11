@@ -58,7 +58,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "product-card group flex flex-col overflow-hidden bg-white rounded-xl border border-neutral-200/80 p-2 sm:border-0 sm:p-0 transition-shadow hover:shadow-md",
+        "product-card group flex flex-col overflow-hidden bg-surface rounded-xl border border-line/80 p-2 sm:border-0 sm:p-0 transition-shadow hover:shadow-md",
         layout === "list" &&
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}
@@ -66,7 +66,7 @@ export function ProductCard({
       <Link
         href={`/product/${product.slug}`}
         className={cn(
-          "product-card-image relative block aspect-square overflow-hidden rounded-lg bg-[#f6f5f1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#17643a]",
+          "product-card-image relative block aspect-square overflow-hidden rounded-lg bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus",
           layout === "list" && "sm:aspect-auto sm:min-h-56",
         )}
         aria-label={`View ${product.name}`}
@@ -86,12 +86,12 @@ export function ProductCard({
         )}
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           {hasSale && (
-            <span className="rounded-full bg-[#17643a] px-2 py-0.5 text-[10px] font-bold text-white sm:px-2.5 sm:py-1 sm:text-xs">
+            <span className="rounded-full bg-action px-2 py-0.5 text-[10px] font-bold text-white sm:px-2.5 sm:py-1 sm:text-xs">
               {discount}% off
             </span>
           )}
           {product.bestSeller && (
-            <span className="rounded-full bg-[#fff7df] px-2 py-0.5 text-[10px] font-bold text-[#775a06] sm:px-2.5 sm:py-1 sm:text-xs">
+            <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning sm:px-2.5 sm:py-1 sm:text-xs">
               Best seller
             </span>
           )}
@@ -102,7 +102,7 @@ export function ProductCard({
         <div className="product-card-meta mb-2 flex flex-wrap items-center justify-between gap-1.5 sm:mb-3 sm:gap-2">
           <Link
             href={`/shop/${product.categorySlug}`}
-            className="product-card-category text-[10px] font-normal tracking-wide text-[#48705a] hover:text-[#17643a] hover:underline"
+            className="product-card-category text-[10px] font-normal tracking-wide text-accent hover:text-accent hover:underline"
           >
             {product.category}
           </Link>
@@ -114,34 +114,34 @@ export function ProductCard({
           />
         </div>
 
-        <Heading className="product-card-title text-xs font-semibold leading-snug sm:text-base text-[#173c29] line-clamp-2">
+        <Heading className="product-card-title text-xs font-semibold leading-snug sm:text-base text-content line-clamp-2">
           <Link
             href={`/product/${product.slug}`}
-            className="rounded-sm hover:text-[#17643a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a]"
+            className="rounded-sm hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
           >
             {product.name}
           </Link>
         </Heading>
         <p
           className={cn(
-            "product-card-description mt-1.5 text-[11px] leading-4 text-[#617067] sm:text-xs sm:leading-5",
+            "product-card-description mt-1.5 text-[11px] leading-4 text-secondary sm:text-xs sm:leading-5",
             layout === "grid" && "line-clamp-1 sm:line-clamp-2",
           )}
         >
           {product.shortDescription}
         </p>
 
-        <div className="product-card-packing mt-2 space-y-0.5 text-[11px] font-medium text-[#17643a] sm:mt-3 sm:space-y-1 sm:text-xs sm:font-semibold">
+        <div className="product-card-packing mt-2 space-y-0.5 text-[11px] font-medium text-accent sm:mt-3 sm:space-y-1 sm:text-xs sm:font-semibold">
           <p className="truncate">{cartonPacking(product)}</p>
           <p>MOQ: {minimumCartons(product)} carton{minimumCartons(product) === 1 ? "" : "s"}</p>
         </div>
 
         <div className="product-card-price mt-auto flex flex-wrap items-end gap-2 pt-3 sm:pt-5">
-          <span className="text-xs font-bold tracking-tight sm:text-base text-[#173c29]">
+          <span className="text-xs font-bold tracking-tight sm:text-base text-accent">
             {formatProductPrice(product)}
           </span>
           {hasSale && (
-            <span className="pb-0.5 text-xs text-[#7d8981] line-through sm:text-sm">
+            <span className="pb-0.5 text-xs text-muted line-through sm:text-sm">
               {formatPrice(product.price)}
             </span>
           )}
@@ -150,7 +150,7 @@ export function ProductCard({
 
       <div
         className={cn(
-          "product-card-actions mt-auto border-t border-neutral-100 pt-2 sm:border-neutral-200 sm:pt-3",
+          "product-card-actions mt-auto border-t border-line pt-2 sm:border-line sm:pt-3",
           layout === "list" &&
             "sm:col-span-2 lg:col-span-1 lg:flex lg:flex-col lg:justify-center lg:border-l lg:border-t-0 lg:p-6",
         )}
@@ -173,7 +173,7 @@ export function ProductCard({
             type="button"
             onClick={handleAddToCart}
             disabled={isUnavailable}
-            className="commerce-button commerce-button-primary inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-[#a8b3ac] disabled:bg-[#a8b3ac]"
+            className="commerce-button commerce-button-primary inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-line disabled:bg-disabled"
             aria-label={
               isUnavailable
                 ? `${product.name} is out of stock`

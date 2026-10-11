@@ -13,7 +13,7 @@ export default async function RequestQuotePage({ searchParams }: { searchParams:
   return (
     <CommerceShell eyebrow="Corporate and bulk supply" title="Request a quotation" description="Share the products, estimated quantities, and delivery city. Pricing, availability, delivery, and commercial terms are provided only after review.">
       <div className="grid gap-8 lg:grid-cols-[19rem_minmax(0,1fr)] lg:items-start">
-        <aside className="rounded-3xl bg-emerald-900 p-6 text-white lg:sticky lg:top-28">
+        <aside className="rounded-3xl bg-action p-6 text-white lg:sticky lg:top-28">
           <h2 className="text-xl font-bold">Before you submit</h2>
           <ul className="mt-5 space-y-4 text-sm leading-6 text-emerald-50">
             <li><strong className="block text-white">Add multiple products</strong>Enter separate estimated quantities for easier review.</li>

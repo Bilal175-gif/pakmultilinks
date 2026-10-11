@@ -37,10 +37,10 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               type="button"
               onClick={() => setSelectedImage(image)}
               className={cn(
-                "relative size-[72px] shrink-0 overflow-hidden rounded-xl border bg-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17643a] focus-visible:ring-offset-2",
+                "relative size-[72px] shrink-0 overflow-hidden rounded-xl border bg-surface transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2",
                 selectedImage === image
-                  ? "border-[#17643a] ring-1 ring-[#17643a]"
-                  : "border-[#d9e3dc] hover:border-[#7ba68a]",
+                  ? "border-focus ring-1 ring-focus"
+                  : "border-line hover:border-line-strong",
               )}
               aria-label={`Show image ${index + 1} of ${productName}`}
               aria-pressed={selectedImage === image}
@@ -58,7 +58,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         </div>
       )}
 
-      <div className="product-gallery-main relative order-1 aspect-square overflow-hidden rounded-3xl border border-[#dce8df] bg-[#f5f8f2] sm:order-2">
+      <div className="product-gallery-main relative order-1 aspect-square overflow-hidden rounded-3xl border border-line bg-surface-soft sm:order-2">
         <Image
           key={selectedImage}
           src={selectedImage}
@@ -69,7 +69,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-contain p-8 sm:p-12"
         />
-        <span className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full border border-[#d8e4da] bg-white/90 px-3 py-1.5 text-xs font-semibold text-[#52675a] shadow-sm backdrop-blur">
+        <span className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full border border-line bg-surface/90 px-3 py-1.5 text-xs font-semibold text-accent shadow-sm backdrop-blur">
           <Expand className="size-3.5" aria-hidden="true" />
           Product view
         </span>

@@ -6,7 +6,7 @@ import { useState, type FormEvent } from "react";
 import { AlertCircle, CheckCircle2, Loader2, LockKeyhole } from "lucide-react";
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100";
+  "mt-2 w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-sm text-content outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus";
 
 async function parseResponse(response: Response) {
   try {
@@ -27,7 +27,7 @@ function apiError(response: Response, data: Record<string, unknown>) {
 function StatusMessage({ error, success }: { error?: string; success?: string }) {
   if (!error && !success) return null;
   return (
-    <div className={`mt-5 flex gap-2 rounded-xl border p-4 text-sm leading-6 ${error ? "border-red-200 bg-red-50 text-red-800" : "border-emerald-200 bg-emerald-50 text-emerald-900"}`} role={error ? "alert" : "status"}>
+    <div className={`mt-5 flex gap-2 rounded-xl border p-4 text-sm leading-6 ${error ? "border-danger-line bg-danger-soft text-danger" : "border-line bg-accent-soft text-accent"}`} role={error ? "alert" : "status"}>
       {error ? <AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" /> : <CheckCircle2 aria-hidden="true" className="mt-0.5 size-4 shrink-0" />}
       {error || success}
     </div>
@@ -65,21 +65,21 @@ export function LoginForm({ nextPath = "/account" }: { nextPath?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-xl font-bold text-slate-950">Sign in securely</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">Your session is created by the server; credentials are never stored in the browser store.</p>
+    <form onSubmit={handleSubmit} className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+      <h2 className="text-xl font-bold text-content">Sign in securely</h2>
+      <p className="mt-2 text-sm leading-6 text-secondary">Sign in to view your orders and saved delivery details.</p>
       <div className="mt-6 space-y-5">
-        <label className="block text-sm font-semibold text-slate-800">Email address
+        <label className="block text-sm font-semibold text-content">Email address
           <input className={inputClass} name="email" type="email" autoComplete="email" required maxLength={254} />
         </label>
-        <label className="block text-sm font-semibold text-slate-800">Password
+        <label className="block text-sm font-semibold text-content">Password
           <input className={inputClass} name="password" type="password" autoComplete="current-password" required maxLength={128} />
         </label>
       </div>
       <StatusMessage error={error} />
-      <div className="mt-5 flex justify-end"><Link href="/forgot-password" className="text-sm font-semibold text-emerald-800 hover:underline">Forgot password?</Link></div>
-      <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-900 disabled:cursor-wait disabled:opacity-60">{submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Signing in…</> : <><LockKeyhole aria-hidden="true" className="size-4" /> Sign in</>}</button>
-      <p className="mt-6 text-center text-sm text-slate-600">New customer? <Link href="/register" className="font-semibold text-emerald-800 hover:underline">Create an account</Link></p>
+      <div className="mt-5 flex justify-end"><Link href="/forgot-password" className="text-sm font-semibold text-accent hover:underline">Forgot password?</Link></div>
+      <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-action px-5 py-3 text-sm font-semibold text-white hover:bg-action-hover disabled:cursor-wait disabled:opacity-60">{submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Signing in…</> : <><LockKeyhole aria-hidden="true" className="size-4" /> Sign in</>}</button>
+      <p className="mt-6 text-center text-sm text-secondary">New customer? <Link href="/register" className="font-semibold text-accent hover:underline">Create an account</Link></p>
     </form>
   );
 }
@@ -123,30 +123,30 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-xl font-bold text-slate-950">Customer details</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">Registration requires the account database. Guest checkout remains available without an account.</p>
+    <form onSubmit={handleSubmit} className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+      <h2 className="text-xl font-bold text-content">Customer details</h2>
+      <p className="mt-2 text-sm leading-6 text-secondary">Save your details for easier ordering. You can also check out as a guest.</p>
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <label className="text-sm font-semibold text-slate-800 sm:col-span-2">Full name
+        <label className="text-sm font-semibold text-content sm:col-span-2">Full name
           <input className={inputClass} name="name" autoComplete="name" required minLength={2} maxLength={100} />
         </label>
-        <label className="text-sm font-semibold text-slate-800">Email address
+        <label className="text-sm font-semibold text-content">Email address
           <input className={inputClass} name="email" type="email" autoComplete="email" required maxLength={254} />
         </label>
-        <label className="text-sm font-semibold text-slate-800">Phone <span className="font-normal text-slate-500">(optional)</span>
-          <input className={inputClass} name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={24} pattern="[+0-9][0-9 ()-]{6,23}" />
+        <label className="text-sm font-semibold text-content">Phone <span className="font-normal text-muted">(optional)</span>
+          <input className={inputClass} name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={24} pattern="[+0-9][0-9 \(\)\-]{6,23}" />
         </label>
-        <label className="text-sm font-semibold text-slate-800">Password
+        <label className="text-sm font-semibold text-content">Password
           <input className={inputClass} name="password" type="password" autoComplete="new-password" required minLength={10} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{10,}" aria-describedby="password-help" />
         </label>
-        <label className="text-sm font-semibold text-slate-800">Confirm password
+        <label className="text-sm font-semibold text-content">Confirm password
           <input className={inputClass} name="confirmPassword" type="password" autoComplete="new-password" required minLength={10} maxLength={128} />
         </label>
       </div>
-      <p id="password-help" className="mt-3 text-xs leading-5 text-slate-500">Use at least 10 characters with uppercase, lowercase, and a number.</p>
+      <p id="password-help" className="mt-3 text-xs leading-5 text-muted">Use at least 10 characters with uppercase, lowercase, and a number.</p>
       <StatusMessage error={error} />
-      <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-900 disabled:cursor-wait disabled:opacity-60">{submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Creating account…</> : "Create account"}</button>
-      <p className="mt-6 text-center text-sm text-slate-600">Already registered? <Link href="/login" className="font-semibold text-emerald-800 hover:underline">Sign in</Link></p>
+      <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-action px-5 py-3 text-sm font-semibold text-white hover:bg-action-hover disabled:cursor-wait disabled:opacity-60">{submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Creating account…</> : "Create account"}</button>
+      <p className="mt-6 text-center text-sm text-secondary">Already registered? <Link href="/login" className="font-semibold text-accent hover:underline">Sign in</Link></p>
     </form>
   );
 }
@@ -193,22 +193,22 @@ export function PasswordRecoveryForm({ token = "" }: { token?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-xl font-bold text-slate-950">{token ? "Choose a new password" : "Request password reset"}</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{token ? "The reset token is verified securely by the server and can only be used once." : "For privacy, the response does not reveal whether an email address has an account."}</p>
+    <form onSubmit={handleSubmit} className="rounded-3xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+      <h2 className="text-xl font-bold text-content">{token ? "Choose a new password" : "Request password reset"}</h2>
+      <p className="mt-2 text-sm leading-6 text-secondary">{token ? "The reset token is verified securely by the server and can only be used once." : "For privacy, the response does not reveal whether an email address has an account."}</p>
       {token ? (
         <div className="mt-6 grid gap-5">
-          <label className="text-sm font-semibold text-slate-800">New password<input className={inputClass} name="password" type="password" autoComplete="new-password" required minLength={10} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{10,}" /></label>
-          <label className="text-sm font-semibold text-slate-800">Confirm new password<input className={inputClass} name="confirmPassword" type="password" autoComplete="new-password" required minLength={10} maxLength={128} /></label>
-          <p className="text-xs text-slate-500">Use at least 10 characters with uppercase, lowercase, and a number.</p>
+          <label className="text-sm font-semibold text-content">New password<input className={inputClass} name="password" type="password" autoComplete="new-password" required minLength={10} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{10,}" /></label>
+          <label className="text-sm font-semibold text-content">Confirm new password<input className={inputClass} name="confirmPassword" type="password" autoComplete="new-password" required minLength={10} maxLength={128} /></label>
+          <p className="text-xs text-muted">Use at least 10 characters with uppercase, lowercase, and a number.</p>
         </div>
       ) : (
-        <label className="mt-6 block text-sm font-semibold text-slate-800">Account email<input className={inputClass} name="email" type="email" autoComplete="email" required maxLength={254} /></label>
+        <label className="mt-6 block text-sm font-semibold text-content">Account email<input className={inputClass} name="email" type="email" autoComplete="email" required maxLength={254} /></label>
       )}
       <StatusMessage error={error} success={success} />
-      {developmentToken ? <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs leading-5 text-amber-900"><strong>Development only:</strong> no email provider is used. Continue using the generated <Link href={`/forgot-password?token=${encodeURIComponent(developmentToken)}`} className="font-bold underline">local reset link</Link>. Do not use this workflow in production.</div> : null}
-      <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-900 disabled:cursor-wait disabled:opacity-60">{submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Submitting…</> : token ? "Update password" : "Request reset instructions"}</button>
-      <p className="mt-6 text-center text-sm"><Link href="/login" className="font-semibold text-emerald-800 hover:underline">Return to sign in</Link></p>
+      {developmentToken ? <div className="mt-4 rounded-xl border border-warning-line bg-warning-soft p-4 text-xs leading-5 text-warning"><strong>Development only:</strong> no email provider is used. Continue using the generated <Link href={`/forgot-password?token=${encodeURIComponent(developmentToken)}`} className="font-bold underline">local reset link</Link>. Do not use this workflow in production.</div> : null}
+      <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-action px-5 py-3 text-sm font-semibold text-white hover:bg-action-hover disabled:cursor-wait disabled:opacity-60">{submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Submitting…</> : token ? "Update password" : "Request reset instructions"}</button>
+      <p className="mt-6 text-center text-sm"><Link href="/login" className="font-semibold text-accent hover:underline">Return to sign in</Link></p>
     </form>
   );
 }

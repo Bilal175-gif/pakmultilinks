@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
+import { SalesContactProvider } from "@/components/commerce/sales-contact";
 import { StoreProvider } from "@/components/providers/store-provider";
 
 import { Footer } from "./footer";
@@ -19,16 +20,18 @@ export function RouteShell({ children }: Readonly<{ children: React.ReactNode }>
   }
 
   return (
-    <StoreProvider>
-      <div className="storefront-shell">
-        <Header />
-        <main id="main-content" className="min-h-[60vh]">
-          {children}
-        </main>
-        <div className="hidden md:block"><Footer /><FloatingSupport /></div>
-        <MobileFooter />
-        <MobileSalesBar />
-      </div>
-    </StoreProvider>
+    <SalesContactProvider>
+      <StoreProvider>
+        <div className="storefront-shell">
+          <Header />
+          <main id="main-content" className="min-h-[60vh]">
+            {children}
+          </main>
+          <div className="hidden md:block"><Footer /><FloatingSupport /></div>
+          <MobileFooter />
+          <MobileSalesBar />
+        </div>
+      </StoreProvider>
+    </SalesContactProvider>
   );
 }

@@ -50,22 +50,22 @@ export function AdminLoginForm({ disabled }: { disabled: boolean }) {
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <label className="block text-sm font-semibold text-slate-800">
+      <label className="block text-sm font-semibold text-content">
         Email address
-        <span className="mt-2 flex items-center gap-2 rounded-md border border-slate-200 px-3 focus-within:border-emerald-700 focus-within:ring-2 focus-within:ring-emerald-700/10">
-          <Mail className="size-4 text-slate-400" aria-hidden="true" />
+        <span className="mt-2 flex items-center gap-2 rounded-md border border-line px-3 focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/10">
+          <Mail className="size-4 text-muted" aria-hidden="true" />
           <input name="email" type="email" autoComplete="username" required disabled={disabled} className="h-12 min-w-0 flex-1 bg-transparent outline-none disabled:cursor-not-allowed" />
         </span>
       </label>
-      <label className="block text-sm font-semibold text-slate-800">
+      <label className="block text-sm font-semibold text-content">
         Password
-        <span className="mt-2 flex items-center gap-2 rounded-md border border-slate-200 px-3 focus-within:border-emerald-700 focus-within:ring-2 focus-within:ring-emerald-700/10">
-          <LockKeyhole className="size-4 text-slate-400" aria-hidden="true" />
+        <span className="mt-2 flex items-center gap-2 rounded-md border border-line px-3 focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/10">
+          <LockKeyhole className="size-4 text-muted" aria-hidden="true" />
           <input name="password" type="password" autoComplete="current-password" required disabled={disabled} className="h-12 min-w-0 flex-1 bg-transparent outline-none disabled:cursor-not-allowed" />
         </span>
       </label>
-      {retrySeconds > 0 && <p role="status" className="rounded-md bg-amber-50 px-4 py-3 text-sm text-amber-900">Too many sign-in attempts. You can try again in {retryLabel}.</p>}
-      {error && <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-800">{error}</p>}
+      {retrySeconds > 0 && <p role="status" className="rounded-md bg-warning-soft px-4 py-3 text-sm text-warning">Too many sign-in attempts. You can try again in {retryLabel}.</p>}
+      {error && <p role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm text-danger">{error}</p>}
       <button disabled={disabled || pending || retrySeconds > 0} className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-neutral-900 font-bold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50">
         {pending && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
         {pending ? "Signing in…" : retrySeconds > 0 ? `Try again in ${retryLabel}` : "Sign in securely"}

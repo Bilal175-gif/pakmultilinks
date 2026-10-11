@@ -38,11 +38,11 @@ export function StockStatus({
     <span
       className={cn(
         "inline-flex w-fit items-center gap-1.5 rounded-sm px-2 py-1 text-[10px] font-medium",
-        isOutOfStock && "bg-stone-100 text-stone-600",
-        isBackorder && "bg-amber-50 text-amber-800",
-        isLowStock && "bg-amber-50 text-amber-800",
+        isOutOfStock && "bg-surface-soft text-secondary",
+        isBackorder && "bg-warning-soft text-warning",
+        isLowStock && "bg-warning-soft text-warning",
         !isOutOfStock && !isBackorder && !isLowStock &&
-          "bg-emerald-50 text-emerald-800",
+          "bg-accent-soft text-accent",
         className,
       )}
     >
@@ -50,9 +50,9 @@ export function StockStatus({
         aria-hidden="true"
         className={cn(
           "size-1.5 rounded-full",
-          isOutOfStock && "bg-stone-400",
+          isOutOfStock && "bg-disabled",
           (isBackorder || isLowStock) && "bg-amber-500",
-          !isOutOfStock && !isBackorder && !isLowStock && "bg-emerald-600",
+          !isOutOfStock && !isBackorder && !isLowStock && "bg-action",
         )}
       />
       {label}

@@ -132,3 +132,32 @@ npm run db:seed
 Docker is required. The database binds only to localhost and persists in the `pakmultilinks-local-data` Docker volume. `db:local` can be run again to start the existing container. The seed adds missing catalogue records while preserving existing product pricing and media. The seven supplied starter products remain quote-only until actual prices and stock are entered.
 
 The build runs `scripts/prepare-database.mjs` before Next.js prerendering. It adds only nullable `Category.parentId`, its index and foreign key to an existing database, and can safely run again. Existing products, prices, media and categories are preserved; production data is never seeded during deployment. Configure the existing production `DATABASE_URL` in Vercel with permission to alter the category table. Existing categories remain main categories; create/reorganize subcategories in Admin. For a brand-new database, initialize it using `npm run db:push` first. Do not point a hosted deployment at the local Docker database.
+
+### Storefront and theme checks
+
+The storefront offers **System**, **Light**, and **Dark** appearance settings. Use
+the appearance control beside the account icon, or the mobile footer. The choice
+is saved locally and synchronized between tabs; System follows the device setting.
+Shared theme colors live in `src/app/theme.css`.
+
+Run the production browser suite after building (the direct Next.js build below
+avoids the database preparation step):
+
+```bash
+npx next build
+npx playwright install chromium
+npm run test:storefront
+```
+
+The suite starts a local production preview on port 3100. Set
+`PLAYWRIGHT_BASE_URL` to use an already running preview, or
+`PLAYWRIGHT_CHROMIUM_PATH` to use an installed Chromium/Chrome executable.
+
+Checks cover light/dark rendering, saved/system preferences, first paint before
+hydration, blocked storage, cross-tab theme changes, public routes and error pages,
+mobile/desktop breakpoints, text contrast, search/filter/sort/list controls,
+product details and dialogs, MOQ/stock limits, cart persistence/removal, form
+validation, and checkout/authentication/quotation feedback. Outbound mutations
+are intercepted: success/error responses are simulated, and no real orders,
+accounts, messages, or emails are created. Live backend delivery and authenticated
+admin workflows are outside this UI suite.

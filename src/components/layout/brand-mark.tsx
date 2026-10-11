@@ -11,7 +11,7 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
       onClick={onNavigate}
       className={cn(
         "focus-ring inline-flex min-w-0 items-center rounded-xl",
-        light && "bg-[#f5faf6] px-3 py-2 shadow-[0_10px_28px_rgba(0,0,0,.12)] ring-1 ring-white/20",
+        light && "bg-surface-soft px-3 py-2 shadow-[0_10px_28px_rgba(0,0,0,.12)] ring-1 ring-white/20",
       )}
       aria-label={`${company.name} home`}
     >
@@ -23,7 +23,7 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         priority
         sizes={compact ? "142px" : light ? "250px" : "210px"}
         className={cn(
-          "h-auto w-[145px] object-contain sm:w-[210px]",
+          "brand-logo h-auto w-[145px] object-contain sm:w-[210px]",
           compact && "w-[142px] sm:w-[160px]",
           light && "w-[220px] sm:w-[250px]",
         )}

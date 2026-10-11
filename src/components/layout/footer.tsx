@@ -3,38 +3,40 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { categories as initialCategories } from "@/lib/catalog";
+import { useSalesContactNumber } from "@/components/commerce/sales-contact";
 import { company } from "@/lib/company";
 import type { Category } from "@/lib/types";
 import { BrandMark } from "./brand-mark";
 
 export function Footer() {
+  const whatsapp = useSalesContactNumber();
   const [categories, setCategories] = useState(initialCategories);
   useEffect(() => {
     const controller = new AbortController();
     fetch("/api/catalog", { signal: controller.signal }).then(response => response.ok ? response.json() : null).then(data => { if (Array.isArray(data?.categories)) setCategories(data.categories); }).catch(() => undefined);
     return () => controller.abort();
   }, []);
-  return <footer className="bg-white text-neutral-700">
+  return <footer className="bg-surface text-secondary">
     <div className="site-shell grid gap-9 py-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_.8fr_1fr_1fr] lg:py-16">
-      <div><BrandMark /><p className="mt-5 max-w-xs text-xs leading-6 text-neutral-500">Tissue, hygiene and workplace essentials, supplied by the carton from Lahore.</p></div>
+      <div><BrandMark /><p className="mt-5 max-w-xs text-xs leading-6 text-muted">Tissue, hygiene and workplace essentials, supplied by the carton from Lahore.</p></div>
       <FooterGroup title="Information" links={[["Our story", "/about"], ["Business orders", "/corporate-orders"], ["Contact us", "/contact"], ["My account", "/account"]]} />
       <FooterGroup title="Collections" links={categories.filter((category: Category) => !category.parentId).slice(0, 6).map(category => [category.name, `/shop/${category.slug}`])} />
       <div>
-        <h2 className="text-sm font-semibold text-neutral-900">Get in touch</h2>
+        <h2 className="text-sm font-semibold text-content">Get in touch</h2>
         <div className="mt-4 space-y-3 text-xs leading-6">
           <a href={`tel:${company.phoneHref}`} className="block hover:underline">{company.phone}</a>
-          <a href={`https://wa.me/${company.whatsapp || "923006917385"}`} target="_blank" rel="noreferrer" className="block text-[#17643a] font-semibold hover:underline">
+          <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="block text-accent font-semibold hover:underline">
             WhatsApp: {company.phone}
           </a>
           <a href={`mailto:${company.email}`} className="block break-all hover:underline">{company.email}</a>
-          <p className="text-neutral-500">{company.address}</p>
+          <p className="text-muted">{company.address}</p>
           {company.facebookUrl && (
             <div className="pt-2">
               <a
                 href={company.facebookUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#cde0d3] bg-[#f4f9f5] px-3 py-1.5 text-xs font-bold text-[#1877F2] transition hover:bg-[#e8f3ec]"
+                className="inline-flex items-center gap-2 rounded-lg border border-line bg-surface-soft px-3 py-1.5 text-xs font-bold text-info transition hover:bg-surface-soft"
                 aria-label="Follow Pak Multilinks on Facebook"
               >
                 <svg className="size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
@@ -47,7 +49,7 @@ export function Footer() {
         </div>
       </div>
     </div>
-    <div className="border-t border-neutral-200"><div className="site-shell flex flex-col justify-between gap-4 py-5 text-[11px] text-neutral-500 sm:flex-row"><p>© {new Date().getFullYear()} {company.name}</p><nav className="flex gap-5" aria-label="Legal"><Link href="/privacy">Privacy policy</Link><Link href="/terms">Terms</Link><Link href="/returns">Returns</Link>{company.facebookUrl && <a href={company.facebookUrl} target="_blank" rel="noreferrer" className="text-[#1877F2] hover:underline">Facebook</a>}</nav></div></div>
+    <div className="border-t border-line"><div className="site-shell flex flex-col justify-between gap-4 py-5 text-[11px] text-muted sm:flex-row"><p>© {new Date().getFullYear()} {company.name}</p><nav className="flex gap-5" aria-label="Legal"><Link href="/privacy">Privacy policy</Link><Link href="/terms">Terms</Link><Link href="/returns">Returns</Link>{company.facebookUrl && <a href={company.facebookUrl} target="_blank" rel="noreferrer" className="text-info hover:underline">Facebook</a>}</nav></div></div>
   </footer>;
 }
-function FooterGroup({ title, links }: { title: string; links: string[][] }) { return <div><h2 className="text-sm font-semibold text-neutral-900">{title}</h2><ul className="mt-4 space-y-3 text-xs text-neutral-500">{links.map(([label, href]) => <li key={href}><Link href={href} className="hover:text-neutral-900 hover:underline">{label}</Link></li>)}</ul></div>; }
+function FooterGroup({ title, links }: { title: string; links: string[][] }) { return <div><h2 className="text-sm font-semibold text-content">{title}</h2><ul className="mt-4 space-y-3 text-xs text-muted">{links.map(([label, href]) => <li key={href}><Link href={href} className="hover:text-content hover:underline">{label}</Link></li>)}</ul></div>; }

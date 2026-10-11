@@ -23,24 +23,24 @@ export function QuantitySelector({
   const incrementDisabled = disabled || (typeof max === "number" && value >= max);
 
   return (
-    <div className="inline-flex items-center rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="inline-flex items-center rounded-xl border border-line bg-surface shadow-sm">
       <button
         type="button"
         aria-label={`Decrease ${label.toLowerCase()}`}
-        className="grid size-10 place-items-center rounded-l-xl text-slate-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-35"
+        className="grid size-10 place-items-center rounded-l-xl text-secondary transition hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-35"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={decrementDisabled}
       >
         <Minus aria-hidden="true" className="size-4" />
       </button>
-      <span className="min-w-10 px-2 text-center text-sm font-semibold text-slate-900" aria-live="polite">
+      <span className="min-w-10 px-2 text-center text-sm font-semibold text-content" aria-live="polite">
         <span className="sr-only">{label}: </span>
         {value}
       </span>
       <button
         type="button"
         aria-label={`Increase ${label.toLowerCase()}`}
-        className="grid size-10 place-items-center rounded-r-xl text-slate-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-35"
+        className="grid size-10 place-items-center rounded-r-xl text-secondary transition hover:bg-accent-soft disabled:cursor-not-allowed disabled:opacity-35"
         onClick={() => onChange(typeof max === "number" ? Math.min(max, value + 1) : value + 1)}
         disabled={incrementDisabled}
       >

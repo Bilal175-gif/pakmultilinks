@@ -1,7 +1,7 @@
 .section {
   padding: 48px 0 28px;
-  background: #fff;
-  color: #202020;
+  background: var(--surface);
+  color: var(--content);
 }
 
 .heading {
@@ -71,7 +71,7 @@
 }
 
 .salonIcon { width: 56px; height: 56px; color: #333; }
-.partner p { max-width: 200px; font-size: 13px; font-weight: 500; line-height: 1.5; color: #525252; }
+.partner p { max-width: 200px; font-size: 13px; font-weight: 500; line-height: 1.5; color: var(--content); }
 
 @keyframes partner-scroll { to { transform: translateX(-50%); } }
 

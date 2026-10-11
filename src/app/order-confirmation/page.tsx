@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function OrderConfirmationPage({ searchParams }: { searchParams: Promise<{ order?: string; mode?: string }> }) {
   const params = await searchParams;
   return (
-    <div className="min-h-[65vh] bg-slate-50/70 px-4 py-12 sm:px-6 sm:py-16">
+    <div className="min-h-[65vh] bg-surface-soft/70 px-4 py-12 sm:px-6 sm:py-16">
       <OrderConfirmationClient orderId={params.order ?? ""} mode={params.mode} />
     </div>
   );
