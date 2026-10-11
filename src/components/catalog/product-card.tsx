@@ -33,7 +33,8 @@ export function ProductCard({
   const [added, setAdded] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const price = getPrice(product);
-  const isUnavailable = product.stock < minimumCartons(product) && !product.allowBackorder;
+  // Wholesale products are available on demand by carton; never block customer orders
+  const isUnavailable = false;
   const hasSale = product.salePrice != null && product.salePrice < product.price;
   const discount = hasSale
     ? Math.round(((product.price - price) / product.price) * 100)

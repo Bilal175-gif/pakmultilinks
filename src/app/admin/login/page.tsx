@@ -8,10 +8,7 @@ import { AdminLoginForm } from "./login-form";
 export default async function AdminLoginPage() {
   const session = await getSession();
   if (session?.role === "ADMIN") redirect("/admin");
-  const configured = Boolean(
-    process.env.ADMIN_EMAIL &&
-      (process.env.ADMIN_PASSWORD_HASH || (process.env.NODE_ENV !== "production" && process.env.ADMIN_PASSWORD)),
-  );
+  const configured = true;
 
   return (
     <main className="admin-login flex min-h-screen items-center justify-center bg-canvas px-4 py-12">

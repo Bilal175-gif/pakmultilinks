@@ -34,8 +34,8 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
     return () => { if (addedTimer.current) clearTimeout(addedTimer.current); };
   }, []);
   const hasSale = product.salePrice != null && product.salePrice < product.price;
-  const isUnavailable = product.stock < minimum && !product.allowBackorder;
-  const maxQuantity = product.allowBackorder ? 10_000 : Math.max(product.stock, minimum);
+  const isUnavailable = false;
+  const maxQuantity = 10_000;
 
   function setSafeQuantity(nextQuantity: number) {
     setQuantity(Math.min(maxQuantity, Math.max(minimum, nextQuantity)));

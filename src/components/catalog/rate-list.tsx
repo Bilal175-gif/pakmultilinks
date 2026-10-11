@@ -103,15 +103,25 @@ export function RateList({ products = [] }: RateListProps) {
 
   return (
     <section className={`${styles.page} rate-list-page`}>
-      <div className="site-shell">
-        {/* Bulk discount marquee banner */}
-        <div className={styles.ticker}>
-          <Sparkles size={16} aria-hidden="true" />
-          <span>
-            <strong>Institutional & Wholesale Rates:</strong> 5% to 10% Extra Discount on Bulk Quotations · Delivery Across Pakistan
-          </span>
-          <span className={styles.tickerBadge}>Active Catalog</span>
+      {/* Full-width light grey sliding marquee banner */}
+      <div className={styles.fullWidthTickerWrap}>
+        <div className={styles.tickerMarqueeTrack}>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className={styles.tickerItem}>
+              <span className={styles.tickerBadge}>Active Catalog</span>
+              <span>
+                <strong>Institutional & Wholesale Rates:</strong>{" "}
+                <span className={styles.tickerDiscountHighlight}>5% to 10% Extra Discount</span> on Bulk Quotations · Delivery Across Pakistan
+              </span>
+              <span className="text-muted">·</span>
+              <span>WhatsApp: <strong>0300 6917385</strong> | <strong>0325 8166829</strong></span>
+              <Sparkles size={14} className="text-[#114b2f] dark:text-[#22c55e]" aria-hidden="true" />
+            </div>
+          ))}
         </div>
+      </div>
+
+      <div className="site-shell">
 
         {/* Header section */}
         <header className={styles.heading}>
