@@ -69,14 +69,14 @@ export function Header() {
         categoryMenuRef.current?.open ||
         (header?.contains(activeElement) && activeElement?.matches("input, :focus-visible"));
 
-      if (currentY <= (header?.offsetHeight ?? 180) || interacting) {
+      if (currentY <= 60 || interacting) {
         setHeaderHidden(false);
         previousY = currentY;
         return;
       }
 
-      // Ignore tiny scroll movements so the header does not flicker.
-      if (Math.abs(currentY - previousY) < 10) return;
+      // Ignore tiny jitter movements
+      if (Math.abs(currentY - previousY) < 6) return;
       setHeaderHidden(currentY > previousY);
       previousY = currentY;
     }
@@ -176,7 +176,7 @@ export function Header() {
   return (
     <>
       <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-24 rounded-lg bg-surface px-4 py-2 text-sm font-bold text-accent shadow-xl focus:translate-y-0">Skip to content</a>
-      <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "md:-translate-y-full" : "translate-y-0"}`}>
+      <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
         <div className="hidden bg-canvas text-secondary md:block border-b border-line/60">
           <div className="site-shell flex min-h-10 items-center justify-between gap-3 text-[11px] font-semibold sm:text-xs py-1">
             {/* Left: Social Media Icons */}
