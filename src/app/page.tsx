@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/catalog/product-card";
 import { TrustedPartners } from "@/components/home/trusted-partners";
 import { DealsSlider } from "@/components/home/deals-slider";
+import { ProductsCatalogTable } from "@/components/home/products-catalog-table";
+import { CustomBrandingSection } from "@/components/home/custom-branding-section";
 import { listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
 import { company } from "@/lib/company";
 import { listPublicDeals } from "@/lib/deals";
@@ -110,24 +112,11 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-        <section className="border-t border-line bg-canvas py-12 sm:py-16">
-          <div className="site-shell">
-            <div className="mb-8 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[.14em] text-muted">Complete Catalog</p>
-                <h2 className="mt-2 font-serif text-3xl text-content sm:text-4xl">All Wholesale Products</h2>
-              </div>
-              <span className="text-xs font-semibold text-secondary">
-                {products.length} products available
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-              {products.map(product => (
-                <ProductCard key={product.id} product={product} headingLevel="h3" />
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Content-wise HTML Table Form for Complete Product Reference */}
+        <ProductsCatalogTable products={products} />
+
+        {/* Custom Branding Animated Tissue Box Showcase */}
+        <CustomBrandingSection />
     </>
   );
 }
