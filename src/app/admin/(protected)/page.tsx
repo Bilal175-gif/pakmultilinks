@@ -7,6 +7,11 @@ import { DemoNotice, EmptyState, PageHeading, panelClass, buttonClass } from "..
 
 const money = new Intl.NumberFormat("en-PK", { style: "currency", currency: "PKR", minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
+
+// Short in-memory cache for dashboard stats (30s) to avoid hitting DB on every load
+let dashboardCache: { data: any; ts: number } | null = null;
+const DASHBOARD_CACHE_TTL = 30_000;
+
 export default async function AdminDashboard() {
   let connected = isDatabaseConfigured;
   let data = {
@@ -20,7 +25,11 @@ export default async function AdminDashboard() {
     recentOrders: [] as Array<{ id: string; orderNumber: string; customerName: string; total: number; status: string; createdAt: Date }>,
   };
 
-  if (connected) {
+  const now = Date.now();
+  if (dashboardCache && now - dashboardCache.ts < DASHBOARD_CACHE_TTL) {
+    data = dashboardCache.data;
+    connected = true;
+  } else if (connected) {
     try {
       const [orderCount, revenue, productRows, customerCount, pendingOrders, quoteCount, recentOrders] = await Promise.all([
         db.order.count(),
@@ -44,6 +53,7 @@ export default async function AdminDashboard() {
     } catch {
       connected = false;
     }
+    if (connected) dashboardCache = { data, ts: Date.now() };
   }
 
   const metrics = [
