@@ -16,6 +16,7 @@ export function FloatingSupport() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const launcherRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<AbortController | null>(null);
@@ -32,8 +33,22 @@ export function FloatingSupport() {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") close();
     }
+    function onClickOutside(event: MouseEvent) {
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(event.target as Node) &&
+        launcherRef.current &&
+        !launcherRef.current.contains(event.target as Node)
+      ) {
+        close();
+      }
+    }
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("mousedown", onClickOutside);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("mousedown", onClickOutside);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -94,7 +109,7 @@ export function FloatingSupport() {
   return (
     <>
       {open && (
-        <section id="support-assistant" role="dialog" aria-modal="false" aria-labelledby="support-assistant-title" className="fixed bottom-[5.25rem] left-3 z-[70] flex h-[min(25rem,calc(100dvh-6rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-md border border-line bg-surface shadow-lg sm:left-6">
+        <section ref={panelRef} id="support-assistant" role="dialog" aria-modal="false" aria-labelledby="support-assistant-title" className="fixed bottom-[5.25rem] left-3 z-[70] flex h-[min(25rem,calc(100dvh-6rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-md border border-line bg-surface shadow-lg sm:left-6">
           <div className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3.5 text-content">
             <div className="min-w-0 flex-1"><h2 id="support-assistant-title" className="text-sm font-medium leading-5">Chat with us</h2><p className="text-[11px] leading-4 text-muted">Pak Multilinks support</p></div>
             <button type="button" onClick={close} className="grid size-9 shrink-0 place-items-center rounded-lg transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-focus" aria-label="Close chat"><X className="size-5" /></button>
@@ -108,7 +123,19 @@ export function FloatingSupport() {
             {error && <p role="alert" className="mb-2 rounded-lg bg-surface-soft px-3 py-2 text-xs leading-5 text-danger">{error}</p>}
             <form onSubmit={sendMessage} className="flex items-end gap-2">
               <label htmlFor="support-message" className="sr-only">Your message</label>
-              <textarea ref={inputRef} id="support-message" value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={onInputKeyDown} maxLength={2000} readOnly={pending} rows={1} placeholder="Write a message…" className="max-h-28 min-h-11 min-w-0 flex-1 resize-none overflow-y-auto rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm leading-6 text-accent outline-none transition-colors placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus" />
+              <textarea
+                ref={inputRef}
+                id="support-message"
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                onKeyDown={onInputKeyDown}
+                maxLength={2000}
+                readOnly={pending}
+                rows={1}
+                placeholder="Write a message…"
+                className="no-scrollbar max-h-28 min-h-11 min-w-0 flex-1 resize-none overflow-hidden rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm leading-6 text-accent outline-none transition-colors placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
+                style={{ scrollbarWidth: "none" }}
+              />
               <button type="submit" disabled={pending || !draft.trim()} aria-label="Send message" className="focus-ring grid size-11 shrink-0 place-items-center rounded-md bg-action text-white transition-colors hover:bg-action-hover disabled:cursor-not-allowed disabled:bg-disabled"><ArrowUp className="size-5" /></button>
             </form>
             <p className="mt-2 text-center text-[11px] leading-4 text-muted">Need a person? <a className="font-semibold text-accent underline underline-offset-2" href={`tel:${company.phoneHref}`}>Call our team</a></p>

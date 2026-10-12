@@ -104,4 +104,14 @@
 :root[data-theme-preference="system"] .theme-icon-system,
 :root[data-theme-preference="light"] .theme-icon-light,
 :root[data-theme-preference="dark"] .theme-icon-dark { display: block; }
-:root[data-theme="dark"] .brand-logo { border-radius: 3px; background: #f4f8f0; box-shadow: 0 0 0 5px #f4f8f0; }
+.brand-logo-dark { display: none !important; }
+.brand-logo-light { display: block !important; }
+
+:root[data-theme="dark"] .brand-logo-light { display: none !important; }
+:root[data-theme="dark"] .brand-logo-dark { display: block !important; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .brand-logo-light { display: none !important; }
+  :root:not([data-theme="light"]) .brand-logo-dark { display: block !important; }
+}
+

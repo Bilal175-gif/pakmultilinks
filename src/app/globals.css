@@ -169,8 +169,83 @@ button:not(.rounded-full-icon) {
   .admin-workspace :is(input, select, textarea) { font-size: 16px; }
 }
 
+/* Sleek modern scrollbars across Admin Panel */
+.admin-workspace * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.admin-workspace *::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.admin-workspace *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-workspace *::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 9999px;
+}
+
+.admin-workspace *::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+.admin-workspace *::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0;
+  height: 0;
+}
+
+.admin-workspace *::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Dedicated Admin Sidebar scrollbar - invisible when idle, subtle 4px pill on hover */
+.admin-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+.admin-sidebar:hover {
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.admin-sidebar:hover::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+.admin-sidebar::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0;
+  height: 0;
+}
+
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 .no-scrollbar {
   -ms-overflow-style: none;

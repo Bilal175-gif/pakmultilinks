@@ -35,24 +35,120 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
   }
   if (!deals.length) return null;
 
-  return <section className="w-full border-b border-line bg-canvas" aria-label="Featured offers">
-    <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
-    <div role="region" aria-roledescription="carousel" aria-label="Current deals" className="relative isolate aspect-[3/4] w-full overflow-hidden md:aspect-[16/9]"
-      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
-      onTouchStart={event => { const touch = event.touches[0]; touchStart.current = { x: touch.clientX, y: touch.clientY }; }}
-      onTouchEnd={event => { const start = touchStart.current; touchStart.current = null; if (!start) return; const touch = event.changedTouches[0]; const dx = touch.clientX - start.x; const dy = touch.clientY - start.y; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) select(active + (dx < 0 ? 1 : -1)); }}>
-      {deals.map((deal, index) => <Link key={deal.id} href={deal.linkUrl} aria-hidden={index !== active} tabIndex={index === active ? 0 : -1}
-        className={`absolute inset-0 flex flex-col transition-transform duration-700 ease-out motion-reduce:transition-none ${index === active ? "z-10 translate-x-0" : index > active ? "pointer-events-none translate-x-full" : "pointer-events-none -translate-x-full"}`}>
-        <div className="relative aspect-[16/9] w-full shrink-0 md:absolute md:inset-0 md:aspect-auto"><Image src={deal.imageUrl} alt={deal.alt} fill preload={index === 0} unoptimized={deal.imageUrl.startsWith("https://")} sizes="100vw" className="object-cover object-center" /></div>
-        <div className="flex flex-1 flex-col justify-center px-6 py-5 text-accent md:hidden"><p className="text-[10px] uppercase tracking-[.16em] text-muted">Tissue & hygiene essentials</p><h2 className="mt-3 font-serif text-[clamp(24px,7vw,36px)] leading-tight">{deal.title}</h2><p className="mt-3 max-w-md text-sm leading-6 text-secondary">Everyday supplies for your home and workplace. Explore our range or arrange a bulk order.</p><span className="mt-5 w-fit border-b border-focus pb-1 text-sm font-medium">Shop the collection →</span></div>
-        <span className="sr-only md:not-sr-only md:hidden">{deal.title}</span>
-      </Link>)}
-    </div>
-    {deals.length > 1 && <div className="flex items-center justify-center gap-1 bg-surface py-2" aria-label="Offer controls">
-      <button type="button" onClick={() => select(active - 1)} aria-label="Previous offer" className="focus-ring grid size-11 place-items-center text-accent"><ChevronLeft className="size-5" /></button>
-      {deals.map((deal, index) => <button key={deal.id} type="button" onClick={() => select(index)} aria-label={`Show ${deal.title}`} aria-current={index === active ? "true" : undefined} className="focus-ring grid size-11 place-items-center"><span className={`h-2 rounded-full ${index === active ? "w-6 bg-action" : "w-2 bg-disabled"}`} /></button>)}
-      <button type="button" onClick={() => select(active + 1)} aria-label="Next offer" className="focus-ring grid size-11 place-items-center text-accent"><ChevronRight className="size-5" /></button>
-    </div>}
-  </section>;
+  return (
+    <section className="relative w-full border-b border-line bg-canvas" aria-label="Featured offers">
+      <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
+      <div
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Current deals"
+        className="relative isolate aspect-[16/9] w-full overflow-hidden bg-surface-soft"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+        }}
+        onTouchStart={(event) => {
+          const touch = event.touches[0];
+          touchStart.current = { x: touch.clientX, y: touch.clientY };
+        }}
+        onTouchEnd={(event) => {
+          const start = touchStart.current;
+          touchStart.current = null;
+          if (!start) return;
+          const touch = event.changedTouches[0];
+          const dx = touch.clientX - start.x;
+          const dy = touch.clientY - start.y;
+          if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) select(active + (dx < 0 ? 1 : -1));
+        }}
+      >
+        {deals.map((deal, index) => (
+          <Link
+            key={deal.id}
+            href={deal.linkUrl}
+            aria-hidden={index !== active}
+            tabIndex={index === active ? 0 : -1}
+            className={`absolute inset-0 block size-full transition-transform duration-700 ease-out motion-reduce:transition-none ${
+              index === active
+                ? "z-10 translate-x-0"
+                : index > active
+                ? "pointer-events-none translate-x-full"
+                : "pointer-events-none -translate-x-full"
+            }`}
+          >
+            <div className="relative size-full">
+              <Image
+                src={deal.imageUrl}
+                alt={deal.alt}
+                fill
+                priority={index === 0}
+                unoptimized={deal.imageUrl.startsWith("https://")}
+                sizes="(max-width: 768px) 100vw, (max-width: 1400px) 100vw, 1920px"
+                className="object-cover object-center"
+              />
+            </div>
+            <span className="sr-only">{deal.title}</span>
+          </Link>
+        ))}
+
+        {/* Floating Overlay Dots & Controls */}
+        {deals.length > 1 && (
+          <>
+            <div
+              className="pointer-events-none absolute bottom-2.5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-md shadow-md sm:bottom-4"
+              aria-label="Offer controls"
+            >
+              {deals.map((deal, index) => (
+                <button
+                  key={deal.id}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    select(index);
+                  }}
+                  aria-label={`Show ${deal.title}`}
+                  aria-current={index === active ? "true" : undefined}
+                  className="pointer-events-auto p-0.5 focus-ring rounded-full"
+                >
+                  <span
+                    className={`block h-1.5 rounded-full transition-all duration-300 ${
+                      index === active ? "w-5 bg-white shadow-sm" : "w-1.5 bg-white/50 hover:bg-white/80"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+
+            {/* Desktop Side Chevrons */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                select(active - 1);
+              }}
+              aria-label="Previous offer"
+              className="focus-ring absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 place-items-center rounded-full bg-black/35 p-2 text-white backdrop-blur-md transition hover:bg-black/60 sm:grid"
+            >
+              <ChevronLeft className="size-5" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                select(active + 1);
+              }}
+              aria-label="Next offer"
+              className="focus-ring absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 place-items-center rounded-full bg-black/35 p-2 text-white backdrop-blur-md transition hover:bg-black/60 sm:grid"
+            >
+              <ChevronRight className="size-5" />
+            </button>
+          </>
+        )}
+      </div>
+    </section>
+  );
 }

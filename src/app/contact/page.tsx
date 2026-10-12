@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mail, MapPin, Navigation, Phone } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { company, contacts } from "@/lib/company";
 
@@ -28,11 +29,14 @@ export default function ContactPage() {
                 className="group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-4 shadow-[0_10px_35px_rgba(21,65,42,.06)] transition-all duration-300 hover:border-action/40 hover:shadow-xl sm:p-5"
               >
                 <div className="overflow-hidden rounded-[1.4rem] border border-line/60 bg-white shadow-sm transition-transform duration-300 group-hover:scale-[1.01]">
-                  <img
+                  <Image
                     src={cardImg}
                     alt={`${contact.name} - Pak Multilinks Hygiene Visiting Card`}
+                    width={600}
+                    height={350}
                     className="h-auto w-full object-contain"
-                    loading="lazy"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
                   />
                 </div>
 

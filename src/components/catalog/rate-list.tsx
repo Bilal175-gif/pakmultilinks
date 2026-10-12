@@ -44,33 +44,89 @@ export function RateList({ products = [] }: RateListProps) {
     return Array.from(set.entries()).sort((a, b) => a[1].localeCompare(b[1]));
   }, []);
 
+function cleanSearchText(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[-_/\\(),.:;[\]#]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const SEARCH_SYNONYMS: Record<string, string[]> = {
+  energy: ["airnergy"],
+  airnergy: ["air", "energy"],
+  handwash: ["hand", "wash"],
+  dishwash: ["dish", "wash"],
+  popup: ["pop"],
+  germicure: ["germi", "cure"],
+  germi: ["germicure"],
+  cure: ["germicure"],
+  shinewell: ["shine", "well"],
+};
+
+function matchesSearchQuery(item: RateItem, rawQuery: string): boolean {
+  const q = rawQuery.trim().toLowerCase();
+  if (!q) return true;
+
+  // Exact item number check (e.g. '#1', '#01', 'item 14a', '14a', '#14a')
+  const numPattern = q.match(/^(?:#|item\s*|no\.?\s*|number\s*)?0*(\d{1,2})([a-z])?$/i);
+  if (numPattern) {
+    const rawDigits = parseInt(numPattern[1], 10).toString();
+    const suffix = numPattern[2] ? numPattern[2].toLowerCase() : "";
+    const targetTag = rawDigits + suffix;
+    const itemTag = item.itemNumber.toLowerCase().replace(/[^a-z0-9]/g, "").replace(/^0+/, "");
+    if (itemTag === targetTag) return true;
+  }
+
+  // Multi-word keyword matching: every word in query must match
+  const queryWords = cleanSearchText(q).split(" ").filter(Boolean);
+  if (!queryWords.length) return true;
+
+  const hay = cleanSearchText([
+    item.itemNumber,
+    item.name,
+    item.brand,
+    item.spec,
+    item.category,
+    item.rateDisplay,
+    item.companyName,
+    item.note || "",
+  ].join(" "));
+
+  return queryWords.every((word) => {
+    if (hay.includes(word)) return true;
+    const syns = SEARCH_SYNONYMS[word];
+    if (syns && syns.some((syn) => hay.includes(syn))) return true;
+    return false;
+  });
+}
+
   // Filtered and sorted items
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
 
+    // Check if the query has matches in the selected company
+    const matchesCurrentCompany = RATE_ITEMS.some((item) => {
+      if (selectedCompany !== "all" && item.company !== selectedCompany) return false;
+      if (category && item.categorySlug !== category) return false;
+      return matchesSearchQuery(item, q);
+    });
+
+    // If user searched for something from another company/category, don't show 0 results
+    const bypassCompany = q && !matchesCurrentCompany && selectedCompany !== "all";
+
     return RATE_ITEMS.filter((item) => {
-      // Company filter
-      if (selectedCompany !== "all" && item.company !== selectedCompany) {
+      // Company filter (bypassed if query specifically targets another company)
+      if (!bypassCompany && selectedCompany !== "all" && item.company !== selectedCompany) {
         return false;
       }
       // Category filter
-      if (category && item.categorySlug !== category) {
+      if (!bypassCompany && category && item.categorySlug !== category) {
         return false;
       }
       // Search query
-      if (q) {
-        const hay = [
-          item.itemNumber,
-          item.name,
-          item.brand,
-          item.spec,
-          item.category,
-          item.rateDisplay,
-          item.note || "",
-        ]
-          .join(" ")
-          .toLowerCase();
-        if (!hay.includes(q)) return false;
+      if (q && !matchesSearchQuery(item, q)) {
+        return false;
       }
       return true;
     }).sort((a, b) => {
@@ -215,6 +271,17 @@ export function RateList({ products = [] }: RateListProps) {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search product name, #number, brand or specification..."
             />
+            {query.trim() && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className={styles.clearSearchBtn}
+                aria-label="Clear search query"
+                title="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
           </label>
 
           <label htmlFor={categorySelectId}>

@@ -304,6 +304,25 @@
   border-color: var(--focus);
 }
 
+.clearSearchBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.clearSearchBtn:hover {
+  color: var(--content);
+  background: var(--surface-soft);
+}
+
+
 .results {
   display: flex;
   flex-wrap: wrap;

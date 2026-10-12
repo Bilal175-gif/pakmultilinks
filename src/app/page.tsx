@@ -23,70 +23,74 @@ export default async function HomePage() {
       <DealsSlider deals={deals} />
       <TrustedPartners />
         <div className="border-y border-line bg-surface">
-          <div className="site-shell grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div className="site-shell grid grid-cols-3 divide-x divide-line py-3 sm:py-5">
             {[
-              { Icon: PackageCheck, title: "Supplied by the carton", text: "Packing details on every product" },
-              { Icon: Truck, title: "Business orders welcome", text: "Delivery arranged with your order" },
-              { Icon: Phone, title: "A person to talk to", text: company.phone },
-            ].map(({ Icon, title, text }) => (
-              <div key={title} className="flex items-center justify-start gap-3 py-5 sm:justify-center sm:px-4">
-                <Icon className="size-5 text-accent" strokeWidth={1.4} />
+              { Icon: PackageCheck, title: "Carton Supply", fullTitle: "Supplied by the carton", text: "Packing details on every product" },
+              { Icon: Truck, title: "Bulk Delivery", fullTitle: "Business orders welcome", text: "Delivery arranged with your order" },
+              { Icon: Phone, title: "Live Support", fullTitle: "A person to talk to", text: company.phone },
+            ].map(({ Icon, title, fullTitle, text }) => (
+              <div key={title} className="flex flex-col items-center justify-center gap-1 px-1.5 text-center sm:flex-row sm:gap-3 sm:text-left sm:px-4">
+                <Icon className="size-4 shrink-0 text-action sm:size-5 sm:text-accent" strokeWidth={1.5} />
                 <div>
-                  <p className="text-xs font-semibold text-content">{title}</p>
-                  <p className="mt-1 text-[11px] text-muted">{text}</p>
+                  <p className="text-[11px] font-bold text-content sm:text-xs">
+                    <span className="sm:hidden">{title}</span>
+                    <span className="hidden sm:inline">{fullTitle}</span>
+                  </p>
+                  <p className="hidden text-[11px] text-muted sm:block">{text}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
         <div className="border-b border-line bg-surface-soft py-3 sm:py-4">
-          <div className="site-shell flex flex-wrap items-center justify-between gap-3 text-sm">
-            <div className="flex items-center gap-2.5">
-              <span className="rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-accent">
+          <div className="site-shell flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent/15 px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-accent">
+                <span className="size-1.5 rounded-full bg-action" />
                 2026 Reference
               </span>
-              <p className="font-medium text-content">
-                Official Wholesale Rate List & Product Reference (52 Verified Items)
+              <p className="text-xs font-semibold text-content sm:text-sm">
+                Official Wholesale Rate List (52 Items)
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
               <a
                 href="/rate-list.pdf"
                 download="Pak-Multilinks-Official-Rate-List.pdf"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#114b2f] px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-[#17643a] transition"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-action px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-action transition text-center"
               >
                 Download PDF
               </a>
               <Link
                 href="/rate-list"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3.5 py-1.5 text-xs font-semibold text-content hover:bg-surface-hover transition"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-bold text-content hover:bg-surface-soft transition text-center"
               >
                 View Rate List <ArrowRight className="size-3.5" />
               </Link>
             </div>
           </div>
         </div>
-        <section className="site-shell py-12 sm:py-16">
-          <div className="mb-7 flex items-end justify-between gap-4">
+        <section className="site-shell py-8 sm:py-16">
+          <div className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
             <div>
-              <p className="text-xs text-muted">Find what you need</p>
-              <h2 className="mt-2 font-serif text-3xl text-content sm:text-4xl">Shop by category</h2>
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted">Find what you need</p>
+              <h2 className="mt-1 font-serif text-2xl text-content sm:text-4xl">Shop by category</h2>
             </div>
-            <Link href="/shop" className="flex items-center gap-2 text-xs underline underline-offset-4">
+            <Link href="/shop" className="flex items-center gap-1.5 text-xs font-bold text-action hover:underline">
               Shop all<ArrowRight className="size-3.5" />
             </Link>
           </div>
-          <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-4">
             {roots.map(category => (
-              <div key={category.id} className="border-t border-line-strong pt-5">
-                <Link href={`/shop/${category.slug}`} className="flex items-center justify-between gap-3 text-sm font-semibold hover:underline">
+              <div key={category.id} className="rounded-2xl border border-line bg-surface p-4 transition hover:border-line-strong sm:border-0 sm:border-t sm:border-line-strong sm:bg-transparent sm:p-0 sm:pt-5 sm:rounded-none">
+                <Link href={`/shop/${category.slug}`} className="flex items-center justify-between gap-3 text-sm font-bold text-accent hover:text-action">
                   {category.name}<ArrowRight className="size-4 text-muted" />
                 </Link>
-                <p className="mt-3 text-xs leading-6 text-muted">{category.description}</p>
-                <ul className="mt-3 space-y-2">
+                <p className="mt-2 text-xs leading-5 text-muted sm:mt-3 sm:leading-6">{category.description}</p>
+                <ul className="mt-3 flex flex-wrap gap-1.5 sm:block sm:space-y-2">
                   {categories.filter(child => child.parentId === category.id).slice(0, 5).map(child => (
                     <li key={child.id}>
-                      <Link href={`/shop/${child.slug}`} className="text-xs text-secondary hover:underline">
+                      <Link href={`/shop/${child.slug}`} className="inline-block rounded-lg bg-surface-soft px-2 py-1 text-[11px] font-medium text-secondary hover:text-accent sm:bg-transparent sm:p-0 sm:text-xs sm:hover:underline">
                         {child.name}
                       </Link>
                     </li>

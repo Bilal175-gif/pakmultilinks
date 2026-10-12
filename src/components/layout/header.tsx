@@ -178,20 +178,28 @@ export function Header() {
       <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-24 rounded-lg bg-surface px-4 py-2 text-sm font-bold text-accent shadow-xl focus:translate-y-0">Skip to content</a>
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
 
-        <div className="site-shell flex h-16 items-center gap-1 md:h-[86px] md:gap-3 lg:gap-7">
-          <button type="button" className="focus-ring -ml-2 grid size-11 shrink-0 place-items-center rounded-xl text-accent lg:hidden" onClick={() => mobileDialogRef.current?.showModal()} aria-label="Open navigation menu" aria-haspopup="dialog">
-            <Menu className="size-6" />
-          </button>
+        <div className="site-shell relative z-30 flex h-16 items-center gap-2 md:h-[86px] md:gap-3 lg:gap-7">
           <BrandMark />
 
-          <div ref={searchWrap} className="relative ml-auto hidden min-w-0 max-w-[430px] flex-1 md:block">
+          <div ref={searchWrap} className="relative z-50 ml-auto hidden min-w-0 max-w-[430px] flex-1 md:block">
             <form onSubmit={submitSearch} role="search">
               <label htmlFor="site-search" className="sr-only">Search products</label>
               <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-secondary" />
-              <input id="site-search" value={query} onChange={(event) => setQuery(event.target.value)} onFocus={() => setSearchFocused(true)} placeholder="Search products, SKU or category" autoComplete="off" className="h-11 w-full rounded-2xl border border-line bg-surface pl-11 pr-4 text-sm text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus" />
+              <input
+                id="site-search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") setSearchFocused(false);
+                }}
+                placeholder="Search products, SKU or category"
+                autoComplete="off"
+                className="h-11 w-full rounded-2xl border border-line bg-surface pl-11 pr-4 text-sm text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus"
+              />
             </form>
             {searchFocused && suggestions.length > 0 && (
-              <nav className="absolute inset-x-0 top-[calc(100%+8px)] overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-[0_18px_50px_rgba(19,58,37,.14)]" aria-label="Suggested products">
+              <nav className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-[0_20px_50px_rgba(0,0,0,0.22)]" aria-label="Suggested products">
                 <ul>{suggestions.map((product) => (
                   <li key={product.id}><Link href={`/product/${product.slug}`} className="flex items-center justify-between gap-4 rounded-xl px-3 py-2.5 text-sm hover:bg-surface-soft" onClick={() => setSearchFocused(false)}>
                     <span><span className="block font-bold text-accent">{product.name}</span><span className="mt-0.5 block text-xs text-muted">{product.category} · {product.sku}</span></span>
@@ -246,21 +254,56 @@ export function Header() {
             </a>
           </div>
 
-          <ThemeSwitch compact />
-          <Link href="/account" className="commerce-icon-button focus-ring ml-auto grid size-11 shrink-0 place-items-center rounded-lg border border-line bg-surface text-accent transition hover:border-line-strong hover:bg-surface-soft md:ml-0" aria-label="Your account"><UserRound className="size-5" /></Link>
-          <button type="button" onClick={() => cartDialogRef.current?.showModal()} className="commerce-icon-button focus-ring relative grid size-11 shrink-0 place-items-center rounded-xl bg-action text-white transition hover:bg-action" aria-label={`Open bulk cart with ${itemCount} cartons`} aria-haspopup="dialog">
-            <ShoppingBag className="size-5" />
-            {itemCount > 0 && <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-line bg-[#f3b941] px-1 text-[10px] font-black leading-4 text-accent">{itemCount > 99 ? "99+" : itemCount}</span>}
-          </button>
+          {/* Header Action Buttons (Aligned to the Right) */}
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+            <ThemeSwitch compact />
+            <Link
+              href="/account"
+              className="commerce-icon-button focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent transition hover:border-line-strong hover:bg-surface-soft sm:size-11"
+              aria-label="Your account"
+            >
+              <UserRound className="size-4 sm:size-5" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => cartDialogRef.current?.showModal()}
+              className="commerce-icon-button focus-ring relative grid size-10 shrink-0 place-items-center rounded-xl bg-action text-white transition hover:bg-action sm:size-11"
+              aria-label={`Open bulk cart with ${itemCount} cartons`}
+              aria-haspopup="dialog"
+            >
+              <ShoppingBag className="size-4 sm:size-5" />
+              {itemCount > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-line bg-[#f3b941] px-1 text-[10px] font-black leading-4 text-accent">
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
-        <form onSubmit={submitSearch} role="search" className="hidden">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-secondary" aria-hidden="true" />
-          <input aria-label="Search the catalog" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products, SKU or category" className="h-11 w-full rounded-xl border border-line bg-surface pl-11 pr-16 text-base outline-none focus:border-focus" />
-          <button type="submit" className="focus-ring absolute right-1 top-1 min-h-9 rounded-lg px-3 text-sm font-bold text-accent">Find</button>
-        </form>
+        {/* Mobile Search Bar - Instant access for mobile corporate buyers */}
+        <div className="border-t border-line/60 bg-surface px-4 py-2 md:hidden">
+          <form onSubmit={submitSearch} role="search" className="relative">
+            <label htmlFor="mobile-site-search" className="sr-only">Search products</label>
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
+            <input
+              id="mobile-site-search"
+              aria-label="Search the catalog"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search products, SKU or category..."
+              className="h-10 w-full rounded-xl border border-line bg-surface-soft pl-10 pr-16 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
+            />
+            <button
+              type="submit"
+              className="focus-ring absolute right-1 top-1 bottom-1 rounded-lg px-2.5 text-xs font-bold text-accent hover:bg-surface"
+            >
+              Search
+            </button>
+          </form>
+        </div>
 
-        <nav className="hidden border-t border-line lg:block" aria-label="Main navigation">
+        <nav className="relative z-10 hidden border-t border-line lg:block" aria-label="Main navigation">
           <div className="site-shell relative flex h-12 items-center gap-4 xl:gap-7">
             {nav.slice(0, 2).map((item) => <NavLink key={item.href} {...item} active={item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)} />)}
             <details ref={categoryMenuRef} className="group h-full" onKeyDown={(event) => {
