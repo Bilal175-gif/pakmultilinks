@@ -210,50 +210,6 @@ export function Header() {
             )}
           </div>
 
-          {/* Social Media Circular Outline Buttons */}
-          <div className="hidden items-center gap-1.5 sm:flex">
-            <a
-              href="https://www.facebook.com/pakmultilinks"
-              target="_blank"
-              rel="noreferrer"
-              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
-              aria-label="Follow Pak Multilinks on Facebook"
-              title="Facebook"
-            >
-              <Facebook className="size-4" />
-            </a>
-            <a
-              href="https://www.instagram.com/pakmultilinks"
-              target="_blank"
-              rel="noreferrer"
-              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
-              aria-label="Follow Pak Multilinks on Instagram"
-              title="Instagram"
-            >
-              <Instagram className="size-4" />
-            </a>
-            <a
-              href="https://www.linkedin.com/company/pakmultilinks"
-              target="_blank"
-              rel="noreferrer"
-              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
-              aria-label="Follow Pak Multilinks on LinkedIn"
-              title="LinkedIn"
-            >
-              <Linkedin className="size-4" />
-            </a>
-            <a
-              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
-              target="_blank"
-              rel="noreferrer"
-              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
-              aria-label="Chat on WhatsApp"
-              title="WhatsApp"
-            >
-              <WhatsAppIcon className="size-4" />
-            </a>
-          </div>
-
           {/* Header Action Buttons (Aligned to the Right) */}
           <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
             <ThemeSwitch compact />
@@ -319,7 +275,54 @@ export function Header() {
               </div>
             </details>
             {nav.slice(2).map((item) => <NavLink key={item.href} {...item} active={pathname.startsWith(item.href)} />)}
-            <Link href="/request-quote" className="commerce-button commerce-button-primary commerce-button-sm ml-auto inline-flex min-h-0 items-center px-4 py-2">Get a quote</Link>
+            
+            <div className="ml-auto flex items-center gap-3">
+              {/* Social Media Circular Outline Buttons */}
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="https://www.facebook.com/pakmultilinks"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="grid size-8 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+                  aria-label="Follow Pak Multilinks on Facebook"
+                  title="Facebook"
+                >
+                  <Facebook className="size-3.5" />
+                </a>
+                <a
+                  href="https://www.instagram.com/pakmultilinks"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="grid size-8 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+                  aria-label="Follow Pak Multilinks on Instagram"
+                  title="Instagram"
+                >
+                  <Instagram className="size-3.5" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/pakmultilinks"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="grid size-8 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+                  aria-label="Follow Pak Multilinks on LinkedIn"
+                  title="LinkedIn"
+                >
+                  <Linkedin className="size-3.5" />
+                </a>
+                <a
+                  href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="grid size-8 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+                  aria-label="Chat on WhatsApp"
+                  title="WhatsApp"
+                >
+                  <WhatsAppIcon className="size-3.5" />
+                </a>
+              </div>
+
+              <Link href="/request-quote" className="commerce-button commerce-button-primary commerce-button-sm inline-flex min-h-0 items-center px-4 py-2">Get a quote</Link>
+            </div>
           </div>
         </nav>
       </header>
