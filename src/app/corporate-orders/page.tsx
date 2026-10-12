@@ -42,3 +42,4 @@ export default function CorporateOrdersPage() {
     </CommerceShell>
   );
 }
+export const revalidate = 3600;

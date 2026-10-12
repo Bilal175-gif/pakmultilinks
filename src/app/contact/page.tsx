@@ -96,3 +96,4 @@ export default function ContactPage() {
     </section>
   </>;
 }
+export const revalidate = 3600;
