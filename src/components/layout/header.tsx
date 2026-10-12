@@ -202,6 +202,50 @@ export function Header() {
             )}
           </div>
 
+          {/* Social Media Circular Outline Buttons */}
+          <div className="hidden items-center gap-1.5 sm:flex">
+            <a
+              href="https://www.facebook.com/pakmultilinks"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+              aria-label="Follow Pak Multilinks on Facebook"
+              title="Facebook"
+            >
+              <Facebook className="size-4" />
+            </a>
+            <a
+              href="https://www.instagram.com/pakmultilinks"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+              aria-label="Follow Pak Multilinks on Instagram"
+              title="Instagram"
+            >
+              <Instagram className="size-4" />
+            </a>
+            <a
+              href="https://www.linkedin.com/company/pakmultilinks"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+              aria-label="Follow Pak Multilinks on LinkedIn"
+              title="LinkedIn"
+            >
+              <Linkedin className="size-4" />
+            </a>
+            <a
+              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-9 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+              aria-label="Chat on WhatsApp"
+              title="WhatsApp"
+            >
+              <WhatsAppIcon className="size-4" />
+            </a>
+          </div>
+
           <ThemeSwitch compact />
           <Link href="/account" className="commerce-icon-button focus-ring ml-auto grid size-11 shrink-0 place-items-center rounded-lg border border-line bg-surface text-accent transition hover:border-line-strong hover:bg-surface-soft md:ml-0" aria-label="Your account"><UserRound className="size-5" /></Link>
           <button type="button" onClick={() => cartDialogRef.current?.showModal()} className="commerce-icon-button focus-ring relative grid size-11 shrink-0 place-items-center rounded-xl bg-action text-white transition hover:bg-action" aria-label={`Open bulk cart with ${itemCount} cartons`} aria-haspopup="dialog">
@@ -271,37 +315,47 @@ export function Header() {
               </div>
             </div>
 
-            {/* Mobile Social Links */}
-            <div className="mt-4 flex items-center justify-center gap-6 py-3 border-y border-line text-muted">
+            {/* Mobile Social Links in Circular Outline Buttons */}
+            <div className="mt-4 flex items-center justify-center gap-3 py-3 border-y border-line">
               <a
                 href="https://www.facebook.com/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 text-xs font-semibold text-secondary transition hover:text-accent"
+                className="grid size-10 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
                 aria-label="Facebook"
+                title="Facebook"
               >
                 <Facebook className="size-4" />
-                <span>Facebook</span>
               </a>
               <a
                 href="https://www.instagram.com/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 text-xs font-semibold text-secondary transition hover:text-accent"
+                className="grid size-10 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
                 aria-label="Instagram"
+                title="Instagram"
               >
                 <Instagram className="size-4" />
-                <span>Instagram</span>
               </a>
               <a
                 href="https://www.linkedin.com/company/pakmultilinks"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 text-xs font-semibold text-secondary transition hover:text-accent"
+                className="grid size-10 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
                 aria-label="LinkedIn"
+                title="LinkedIn"
               >
                 <Linkedin className="size-4" />
-                <span>LinkedIn</span>
+              </a>
+              <a
+                href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
+                target="_blank"
+                rel="noreferrer"
+                className="grid size-10 place-items-center rounded-full border border-line bg-transparent text-secondary transition hover:border-action hover:text-action hover:bg-surface-soft"
+                aria-label="WhatsApp"
+                title="WhatsApp"
+              >
+                <WhatsAppIcon className="size-4" />
               </a>
             </div>
             <Link href="/request-quote" onClick={() => mobileDialogRef.current?.close()} className="commerce-button commerce-button-primary mt-4 flex min-h-12 items-center justify-center rounded-xl bg-action px-4 text-sm font-extrabold text-white">Request bulk quote</Link>
