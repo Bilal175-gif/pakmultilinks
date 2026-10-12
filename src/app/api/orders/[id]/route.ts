@@ -1,22 +1,24 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { OrderStatus } from "@prisma/client";
 import { requireDatabase } from "@/lib/db";
 import { orderStatusSchema, validationError } from "@/lib/validation";
 import { apiFailure, jsonError, noStoreHeaders, readJson, requireAdminRequest, serialize } from "@/app/api/_utils";
 
 type Context = { params: Promise<{ id: string }> };
 
+// Order status values as string literals (Prisma enum not available at build time)
+type OrderStatusStr = "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+
 /** Valid forward-only transitions: from → set of allowed destinations. */
-const ALLOWED_TRANSITIONS: Record<OrderStatus, Set<OrderStatus>> = {
-  [OrderStatus.PENDING]: new Set([OrderStatus.CONFIRMED, OrderStatus.CANCELLED]),
-  [OrderStatus.CONFIRMED]: new Set([OrderStatus.PROCESSING, OrderStatus.CANCELLED]),
-  [OrderStatus.PROCESSING]: new Set([OrderStatus.SHIPPED, OrderStatus.CANCELLED]),
-  [OrderStatus.SHIPPED]: new Set([OrderStatus.DELIVERED, OrderStatus.CANCELLED]),
-  [OrderStatus.DELIVERED]: new Set(),
-  [OrderStatus.CANCELLED]: new Set(),
+const ALLOWED_TRANSITIONS: Record<OrderStatusStr, Set<OrderStatusStr>> = {
+  PENDING: new Set(["CONFIRMED", "CANCELLED"]),
+  CONFIRMED: new Set(["PROCESSING", "CANCELLED"]),
+  PROCESSING: new Set(["SHIPPED", "CANCELLED"]),
+  SHIPPED: new Set(["DELIVERED", "CANCELLED"]),
+  DELIVERED: new Set(),
+  CANCELLED: new Set(),
 };
 
-function isTransitionAllowed(from: OrderStatus, to: OrderStatus): boolean {
+function isTransitionAllowed(from: OrderStatusStr, to: OrderStatusStr): boolean {
   return ALLOWED_TRANSITIONS[from]?.has(to) ?? false;
 }
 
@@ -47,7 +49,7 @@ export async function PATCH(request: NextRequest, context: Context) {
           `Cannot transition order from "${existing.status}" to "${parsed.data.status}".`,
         );
       }
-      if (existing.status !== OrderStatus.CANCELLED && parsed.data.status === OrderStatus.CANCELLED) {
+      if (existing.status !== "CANCELLED" && parsed.data.status === "CANCELLED") {
         for (const item of existing.items) {
           if (item.productId) {
             await tx.product.updateMany({

@@ -24,10 +24,10 @@ export default async function AdminDashboard() {
     try {
       const [orderCount, revenue, productRows, customerCount, pendingOrders, quoteCount, recentOrders] = await Promise.all([
         db.order.count(),
-        db.order.aggregate({ where: { status: { not: OrderStatus.CANCELLED }, paymentStatus: "PAID" }, _sum: { total: true } }),
+        db.order.aggregate({ where: { status: { not: "CANCELLED" }, paymentStatus: "PAID" }, _sum: { total: true } }),
         db.product.findMany({ where: { status: { not: "ARCHIVED" } }, select: { stock: true, lowStockThreshold: true } }),
         db.user.count({ where: { role: "CUSTOMER" } }),
-        db.order.count({ where: { status: OrderStatus.PENDING } }),
+        db.order.count({ where: { status: "PENDING" } }),
         db.quoteRequest.count({ where: { status: { in: [QuoteStatus.NEW, QuoteStatus.CONTACTED] } } }),
         db.order.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, orderNumber: true, customerName: true, total: true, status: true, createdAt: true } }),
       ]);

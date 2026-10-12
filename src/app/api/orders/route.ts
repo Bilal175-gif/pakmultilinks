@@ -123,7 +123,8 @@ export async function GET(request: NextRequest) {
     const database = requireDatabase();
     const { page, take, skip } = pagination(request);
     const requestedStatus = request.nextUrl.searchParams.get("status");
-    const status = Object.values(OrderStatus).includes(requestedStatus as OrderStatus) ? (requestedStatus as OrderStatus) : undefined;
+    const validStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+    const status = validStatuses.includes(requestedStatus as string) ? (requestedStatus as OrderStatus) : undefined;
     const where = status ? { status } : {};
     const [orders, total] = await database.$transaction([
       database.order.findMany({ where, skip, take, orderBy: { createdAt: "desc" }, include: { items: true } }),
