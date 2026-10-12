@@ -11,7 +11,7 @@ import { company } from "@/lib/company";
 import { listPublicDeals } from "@/lib/deals";
 
 export const metadata: Metadata = { alternates: { canonical: "/" }, openGraph: { url: "/", title: `${company.name} | ${company.tagline}` } };
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export default async function HomePage() {
   const [products, categories, deals] = await Promise.all([listPublicProducts(), listPublicCategories(), listPublicDeals()]);

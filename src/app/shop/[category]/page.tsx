@@ -10,7 +10,7 @@ type CategoryPageProps = {
   params: Promise<{ category: string }>;
 };
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return developmentCategories.map((category) => ({ category: category.slug }));
