@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, LoaderCircle, MessageCircle, X } from "lucide-react";
+import { ArrowUp, Bot, LoaderCircle, MessageCircle, X } from "lucide-react";
 import { FormEvent, KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useState } from "react";
 
 import { useSalesContactNumber } from "@/components/commerce/sales-contact";
@@ -110,14 +110,31 @@ export function FloatingSupport() {
     <>
       {open && (
         <section ref={panelRef} id="support-assistant" role="dialog" aria-modal="false" aria-labelledby="support-assistant-title" className="fixed bottom-[5.25rem] left-3 z-[70] flex h-[min(25rem,calc(100dvh-6rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-md border border-line bg-surface shadow-lg sm:left-6">
-          <div className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3.5 text-content">
-            <div className="min-w-0 flex-1"><h2 id="support-assistant-title" className="text-sm font-medium leading-5">Chat with us</h2><p className="text-[11px] leading-4 text-muted">Pak Multilinks support</p></div>
+          <div className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3 text-content">
+            <div className="relative grid size-10 shrink-0 place-items-center rounded-full bg-action text-white">
+              <Bot className="size-5" />
+              <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-surface bg-green-500" />
+            </div>
+            <div className="min-w-0 flex-1"><h2 id="support-assistant-title" className="text-sm font-semibold leading-5">Pak Multilinks AI</h2><p className="text-[11px] leading-4 text-muted">Online - replies instantly</p></div>
             <button type="button" onClick={close} className="grid size-9 shrink-0 place-items-center rounded-lg transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-focus" aria-label="Close chat"><X className="size-5" /></button>
           </div>
           <div ref={logRef} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text" className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-surface px-4 py-5">
-            <p className="w-fit max-w-[90%] rounded-md border border-line bg-surface px-3.5 py-3 text-sm leading-5 text-accent">Welcome to Pak Multilinks. Send us a message.</p>
-            {messages.map((message, index) => <p key={index} className={`w-fit max-w-[90%] whitespace-pre-wrap break-words rounded-md px-3.5 py-2.5 text-sm leading-5 ${message.role === "user" ? "ml-auto bg-action text-white" : "border border-line bg-surface text-accent"}`}><span className="sr-only">{message.role === "user" ? "You: " : "Assistant: "}</span>{message.content}</p>)}
-            {pending && <p className="flex items-center gap-2 text-xs text-secondary"><LoaderCircle className="size-4 animate-spin" aria-hidden="true" />Replying…</p>}
+            <div className="flex items-start gap-2">
+              <div className="grid size-7 shrink-0 place-items-center rounded-full bg-action/10 text-action"><Bot className="size-4" /></div>
+              <p className="w-fit max-w-[85%] rounded-md rounded-tl-sm border border-line bg-surface px-3.5 py-3 text-sm leading-5 text-accent">Hello, and welcome to Pak Multilinks support. How can I help you today? I can answer questions about our hygiene supplies and bulk orders.</p>
+            </div>
+            {messages.map((message, index) => message.role === "user" ? (
+              <p key={index} className="ml-auto w-fit max-w-[90%] whitespace-pre-wrap break-words rounded-md rounded-br-sm bg-action px-3.5 py-2.5 text-sm leading-5 text-white"><span className="sr-only">You: </span>{message.content}</p>
+            ) : (
+              <div key={index} className="flex items-start gap-2">
+                <div className="grid size-7 shrink-0 place-items-center rounded-full bg-action/10 text-action"><Bot className="size-4" /></div>
+                <p className="w-fit max-w-[85%] whitespace-pre-wrap break-words rounded-md rounded-tl-sm border border-line bg-surface px-3.5 py-2.5 text-sm leading-5 text-accent"><span className="sr-only">Assistant: </span>{message.content}</p>
+              </div>
+            ))}
+            {pending && <div className="flex items-start gap-2">
+              <div className="grid size-7 shrink-0 place-items-center rounded-full bg-action/10 text-action"><Bot className="size-4" /></div>
+              <p className="flex items-center gap-2 rounded-md rounded-tl-sm border border-line bg-surface px-3.5 py-2.5 text-xs text-secondary"><LoaderCircle className="size-4 animate-spin" aria-hidden="true" />Typing…</p>
+            </div>}
           </div>
           <div className="shrink-0 border-t border-line bg-surface px-3 py-3">
             {error && <p role="alert" className="mb-2 rounded-lg bg-surface-soft px-3 py-2 text-xs leading-5 text-danger">{error}</p>}
@@ -142,7 +159,7 @@ export function FloatingSupport() {
           </div>
         </section>
       )}
-      <button ref={launcherRef} type="button" onClick={() => open ? close() : setOpen(true)} aria-expanded={open} aria-controls={open ? "support-assistant" : undefined} aria-label={open ? "Close chat" : "Chat with us"} className="focus-ring fixed bottom-16 left-3 z-[65] flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface/95 px-3 text-xs font-semibold text-accent shadow-md backdrop-blur-sm transition hover:bg-surface-soft sm:bottom-5 sm:left-6 sm:h-11 sm:rounded-md sm:text-sm sm:font-medium">{open ? <X className="size-4" /> : <MessageCircle className="size-4" />}<span>Chat</span></button>
+      <button ref={launcherRef} type="button" onClick={() => open ? close() : setOpen(true)} aria-expanded={open} aria-controls={open ? "support-assistant" : undefined} aria-label={open ? "Close chat" : "Chat with us"} className="focus-ring fixed bottom-16 left-3 z-[65] grid size-14 place-items-center rounded-full bg-action text-white shadow-lg transition hover:bg-action-hover hover:scale-105 sm:bottom-5 sm:left-6">{open ? <X className="size-6" /> : <Bot className="size-6" />}</button>
       <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="focus-ring fixed bottom-5 right-6 z-[65] hidden size-12 place-items-center rounded-full border border-white/60 bg-action text-white shadow-lg transition hover:bg-action-hover sm:grid" aria-label="Chat with our team on WhatsApp" title="Chat on WhatsApp"><MessageCircle className="size-6" /></a>
     </>
   );
