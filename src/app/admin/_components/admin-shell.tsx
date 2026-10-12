@@ -31,7 +31,8 @@ export function AdminShell({ userName, children }: { userName: string; children:
     } catch { setError("Could not sign out. Please try again."); }
   }
   const navigation = <>
-    <div className="flex items-center justify-between px-5 py-5"><div className="flex items-center gap-3"><span className="grid size-8 place-items-center rounded-lg border border-line-strong bg-surface text-xs font-bold">PM</span><div><strong className="block text-[13px]">Pak Multilinks</strong><span className="text-[11px] text-muted">Store administration</span></div></div><button onClick={() => menu.current?.close()} className="p-2 lg:hidden" aria-label="Close menu"><X className="size-4" /></button></div>
+    <div className="flex items-center justify-end px-3 py-2 lg:hidden"><button onClick={() => menu.current?.close()} className="p-2" aria-label="Close menu"><X className="size-4" /></button></div>
+    <div className="pt-3 lg:pt-4" />
     <nav aria-label="Administration" className="space-y-1 px-3">{links.map(({ href, label, icon: Icon }) => {
       const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
       return <Link key={href} href={href} aria-current={active ? "page" : undefined} onClick={() => menu.current?.close()} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] transition ${active ? "bg-surface font-semibold text-content shadow-sm" : "text-secondary hover:bg-disabled/70"}`}><Icon className="size-[17px] shrink-0" />{label}</Link>;
