@@ -151,30 +151,23 @@ export function ProductCard({
 
       <div
         className={cn(
-          "product-card-actions mt-auto border-t border-line pt-2 sm:border-line sm:pt-3",
+          "product-card-actions mt-auto border-t border-line/70 pt-2.5 sm:pt-3",
           layout === "list" &&
             "sm:col-span-2 lg:col-span-1 lg:flex lg:flex-col lg:justify-center lg:border-l lg:border-t-0 lg:p-6",
         )}
       >
-        <div className="md:hidden">
+        <div className="grid grid-cols-[1fr_auto] gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={handleAddToCart}
             disabled={isUnavailable}
-            className="mobile-add-to-cart focus-ring"
-            aria-label={isUnavailable ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
-          >
-            {added ? <Check className="size-4" aria-hidden="true" /> : <ShoppingCart className="size-4" aria-hidden="true" />}
-            {isUnavailable ? "Unavailable" : added ? "Added" : "Add to cart"}
-          </button>
-        </div>
-
-        <div className="hidden md:grid md:grid-cols-[1fr_auto] md:gap-2">
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={isUnavailable}
-            className="commerce-button commerce-button-primary inline-flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:border-line disabled:bg-disabled"
+            className={cn(
+              "focus-ring inline-flex h-10 items-center justify-center gap-1.5 rounded-xl px-3 text-xs sm:text-sm font-bold transition active:scale-95",
+              added
+                ? "bg-[#114b2f] text-white shadow-xs"
+                : "bg-action text-white hover:bg-action-hover shadow-xs",
+              isUnavailable && "cursor-not-allowed bg-disabled text-muted",
+            )}
             aria-label={
               isUnavailable
                 ? `${product.name} is out of stock`
@@ -182,7 +175,7 @@ export function ProductCard({
             }
           >
             {added ? <Check className="size-4" /> : <ShoppingCart className="size-4" />}
-            {isUnavailable ? "Unavailable" : added ? "Added to cart" : "Add to cart"}
+            <span>{isUnavailable ? "Out of Stock" : added ? "Added ✓" : "Add to cart"}</span>
           </button>
           <ProductQuickView
             product={product}

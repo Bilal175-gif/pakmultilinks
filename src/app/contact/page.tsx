@@ -26,7 +26,7 @@ export default function ContactPage() {
             return (
               <article
                 key={contact.email}
-                className="group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-4 shadow-[0_10px_35px_rgba(21,65,42,.06)] transition-all duration-300 hover:border-action/40 hover:shadow-xl sm:p-5"
+                className="contact-card group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-4 shadow-[0_10px_35px_rgba(21,65,42,.06)] transition-all duration-300 hover:border-action/40 hover:shadow-xl sm:p-5"
               >
                 <div className="overflow-hidden rounded-[1.4rem] border border-line/60 bg-white shadow-sm transition-transform duration-300 group-hover:scale-[1.01]">
                   <Image
@@ -71,7 +71,7 @@ export default function ContactPage() {
           })}
         </div>
 
-        <section className="mt-5 overflow-hidden rounded-[2rem] border border-line bg-surface shadow-[0_10px_35px_rgba(21,65,42,.06)]" aria-labelledby="office-location-title">
+        <section className="contact-map mt-5 overflow-hidden rounded-[2rem] border border-line bg-surface shadow-[0_10px_35px_rgba(21,65,42,.06)]" aria-labelledby="office-location-title">
           <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <div className="flex items-start gap-4 sm:items-center">
               <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-surface-soft text-accent"><MapPin className="size-5" /></span>
@@ -91,7 +91,7 @@ export default function ContactPage() {
           />
         </section>
 
-        <div className="mt-10 rounded-[2rem] bg-action p-7 text-white sm:flex sm:items-center sm:justify-between sm:p-10"><div><h2 className="text-2xl font-black">Request a business quotation</h2><p className="mt-2 text-sm leading-6 text-[#c9dfd1]">Send us your product quantities and delivery city for review.</p></div><Link href="/request-quote" className="commerce-button mt-6 inline-flex items-center justify-center border border-white bg-surface text-accent sm:mt-0">Get a quote</Link></div>
+        <div className="contact-cta mt-10 rounded-[2rem] bg-action p-7 text-white sm:flex sm:items-center sm:justify-between sm:p-10"><div><h2 className="text-2xl font-black">Request a business quotation</h2><p className="mt-2 text-sm leading-6 text-[#c9dfd1]">Send us your product quantities and delivery city for review.</p></div><Link href="/request-quote" className="commerce-button mt-6 inline-flex items-center justify-center border border-white bg-surface text-accent sm:mt-0">Get a quote</Link></div>
       </div>
     </section>
   </>;

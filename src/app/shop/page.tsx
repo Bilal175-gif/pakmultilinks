@@ -5,7 +5,7 @@ import { isDevelopmentProduct, listPublicCategories, listPublicProducts } from "
 import { absoluteUrl, breadcrumbStructuredData, safeJsonLd } from "@/lib/seo";
 
 type ShopPageProps = {
-  searchParams: Promise<{ q?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; category?: string | string[] }>;
 };
 
 export async function generateMetadata({ searchParams }: ShopPageProps): Promise<Metadata> {
@@ -19,6 +19,7 @@ export async function generateMetadata({ searchParams }: ShopPageProps): Promise
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
   const query = typeof params.q === "string" ? params.q : params.q?.[0] ?? "";
+  const categoryParam = typeof params.category === "string" ? params.category : params.category?.[0] ?? "";
   const [products, categories] = await Promise.all([
     listPublicProducts(),
     listPublicCategories(),
@@ -32,7 +33,15 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   return (
     <>
       {!query && indexableProducts.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }} />}
-      <CatalogExplorer key={query} products={products} categoryOptions={categories} initialQuery={query} title={query ? `Products matching “${query}”` : "Shop all products"} description={query ? "Refine the results by category, brand, price or availability." : "Browse wholesale hygiene products supplied in cartons. Packing and pricing are confirmed before fulfilment."} />
+      <CatalogExplorer
+        key={`${query}-${categoryParam}`}
+        products={products}
+        categoryOptions={categories}
+        initialQuery={query}
+        fixedCategorySlug={categoryParam}
+        title={query ? `Products matching “${query}”` : "Shop all products"}
+        description={query ? "Refine the results by category, brand, price or availability." : "Browse wholesale hygiene products supplied in cartons. Packing and pricing are confirmed before fulfilment."}
+      />
     </>
   );
 }

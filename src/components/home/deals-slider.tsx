@@ -42,7 +42,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
         role="region"
         aria-roledescription="carousel"
         aria-label="Current deals"
-        className="relative isolate aspect-[16/9] w-full overflow-hidden bg-surface-soft"
+        className="deals-slider-viewport relative isolate aspect-[3/4] sm:aspect-[1024/434] w-full overflow-hidden bg-surface-soft"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
@@ -78,15 +78,31 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
             }`}
           >
             <div className="relative size-full">
-              <Image
-                src={deal.imageUrl}
-                alt={deal.alt}
-                fill
-                priority={index === 0}
-                unoptimized={deal.imageUrl.startsWith("https://")}
-                sizes="(max-width: 768px) 100vw, (max-width: 1400px) 100vw, 1920px"
-                className="object-cover object-center"
-              />
+              {/* Mobile vertical image */}
+              <div className="relative block size-full sm:hidden">
+                <Image
+                  src={deal.mobileImageUrl || deal.imageUrl}
+                  alt={deal.alt}
+                  fill
+                  priority={index === 0}
+                  unoptimized={Boolean(deal.mobileImageUrl?.startsWith("https://") || deal.imageUrl.startsWith("https://"))}
+                  sizes="100vw"
+                  className="object-cover object-center"
+                />
+              </div>
+
+              {/* Desktop horizontal image */}
+              <div className="relative hidden size-full sm:block">
+                <Image
+                  src={deal.imageUrl}
+                  alt={deal.alt}
+                  fill
+                  priority={index === 0}
+                  unoptimized={deal.imageUrl.startsWith("https://")}
+                  sizes="(min-width: 640px) 100vw, 1920px"
+                  className="object-cover object-center"
+                />
+              </div>
             </div>
             <span className="sr-only">{deal.title}</span>
           </Link>
@@ -121,7 +137,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
               ))}
             </div>
 
-            {/* Desktop Side Chevrons */}
+            {/* Side Chevrons - available on both mobile and desktop */}
             <button
               type="button"
               onClick={(e) => {
@@ -130,9 +146,9 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                 select(active - 1);
               }}
               aria-label="Previous offer"
-              className="focus-ring absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 place-items-center rounded-full bg-black/35 p-2 text-white backdrop-blur-md transition hover:bg-black/60 sm:grid"
+              className="focus-ring absolute left-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md transition hover:bg-black/60 sm:left-3 sm:size-10"
             >
-              <ChevronLeft className="size-5" />
+              <ChevronLeft className="size-4 sm:size-5" />
             </button>
             <button
               type="button"
@@ -142,9 +158,9 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                 select(active + 1);
               }}
               aria-label="Next offer"
-              className="focus-ring absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 place-items-center rounded-full bg-black/35 p-2 text-white backdrop-blur-md transition hover:bg-black/60 sm:grid"
+              className="focus-ring absolute right-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md transition hover:bg-black/60 sm:right-3 sm:size-10"
             >
-              <ChevronRight className="size-5" />
+              <ChevronRight className="size-4 sm:size-5" />
             </button>
           </>
         )}

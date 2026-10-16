@@ -109,7 +109,7 @@ export function FloatingSupport() {
   return (
     <>
       {open && (
-        <section ref={panelRef} id="support-assistant" role="dialog" aria-modal="false" aria-labelledby="support-assistant-title" className="fixed bottom-[5.25rem] left-3 z-[70] flex h-[min(25rem,calc(100dvh-6rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-md border border-line bg-surface shadow-lg sm:left-6">
+        <section ref={panelRef} id="support-assistant" role="dialog" aria-modal="false" aria-labelledby="support-assistant-title" className="fixed bottom-[5.5rem] left-3 z-[70] flex h-[min(26rem,calc(100dvh-7.5rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl sm:bottom-[5.25rem] sm:left-6 sm:h-[min(26rem,calc(100dvh-6rem))]">
           <div className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3 text-content">
             <div className="relative grid size-10 shrink-0 place-items-center rounded-full bg-action text-white">
               <Bot className="size-5" />
@@ -159,7 +159,7 @@ export function FloatingSupport() {
           </div>
         </section>
       )}
-      <button ref={launcherRef} type="button" onClick={() => open ? close() : setOpen(true)} aria-expanded={open} aria-controls={open ? "support-assistant" : undefined} aria-label={open ? "Close chat" : "Chat with us"} className="focus-ring fixed bottom-16 left-3 z-[65] grid size-14 place-items-center rounded-full bg-action text-white shadow-lg transition hover:bg-action-hover hover:scale-105 sm:bottom-5 sm:left-6">{open ? <X className="size-6" /> : <Bot className="size-6" />}</button>
+      <button ref={launcherRef} type="button" onClick={() => open ? close() : setOpen(true)} aria-expanded={open} aria-controls={open ? "support-assistant" : undefined} aria-label={open ? "Close chat" : "Chat with us"} className="focus-ring fixed bottom-[5.5rem] left-3 z-[65] grid size-14 place-items-center rounded-full bg-action text-white shadow-lg transition hover:bg-action-hover hover:scale-105 sm:bottom-5 sm:left-6">{open ? <X className="size-6" /> : <Bot className="size-6" />}</button>
       <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="focus-ring fixed bottom-5 right-6 z-[65] hidden size-12 place-items-center rounded-full border border-white/60 bg-action text-white shadow-lg transition hover:bg-action-hover sm:grid" aria-label="Chat with our team on WhatsApp" title="Chat on WhatsApp"><MessageCircle className="size-6" /></a>
     </>
   );

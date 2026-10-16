@@ -25,24 +25,26 @@ export default async function HomePage() {
         <div className="border-y border-line bg-surface">
           <div className="site-shell grid grid-cols-3 divide-x divide-line py-3 sm:py-5">
             {[
-              { Icon: PackageCheck, title: "Carton Supply", fullTitle: "Supplied by the carton", text: "Packing details on every product" },
-              { Icon: Truck, title: "Bulk Delivery", fullTitle: "Business orders welcome", text: "Delivery arranged with your order" },
-              { Icon: Phone, title: "Live Support", fullTitle: "A person to talk to", text: company.phone },
+              { Icon: PackageCheck, title: "Carton Supply", fullTitle: "Supplied by the carton", text: "Wholesale packing details" },
+              { Icon: Truck, title: "Bulk Delivery", fullTitle: "Business orders welcome", text: "Lahore warehouse dispatch" },
+              { Icon: Phone, title: "Live Support", fullTitle: "Direct sales desk", text: company.phone },
             ].map(({ Icon, title, fullTitle, text }) => (
-              <div key={title} className="flex flex-col items-center justify-center gap-1 px-1.5 text-center sm:flex-row sm:gap-3 sm:text-left sm:px-4">
-                <Icon className="size-4 shrink-0 text-action sm:size-5 sm:text-accent" strokeWidth={1.5} />
-                <div>
+              <div key={title} className="flex flex-col items-center justify-center gap-1.5 px-1 text-center sm:flex-row sm:gap-3 sm:text-left sm:px-4">
+                <span className="grid size-7 sm:size-9 place-items-center rounded-xl bg-action/10 text-action shrink-0">
+                  <Icon className="size-3.5 sm:size-4" strokeWidth={2} />
+                </span>
+                <div className="min-w-0">
                   <p className="text-[11px] font-bold text-content sm:text-xs">
                     <span className="sm:hidden">{title}</span>
                     <span className="hidden sm:inline">{fullTitle}</span>
                   </p>
-                  <p className="hidden text-[11px] text-muted sm:block">{text}</p>
+                  <p className="text-[10px] text-muted sm:text-[11px] truncate">{text}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-        <div className="border-b border-line bg-surface-soft py-3 sm:py-4">
+        <div className="rate-list-bar border-b border-line bg-surface-soft py-3 sm:py-4">
           <div className="site-shell flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between text-sm">
             <div className="flex items-center gap-2">
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent/15 px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-accent">
@@ -74,7 +76,7 @@ export default async function HomePage() {
           <div className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted">Find what you need</p>
-              <h2 className="mt-1 font-serif text-2xl text-content sm:text-4xl">Shop by category</h2>
+              <h2 className="mobile-section-title mt-1 font-serif text-2xl text-content sm:text-4xl">Shop by category</h2>
             </div>
             <Link href="/shop" className="flex items-center gap-1.5 text-xs font-bold text-action hover:underline">
               Shop all<ArrowRight className="size-3.5" />
@@ -105,7 +107,7 @@ export default async function HomePage() {
             <div className="mb-8 flex items-end justify-between gap-4">
               <div>
                 <p className="text-xs text-muted">For your everyday spaces</p>
-                <h2 className="mt-2 font-serif text-3xl text-content sm:text-4xl">From our collection</h2>
+                <h2 className="mobile-section-title mt-2 font-serif text-3xl text-content sm:text-4xl">From our collection</h2>
               </div>
               <Link href="/shop" className="text-xs underline underline-offset-4">View all products</Link>
             </div>

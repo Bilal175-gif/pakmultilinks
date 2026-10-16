@@ -34,8 +34,6 @@ const nav = [
   { href: "/contact", label: "Contact" },
 ];
 
-const defaultAnnouncement = "Tissue & hygiene essentials · Wholesale supply from Lahore";
-
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -45,9 +43,6 @@ export function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
-  const [runtimeDetails, setRuntimeDetails] = useState({
-    announcement: defaultAnnouncement,
-  });
   const [searchProducts, setSearchProducts] = useState<Product[]>(products);
   const [navigationCategories, setNavigationCategories] = useState<Category[]>(categories);
   const searchWrap = useRef<HTMLDivElement>(null);
@@ -144,27 +139,6 @@ export function Header() {
     return () => controller.abort();
   }, []);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("/api/settings/public", { signal: controller.signal })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((payload: unknown) => {
-        if (!payload || typeof payload !== "object" || !("settings" in payload)) return;
-        const settings = (payload as { settings?: unknown }).settings;
-        if (!settings || typeof settings !== "object") return;
-        const values = settings as { announcement?: unknown };
-        setRuntimeDetails({
-          announcement:
-            typeof values.announcement === "string" && values.announcement.trim() &&
-            !["Corporate hygiene supplies · Lahore", "Corporate and bulk enquiries are welcome."].includes(values.announcement.trim())
-              ? values.announcement.trim()
-              : defaultAnnouncement,
-        });
-      })
-      .catch(() => undefined);
-    return () => controller.abort();
-  }, []);
-
   function submitSearch(event: FormEvent) {
     event.preventDefault();
     const clean = query.trim();
@@ -176,9 +150,21 @@ export function Header() {
   return (
     <>
       <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-24 rounded-lg bg-surface px-4 py-2 text-sm font-bold text-accent shadow-xl focus:translate-y-0">Skip to content</a>
+
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
 
         <div className="site-shell relative z-30 flex h-16 items-center gap-2 md:h-[86px] md:gap-3 lg:gap-7">
+          {/* Mobile Hamburger Menu Button - Gives mobile users full access to all links, collections and functions */}
+          <button
+            type="button"
+            onClick={() => mobileDialogRef.current?.showModal()}
+            className="focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent transition hover:bg-surface-soft active:scale-95 md:hidden"
+            aria-label="Open menu"
+            aria-haspopup="dialog"
+          >
+            <Menu className="size-5" />
+          </button>
+
           <BrandMark />
 
           <div ref={searchWrap} className="relative z-50 ml-auto hidden min-w-0 max-w-[430px] flex-1 md:block">
@@ -212,6 +198,18 @@ export function Header() {
 
           {/* Header Action Buttons (Aligned to the Right) */}
           <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+            {/* Quick WhatsApp button on mobile */}
+            <a
+              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-[#25D366]/10 text-[#128C7E] transition hover:bg-[#25D366] hover:text-white md:hidden"
+              aria-label="Direct WhatsApp"
+              title="WhatsApp"
+            >
+              <WhatsAppIcon className="size-4" />
+            </a>
+
             <ThemeSwitch compact />
             <Link
               href="/account"
@@ -223,7 +221,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => cartDialogRef.current?.showModal()}
-              className="commerce-icon-button focus-ring relative grid size-10 shrink-0 place-items-center rounded-xl bg-action text-white transition hover:bg-action sm:size-11"
+              className="commerce-icon-button focus-ring relative grid size-10 shrink-0 place-items-center rounded-xl bg-action text-white transition hover:bg-action active:scale-95 sm:size-11"
               aria-label={`Open bulk cart with ${itemCount} cartons`}
               aria-haspopup="dialog"
             >
@@ -238,7 +236,7 @@ export function Header() {
         </div>
 
         {/* Mobile Search Bar - Instant access for mobile corporate buyers */}
-        <div className="border-t border-line/60 bg-surface px-4 py-2 md:hidden">
+        <div className="relative border-t border-line/60 bg-surface px-4 py-2 md:hidden">
           <form onSubmit={submitSearch} role="search" className="relative">
             <label htmlFor="mobile-site-search" className="sr-only">Search products</label>
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
@@ -247,16 +245,51 @@ export function Header() {
               aria-label="Search the catalog"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
+              onFocus={() => setSearchFocused(true)}
               placeholder="Search products, SKU or category..."
-              className="h-10 w-full rounded-xl border border-line bg-surface-soft pl-10 pr-16 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
+              className="h-10 w-full rounded-xl border border-line bg-surface-soft pl-10 pr-20 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
             />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="absolute right-14 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-accent"
+                aria-label="Clear search"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
             <button
               type="submit"
-              className="focus-ring absolute right-1 top-1 bottom-1 rounded-lg px-2.5 text-xs font-bold text-accent hover:bg-surface"
+              className="focus-ring absolute right-1 top-1 bottom-1 rounded-lg bg-action px-3 text-xs font-bold text-white shadow-xs"
             >
               Search
             </button>
           </form>
+
+          {/* Mobile Auto-Complete Search Suggestions */}
+          {searchFocused && suggestions.length > 0 && (
+            <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-2xl border border-line bg-surface p-2 shadow-2xl">
+              <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted">Suggested Products</div>
+              <ul>
+                {suggestions.map((product) => (
+                  <li key={product.id}>
+                    <Link
+                      href={`/product/${product.slug}`}
+                      className="flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-xs hover:bg-surface-soft"
+                      onClick={() => setSearchFocused(false)}
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate font-bold text-accent">{product.name}</span>
+                        <span className="block text-[10px] text-muted">{product.category} · {product.sku}</span>
+                      </span>
+                      <span className="shrink-0 font-bold text-accent">{formatProductPrice(product)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         <nav className="relative z-10 hidden border-t border-line lg:block" aria-label="Main navigation">

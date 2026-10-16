@@ -27,8 +27,8 @@ export function RouteShell({ children }: Readonly<{ children: React.ReactNode }>
           <main id="main-content" className="min-h-[60vh]">
             {children}
           </main>
-          <div className="hidden md:block"><Footer /><FloatingSupport /></div>
-          <MobileFooter />
+          <Footer />
+          <FloatingSupport />
           <MobileSalesBar />
         </div>
       </StoreProvider>
