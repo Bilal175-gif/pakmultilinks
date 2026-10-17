@@ -213,6 +213,126 @@ function matchesSearchQuery(item: RateItem, rawQuery: string): boolean {
           </div>
         </header>
 
+        {/* Brand PDF Downloads & Install Center */}
+        <section aria-labelledby="brand-pdf-downloads-heading" className="my-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 id="brand-pdf-downloads-heading" className="text-xl font-extrabold text-content">
+                Brand Rate Lists & PDF Downloads
+              </h2>
+              <p className="text-xs text-secondary mt-0.5">
+                Download verified brand PDF rate cards directly to your device or explore live rates below.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Rose Petal Card */}
+            <div className="group flex flex-col justify-between rounded-2xl border border-line bg-surface p-5 shadow-xs transition-all hover:border-[#8c142e] hover:shadow-md">
+              <div className="flex items-start gap-4">
+                <div className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-soft p-1">
+                  <Image
+                    src="https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/ad5f57f1-33d0-4e0b-886d-6c2e9bc9e803.png"
+                    alt="Rose Petal Rate List"
+                    fill
+                    className="object-contain p-1"
+                    unoptimized
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-content">Rose Petal</span>
+                    <span className="rounded-full bg-[#8c142e] px-2 py-0.5 text-[10px] font-bold text-white">
+                      Official Tissues
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-secondary">
+                    Facial boxes, Pop-ups, Soft Packs, Party Packs, Zzoop Kitchen rolls & Maxi rolls.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-3">
+                <span className="text-xs font-semibold text-muted">28+ items in catalogue</span>
+                <a
+                  href="/downloads/rose-petal-rate-list.pdf"
+                  download="Rose-Petal-Wholesale-Rate-List.pdf"
+                  className="focus-ring inline-flex items-center gap-1.5 rounded-xl bg-[#8c142e] px-3.5 py-2 text-xs font-bold text-white transition hover:opacity-90 shadow-xs"
+                >
+                  <Download className="size-3.5" />
+                  <span>Download PDF</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Nozomi Card */}
+            <div className="group flex flex-col justify-between rounded-2xl border border-line bg-surface p-5 shadow-xs transition-all hover:border-[#1b4d3e] hover:shadow-md">
+              <div className="flex items-start gap-4">
+                <div className="relative size-16 shrink-0 overflow-hidden rounded-xl border border-line bg-surface-soft p-1">
+                  <Image
+                    src="/rate-products/nozomi-facial-tissue-box.jpg"
+                    alt="Nozomi Rate List"
+                    fill
+                    className="object-contain p-1"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-content">Nozomi</span>
+                    <span className="rounded-full bg-[#1b4d3e] px-2 py-0.5 text-[10px] font-bold text-white">
+                      Pure Tissues
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-secondary">
+                    Commercial Pop-Up 100s, Luxury 150s, Twin Soft Packs, Autocut Towels & Toilet rolls.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-3">
+                <span className="text-xs font-semibold text-muted">10+ items in catalogue</span>
+                <a
+                  href="/downloads/nozomi-rate-list.pdf"
+                  download="Nozomi-Tissues-Rate-List.pdf"
+                  className="focus-ring inline-flex items-center gap-1.5 rounded-xl bg-[#1b4d3e] px-3.5 py-2 text-xs font-bold text-white transition hover:opacity-90 shadow-xs"
+                >
+                  <Download className="size-3.5" />
+                  <span>Download PDF</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Master PDF Card */}
+            <div className="group flex flex-col justify-between rounded-2xl border border-line bg-surface p-5 shadow-xs transition-all hover:border-action hover:shadow-md">
+              <div className="flex items-start gap-4">
+                <div className="grid size-16 shrink-0 place-items-center rounded-xl border border-line bg-surface-soft text-action">
+                  <FileDown className="size-8" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-content">Master Catalog</span>
+                    <span className="rounded-full bg-action px-2 py-0.5 text-[10px] font-bold text-white">
+                      All Brands
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-secondary">
+                    Full B2B quotation document including all tissues, aerosols, chemicals & disposables.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t border-line/60 pt-3">
+                <span className="text-xs font-semibold text-muted">74+ wholesale items</span>
+                <a
+                  href="/downloads/pak-multilinks-master-rate-list.pdf"
+                  download="Pak-Multilinks-Master-Rate-List.pdf"
+                  className="focus-ring inline-flex items-center gap-1.5 rounded-xl bg-action px-3.5 py-2 text-xs font-bold text-white transition hover:bg-action-hover shadow-xs"
+                >
+                  <Download className="size-3.5" />
+                  <span>Download Master PDF</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Company filter tabs */}
         <div className={styles.companyTabs} role="tablist" aria-label="Company Brand Filter">
           {RATE_COMPANIES.map((comp) => {
