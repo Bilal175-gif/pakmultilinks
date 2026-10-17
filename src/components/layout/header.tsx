@@ -16,6 +16,7 @@ import { ThemeSwitch } from "@/components/theme/theme-switch";
 
 import { BrandMark } from "./brand-mark";
 import { CategoryNavigation } from "./category-navigation";
+import { BrandNavigation } from "./brand-navigation";
 
 function WhatsAppIcon({ className = "size-3.5" }: { className?: string }) {
   return (
@@ -301,10 +302,24 @@ export function Header() {
                 categoryMenuRef.current?.querySelector("summary")?.focus();
               }
             }}>
-              <summary className="focus-ring flex h-full list-none items-center gap-1 rounded-md text-sm font-bold text-accent hover:text-accent">Collections <ChevronDown className="size-3.5 transition group-open:rotate-180" /></summary>
-              <div className="absolute inset-x-0 top-full max-h-[calc(100dvh-190px)] overflow-y-auto border border-line bg-surface px-8 py-8 shadow-sm">
-                <div className="mb-5 flex items-center justify-between border-b border-line pb-4"><p className="text-sm font-medium text-content">Collections</p><Link href="/shop" onClick={() => categoryMenuRef.current?.removeAttribute("open")} className="focus-ring rounded-lg px-3 py-2 text-sm font-bold text-accent">Shop all products →</Link></div>
-                <CategoryNavigation categories={navigationCategories} onNavigate={() => categoryMenuRef.current?.removeAttribute("open")} />
+              <summary className="focus-ring flex h-full list-none items-center gap-1.5 rounded-md text-sm font-bold text-accent hover:text-action cursor-pointer">
+                Brands <ChevronDown className="size-3.5 transition group-open:rotate-180" />
+              </summary>
+              <div className="absolute inset-x-0 top-full max-h-[calc(100dvh-180px)] overflow-y-auto border border-line bg-surface px-8 py-8 shadow-xl">
+                <div className="mb-6 flex items-center justify-between border-b border-line pb-4">
+                  <div>
+                    <p className="text-base font-extrabold text-content">Shop by Brand</p>
+                    <p className="text-xs text-secondary">Official Rose Petal & Nozomi Tissue Collections with Direct Wholesale Rates</p>
+                  </div>
+                  <Link
+                    href="/shop"
+                    onClick={() => categoryMenuRef.current?.removeAttribute("open")}
+                    className="focus-ring rounded-xl bg-surface-soft border border-line px-4 py-2 text-xs font-bold text-accent transition hover:border-action hover:text-action"
+                  >
+                    Browse all products →
+                  </Link>
+                </div>
+                <BrandNavigation onNavigate={() => categoryMenuRef.current?.removeAttribute("open")} />
               </div>
             </details>
             {nav.slice(2).map((item) => <NavLink key={item.href} {...item} active={pathname.startsWith(item.href)} />)}
@@ -367,6 +382,8 @@ export function Header() {
             <nav className="mt-6 grid gap-1" aria-label="Mobile navigation">
               {nav.map((item) => <Link key={item.href} href={item.href} onClick={() => mobileDialogRef.current?.close()} className="rounded-xl px-3 py-3 text-[15px] font-bold text-accent hover:bg-surface-soft">{item.label}</Link>)}
             </nav>
+            <p className="mb-2 mt-6 px-3 text-xs font-extrabold uppercase tracking-[0.14em] text-muted">Shop by Brand</p>
+            <BrandNavigation mobile onNavigate={() => mobileDialogRef.current?.close()} />
             <p className="mb-2 mt-6 px-3 text-xs font-extrabold uppercase tracking-[0.14em] text-muted">Shop categories</p>
             <CategoryNavigation categories={navigationCategories} mobile onNavigate={() => mobileDialogRef.current?.close()} />
             {/* Mobile WhatsApp Quick Buttons */}

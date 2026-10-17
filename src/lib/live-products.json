@@ -1,0 +1,587 @@
+[
+  {
+    "name": "Rose Petal Pocket Pack Purple",
+    "slug": "rose-petal-pocket-pack-purple",
+    "sku": "PM-066",
+    "price": 65,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/f291be22-0e41-425f-8dc8-3a7d65aa1b5f.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Pocket Pack Purple"
+  },
+  {
+    "name": "Rose Petal Party Pack",
+    "slug": "rose-petal-party-pack",
+    "sku": "PM-065",
+    "price": 365,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/f0d3daf5-69e1-481b-83ce-bdfd2224be9c.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Party Pack"
+  },
+  {
+    "name": "Dry Dust Mop Blue",
+    "slug": "dry-dust-mop-blue",
+    "sku": "PM-064",
+    "price": 849,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/f082bf43-952c-4455-9b04-8fbcaaee44d1.png",
+    "category": "Floor & Surface Care",
+    "description": "Dry Dust Mop Blue"
+  },
+  {
+    "name": "Rose Petal Party Pack Multipurpose Tissue",
+    "slug": "rose-petal-party-pack-multipurpose-tissue",
+    "sku": "PM-063",
+    "price": 375,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/ec2fcda2-aed6-4b37-a441-38bc48b0029a.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Party Pack Multipurpose Tissue"
+  },
+  {
+    "name": "Disposable Plastic Plates Wrapped",
+    "slug": "disposable-plastic-plates-wrapped",
+    "sku": "PM-062",
+    "price": 200,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/e21bc403-4d64-4a0e-a8da-b8d6c8296570.jpg",
+    "category": "Disposable Items",
+    "description": "Disposable Plastic Plates Wrapped"
+  },
+  {
+    "name": "Disposable Paper Plates Fluted",
+    "slug": "disposable-paper-plates-fluted",
+    "sku": "PM-061",
+    "price": 400,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/dcb91384-973e-4732-be8c-dcf1ccc0255e.jpg",
+    "category": "Disposable Items",
+    "description": "Disposable Paper Plates Fluted"
+  },
+  {
+    "name": "Rose Petal Wet Wipes Rose-Scent Freshen Up",
+    "slug": "rose-petal-wet-wipes-rose-scent-freshen-up",
+    "sku": "PM-060",
+    "price": 270,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/db2f3bc5-c28b-452a-8392-fb81b32767ae.png",
+    "category": "Disposable Items",
+    "description": "Rose Petal Wet Wipes Rose-Scent Freshen Up"
+  },
+  {
+    "name": "Vim Dishwashing Powder 430g",
+    "slug": "vim-dishwashing-powder-430g",
+    "sku": "PM-059",
+    "price": 300,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/d7b99157-2e5d-4b3c-93ad-20425ec2e774.png",
+    "category": "Floor & Surface Care",
+    "description": "Vim Dishwashing Powder 430g"
+  },
+  {
+    "name": "Romi Bathroom Tiki",
+    "slug": "romi-bathroom-tiki",
+    "sku": "PM-058",
+    "price": 150,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/c26de9ec-c078-47b0-89c5-d27a8bce448e.png",
+    "category": "Hand Wash & Hygiene",
+    "description": "Romi Bathroom Tiki"
+  },
+  {
+    "name": "Diluted Phenyl 2.75 L",
+    "slug": "diluted-phenyl-2.75-l",
+    "sku": "PM-057",
+    "price": 0,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/b1fecd16-1b91-4606-8cc5-8c54a5f5f7f3.png",
+    "category": "Floor & Surface Care",
+    "description": "Diluted Phenyl 2.75 L"
+  },
+  {
+    "name": "Harpic Power Plus 10X Toilet Cleaner 450ml",
+    "slug": "harpic-power-plus-10x-toilet-cleaner-450ml",
+    "sku": "PM-056",
+    "price": 650,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/b135a8bf-aec0-40f2-b0e2-8e6baaa52326.png",
+    "category": "Tissue Rolls",
+    "description": "Harpic Power Plus 10X Toilet Cleaner 450ml"
+  },
+  {
+    "name": "Rose Petal Essential Tissues Peach",
+    "slug": "rose-petal-essential-tissues-peach",
+    "sku": "PM-055",
+    "price": 255,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/ad5f57f1-33d0-4e0b-886d-6c2e9bc9e803.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Essential Tissues Peach"
+  },
+  {
+    "name": "Paper Coffee Cups with Lids",
+    "slug": "paper-coffee-cups-with-lids",
+    "sku": "PM-054",
+    "price": 900,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/a9a2a002-6d8b-4f0e-b4d2-44a5b7abbefb.jpg",
+    "category": "Disposable Items",
+    "description": "Paper Coffee Cups with Lids"
+  },
+  {
+    "name": "Large Steel Wiper",
+    "slug": "large-steel-wiper",
+    "sku": "PM-053",
+    "price": 799,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/9d455623-5344-43f9-8a3e-2a544571f0a3.png",
+    "category": "Floor & Surface Care",
+    "description": "Large Steel Wiper"
+  },
+  {
+    "name": "Rose Petal Perfumed Tissues Red",
+    "slug": "rose-petal-perfumed-tissues-red",
+    "sku": "PM-052",
+    "price": 265,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/9b62b985-ba85-40b2-a924-c5818d3e65f1.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Perfumed Tissues Red"
+  },
+  {
+    "name": "Rose Petal Pocket Pack Teal",
+    "slug": "rose-petal-pocket-pack-teal",
+    "sku": "PM-051",
+    "price": 65,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/977b0683-f90f-4917-a762-288eeb5e87b8.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Pocket Pack Teal"
+  },
+  {
+    "name": "Rose Petal Party Pack Napkins",
+    "slug": "rose-petal-party-pack-napkins",
+    "sku": "PM-050",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/96be6cbb-584a-4db4-a585-8a6a9823de93.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Party Pack Napkins"
+  },
+  {
+    "name": "Disposable Cutlery Set",
+    "slug": "disposable-cutlery-set",
+    "sku": "PM-049",
+    "price": 400,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/9379e6bc-d0ae-40fa-b50e-973fe9df4268.jpg",
+    "category": "Disposable Items",
+    "description": "Disposable Cutlery Set"
+  },
+  {
+    "name": "Air Freshener Fresh Linen 300ml",
+    "slug": "air-freshener-fresh-linen-300ml",
+    "sku": "PM-048",
+    "price": 400,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/92b646b5-8b8d-4554-86df-d9000b0039cf.png",
+    "category": "Hand Wash & Hygiene",
+    "description": "Air Freshener Fresh Linen 300ml"
+  },
+  {
+    "name": "Rose Petal Ciblure Tissues",
+    "slug": "rose-petal-ciblure-tissues",
+    "sku": "PM-047",
+    "price": 310,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/91c566d7-b9ef-444b-b0fd-6a8cfe390a14.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Ciblure Tissues"
+  },
+  {
+    "name": "Glint Glass Cleaner 500ml",
+    "slug": "glint-glass-cleaner-500ml",
+    "sku": "PM-046",
+    "price": 400,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/90810e46-bfb2-4003-ab7f-fd8d34726634.png",
+    "category": "Floor & Surface Care",
+    "description": "Glint Glass Cleaner 500ml"
+  },
+  {
+    "name": "Blue Nitrile Gloves",
+    "slug": "blue-nitrile-gloves",
+    "sku": "PM-045",
+    "price": 1850,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/84633e17-93f8-4c6c-ae60-9c999117ec20.jpg",
+    "category": "Disposable Items",
+    "description": "Blue Nitrile Gloves"
+  },
+  {
+    "name": "Rose Petal Zzoop Kitchen Towel",
+    "slug": "rose-petal-zzoop-kitchen-towel",
+    "sku": "PM-044",
+    "price": 309,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/7e707d53-99e0-4281-b042-b60dc0736316.png",
+    "category": "Paper Napkins",
+    "description": "Rose Petal Zzoop Kitchen Towel"
+  },
+  {
+    "name": "Rose Petal Pocket Pack White",
+    "slug": "rose-petal-pocket-pack-white",
+    "sku": "PM-043",
+    "price": 65,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/7e1347f0-f4f9-4f8e-8fa9-0d44f47bb354.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Pocket Pack White"
+  },
+  {
+    "name": "Bonus Detergent",
+    "slug": "bonus-detergent",
+    "sku": "PM-042",
+    "price": 450,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/694528fb-b330-4aef-81d3-5acd2adc60c9.png",
+    "category": "Floor & Surface Care",
+    "description": "Bonus Detergent"
+  },
+  {
+    "name": "Black Garbage Bags",
+    "slug": "black-garbage-bags",
+    "sku": "PM-041",
+    "price": 250,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/693f3b02-02a0-4c0a-bd4e-eb0751080013.jpg",
+    "category": "Disposable Items",
+    "description": "Black Garbage Bags"
+  },
+  {
+    "name": "Rose Petal Occasions Tissues",
+    "slug": "rose-petal-occasions-tissues",
+    "sku": "PM-040",
+    "price": 395,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/6854a28b-4bcc-4526-bf10-d88bd7dbe517.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Occasions Tissues"
+  },
+  {
+    "name": "Rose Petal Multicolor Tissues",
+    "slug": "rose-petal-multicolor-tissues",
+    "sku": "PM-039",
+    "price": 265,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/67267e8f-b78c-4da7-875a-c4bb78c839b2.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Multicolor Tissues"
+  },
+  {
+    "name": "Rose Petal Pocket Pack Blue",
+    "slug": "rose-petal-pocket-pack-blue",
+    "sku": "PM-038",
+    "price": 65,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/6301d152-4b94-4d8d-85e2-e1bb6ec05a62.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Pocket Pack Blue"
+  },
+  {
+    "name": "Rose Petal Hand Towel Economy Pack",
+    "slug": "rose-petal-hand-towel-economy-pack",
+    "sku": "PM-037",
+    "price": 300,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/5e4c6643-f82c-44c5-bce1-3a57ff0a9b0b.png",
+    "category": "Paper Napkins",
+    "description": "Rose Petal Hand Towel Economy Pack"
+  },
+  {
+    "name": "Rose Petal Pocket Pack",
+    "slug": "rose-petal-pocket-pack",
+    "sku": "PM-036",
+    "price": 65,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/57d21fe4-0a5b-4ec3-b4cf-f768e2f93603.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Pocket Pack"
+  },
+  {
+    "name": "Dettol Floor Cleaner Lemon Fresh 1000ml",
+    "slug": "dettol-floor-cleaner-lemon-fresh-1000ml",
+    "sku": "PM-035",
+    "price": 2000,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/5764be5a-0d2a-41c5-8fb5-93f13911ebe4.png",
+    "category": "Floor & Surface Care",
+    "description": "Dettol Floor Cleaner Lemon Fresh 1000ml"
+  },
+  {
+    "name": "Rose Petal Essential Tissues",
+    "slug": "rose-petal-essential-tissues",
+    "sku": "PM-034",
+    "price": 250,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/56c583ad-a50a-4d08-a35c-0c5f93cf364b.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Essential Tissues"
+  },
+  {
+    "name": "Rose Petal Flu Pack Tissues",
+    "slug": "rose-petal-flu-pack-tissues",
+    "sku": "PM-033",
+    "price": 330,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/56a03dfa-232b-4bf8-b0eb-a16d5d0cade5.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Flu Pack Tissues"
+  },
+  {
+    "name": "Disposable Paper Plates",
+    "slug": "disposable-paper-plates",
+    "sku": "PM-032",
+    "price": 300,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/560a7d3e-a041-4a09-b926-560ec81d9113.jpg",
+    "category": "Disposable Items",
+    "description": "Disposable Paper Plates"
+  },
+  {
+    "name": "Rose Petal Luxury Tissues",
+    "slug": "rose-petal-luxury-tissues",
+    "sku": "PM-031",
+    "price": 310,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/53ba4c66-c83a-49b5-b620-9a73ad964829.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Luxury Tissues"
+  },
+  {
+    "name": "Aluminum Foil Roll",
+    "slug": "aluminum-foil-roll",
+    "sku": "PM-029",
+    "price": 395,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/53351c12-ded2-43c0-a30a-f3ba92c01864.jpg",
+    "category": "Tissue Rolls",
+    "description": "Aluminum Foil Roll"
+  },
+  {
+    "name": "Rose Petal Hand Towel",
+    "slug": "rose-petal-hand-towel",
+    "sku": "PM-028",
+    "price": 265,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/4a68b0f9-f60f-4b66-8d51-48cf66896704.png",
+    "category": "Paper Napkins",
+    "description": "Rose Petal Hand Towel"
+  },
+  {
+    "name": "Rose Petal Zzoop Maxi Roll",
+    "slug": "rose-petal-zzoop-maxi-roll",
+    "sku": "PM-027",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/47e9fd7c-bb31-4e1b-ab00-089ce210fe5b.png",
+    "category": "Tissue Rolls",
+    "description": "Rose Petal Zzoop Maxi Roll"
+  },
+  {
+    "name": "White Paper Napkins Bulk Pack",
+    "slug": "white-paper-napkins-bulk-pack",
+    "sku": "PM-026",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/473e796c-df93-47bf-8b4e-4df25d9a6d8a.jpg",
+    "category": "Paper Napkins",
+    "description": "White Paper Napkins Bulk Pack"
+  },
+  {
+    "name": "Aluminum Foil Containers",
+    "slug": "aluminum-foil-containers",
+    "sku": "PM-025",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/bd0893be-1954-49a7-ac3c-6c4915864113.jpg",
+    "category": "Disposable Items",
+    "description": "Aluminum Foil Containers"
+  },
+  {
+    "name": "Paper Coffee Cups",
+    "slug": "paper-coffee-cups",
+    "sku": "PM-024",
+    "price": 600,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/b124c95f-f5e3-448d-8c09-432e05a2d462.jpg",
+    "category": "Disposable Items",
+    "description": "Paper Coffee Cups"
+  },
+  {
+    "name": "PopUp",
+    "slug": "popup",
+    "sku": "PM-023",
+    "price": 250,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/8e70831d-7c2f-41ce-a718-884de9247dd0.png",
+    "category": "Facial Tissues",
+    "description": "PopUp"
+  },
+  {
+    "name": "Party White",
+    "slug": "party-white",
+    "sku": "PM-022",
+    "price": 250,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/6ad2345f-1182-42fb-84f5-e82c8fc2539f.png",
+    "category": "Soft Pack Tissues",
+    "description": "Party White"
+  },
+  {
+    "name": "Garbage Bags",
+    "slug": "garbage-bags",
+    "sku": "PM-021",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/57815928-0eee-4c80-a2cb-c68a17caad90.jpg",
+    "category": "Disposable Items",
+    "description": "Garbage Bags"
+  },
+  {
+    "name": "Blue Microfiber Cloths",
+    "slug": "blue-microfiber-cloths",
+    "sku": "PM-020",
+    "price": 120,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/4422277b-4583-4ecf-853d-69179758357e.png",
+    "category": "Floor & Surface Care",
+    "description": "Blue Microfiber Cloths"
+  },
+  {
+    "name": "Cling Film Roll",
+    "slug": "cling-film-roll",
+    "sku": "PM-019",
+    "price": 300,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/4034ce74-1155-45e7-8036-af8558544160.jpg",
+    "category": "Tissue Rolls",
+    "description": "Cling Film Roll"
+  },
+  {
+    "name": "White Microfiber Cloths",
+    "slug": "white-microfiber-cloths",
+    "sku": "PM-018",
+    "price": 120,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/3f1e5dd5-ebc8-4270-a04f-4b92b57040d2.png",
+    "category": "Floor & Surface Care",
+    "description": "White Microfiber Cloths"
+  },
+  {
+    "name": "Rose Petal Perfumed Tissues 200 Sheets",
+    "slug": "rose-petal-perfumed-tissues-200-sheets",
+    "sku": "PM-017",
+    "price": 310,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/3a6e42a6-c141-46a2-b4d1-5b535fe8acb5.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Perfumed Tissues 200 Sheets"
+  },
+  {
+    "name": "Rose Petal Perfumed Tissues",
+    "slug": "rose-petal-perfumed-tissues",
+    "sku": "PM-016",
+    "price": 265,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/39fde44d-13fc-4f48-a105-e35dbed51943.png",
+    "category": "Facial Tissues",
+    "description": "Rose Petal Perfumed Tissues"
+  },
+  {
+    "name": "Clear PET Cups with Dome Lids",
+    "slug": "clear-pet-cups-with-dome-lids",
+    "sku": "PM-015",
+    "price": 700,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/35ee928a-1f93-408c-997e-e88e41e76988.jpg",
+    "category": "Disposable Items",
+    "description": "Clear PET Cups with Dome Lids"
+  },
+  {
+    "name": "Scouring Sponge",
+    "slug": "scouring-sponge",
+    "sku": "PM-014",
+    "price": 100,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/350fc6f2-c4c0-4820-813c-8610c340a0d7.png",
+    "category": "Floor & Surface Care",
+    "description": "Scouring Sponge"
+  },
+  {
+    "name": "Floor Broom",
+    "slug": "floor-broom",
+    "sku": "PM-013",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/33fe1a9c-3c2c-4e19-9248-45aeddc708ff.png",
+    "category": "Floor & Surface Care",
+    "description": "Floor Broom"
+  },
+  {
+    "name": "Hi-jeen Tissues",
+    "slug": "hi-jeen-tissues",
+    "sku": "PM-012",
+    "price": 250,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/2fdda938-c4cf-480d-b359-8e3e8fa4c668.png",
+    "category": "Facial Tissues",
+    "description": "Hi-jeen Tissues"
+  },
+  {
+    "name": "Hi-jeen Jumbo Roll",
+    "slug": "hi-jeen-jumbo-roll",
+    "sku": "PM-011",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/27067f9e-47ec-41d2-8a62-0ed2a03f429e.png",
+    "category": "Tissue Rolls",
+    "description": "Hi-jeen Jumbo Roll"
+  },
+  {
+    "name": "Family Deal",
+    "slug": "family-deal",
+    "sku": "PM-010",
+    "price": 1200,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/1f772c54-9795-4461-b7a0-7982e0b1f3e0.png",
+    "category": "Facial Tissues",
+    "description": "Family Deal"
+  },
+  {
+    "name": "Rose Petal Pop-Up Tissues Ultra Soft",
+    "slug": "rose-petal-pop-up-tissues-ultra-soft",
+    "sku": "PM-009",
+    "price": 315,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/1f3020be-5360-43d0-ba6e-0d42a06ee7bd.png",
+    "category": "Soft Pack Tissues",
+    "description": "Rose Petal Pop-Up Tissues Ultra Soft"
+  },
+  {
+    "name": "Commode Brush",
+    "slug": "commode-brush",
+    "sku": "PM-008",
+    "price": 350,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/19138fec-d08c-4773-8718-2b84e24831ec.png",
+    "category": "Floor & Surface Care",
+    "description": "Commode Brush"
+  },
+  {
+    "name": "Microfiber Mop Head",
+    "slug": "microfiber-mop-head",
+    "sku": "PM-007",
+    "price": 480,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/1216e609-8944-4e4a-9eda-38a5502cb2c1.png",
+    "category": "Floor & Surface Care",
+    "description": "Microfiber Mop Head"
+  },
+  {
+    "name": "Sweep Liquid Cleaner 1200ml Fresh Lemon",
+    "slug": "sweep-liquid-cleaner-1200ml-fresh-lemon",
+    "sku": "PM-006",
+    "price": 600,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/118712e4-11a6-451d-83ff-89823a258a5c.png",
+    "category": "Floor & Surface Care",
+    "description": "Sweep Liquid Cleaner 1200ml Fresh Lemon"
+  },
+  {
+    "name": "Hi-jeen Tissues (Rose Petal)",
+    "slug": "hi-jeen-tissues-rose-petal",
+    "sku": "PM-005",
+    "price": 250,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/1083fd45-8b0f-4208-8af7-e30a14eed5a1.png",
+    "category": "Facial Tissues",
+    "description": "Hi-jeen Tissues (Rose Petal)"
+  },
+  {
+    "name": "Colorful Paper Napkins",
+    "slug": "colorful-paper-napkins",
+    "sku": "PM-004",
+    "price": 200,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/0850fdc9-7367-466e-bd96-f1d97ec45de0.jpg",
+    "category": "Paper Napkins",
+    "description": "Colorful Paper Napkins"
+  },
+  {
+    "name": "Straw Broom",
+    "slug": "straw-broom",
+    "sku": "PM-003",
+    "price": 399,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/046dbaf2-bc2f-45b7-aec7-7d9433057ada.png",
+    "category": "Floor & Surface Care",
+    "description": "Straw Broom"
+  },
+  {
+    "name": "Food Takeaway Containers",
+    "slug": "food-takeaway-containers",
+    "sku": "PM-002",
+    "price": 750,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/03da356c-5510-43d6-94be-7d5f7f691f37.jpg",
+    "category": "Disposable Items",
+    "description": "Food Takeaway Containers"
+  },
+  {
+    "name": "Antiseptic Liquid 100ml",
+    "slug": "antiseptic-liquid-100ml",
+    "sku": "PM-001",
+    "price": 300,
+    "image": "https://0zoebkg72rblccp0.public.blob.vercel-storage.com/products/00b9062b-d381-4473-a4ee-9e48823632bd.png",
+    "category": "Hand Wash & Hygiene",
+    "description": "Antiseptic Liquid 100ml"
+  }
+]

@@ -90,6 +90,20 @@ function inferProductTaxonomy(name: string, currentCategory: { name: string; slu
   };
 }
 
+function inferBrand(name: string, currentBrandName?: string | null): string {
+  if (currentBrandName && currentBrandName !== "Pak Multilinks" && currentBrandName !== "Unbranded") {
+    return currentBrandName;
+  }
+  const lower = name.toLowerCase();
+  if (lower.includes("rose petal") || lower.includes("hi-jeen") || lower.includes("zzoop") || lower.includes("maxob")) {
+    return "Rose Petal";
+  }
+  if (lower.includes("nozomi")) {
+    return "Nozomi";
+  }
+  return currentBrandName || "Pak Multilinks";
+}
+
 function mapProduct(row: PublicProductRow): Product {
   const images = row.images.map((image) => image.url).filter(Boolean);
   const image = images[0] || "";
@@ -116,7 +130,7 @@ function mapProduct(row: PublicProductRow): Product {
     category: taxonomy.category,
     categorySlug: taxonomy.categorySlug,
     parentCategorySlug: taxonomy.parentCategorySlug,
-    brand: row.brand?.name || "Pak Multilinks",
+    brand: inferBrand(row.name, row.brand?.name),
     image,
     imageAlt: row.images.find((item) => item.url === image)?.alt || row.name,
     gallery: images,

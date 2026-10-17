@@ -1,0 +1,372 @@
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzpop100",
+    slug: "nozomi-pop-up-tissues-100s",
+    name: "Nozomi Pop-Up Tissues (100 Sheets x 2 Ply)",
+    brand: "Nozomi",
+    price: 175,
+    priceOnRequest: false,
+    category: "Facial Tissues",
+    categorySlug: "facial-tissues",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-POP-100",
+    image: "/rate-products/nozomi-facial-tissue-box.jpg",
+    gallery: ["/rate-products/nozomi-facial-tissue-box.jpg"],
+    unitsPerCarton: 40,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: true,
+    bestSeller: true,
+    shortDescription: "Nozomi Pop-Up 2-ply soft commercial facial tissues for corporate and hospitality supply.",
+    description: "Nozomi Pop-Up 2-ply soft commercial facial tissues crafted for executive offices, boardrooms, luxury hotels, clinics, and hospitality suites. Features ultra-soft virgin pulp sheets that pop up one by one for hygienic, touchless dispensing. Supplied in bulk wholesale cartons with reliable delivery across Lahore and Pakistan.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Ply",
+                "value": "2 Ply Ultra Soft"
+          },
+          {
+                "name": "Sheet Count",
+                "value": "100 sheets"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "40 boxes / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzlux150",
+    slug: "nozomi-luxury-facial-tissues-150s",
+    name: "Nozomi Luxury Facial Tissues (150 Sheets x 2 Ply)",
+    brand: "Nozomi",
+    price: 220,
+    priceOnRequest: false,
+    category: "Facial Tissues",
+    categorySlug: "facial-tissues",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-LUX-150",
+    image: "/rate-products/nozomi-facial-tissue-box.jpg",
+    gallery: ["/rate-products/nozomi-facial-tissue-box.jpg"],
+    unitsPerCarton: 30,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: true,
+    bestSeller: true,
+    shortDescription: "Nozomi Luxury Facial tissue box with extra softness and premium packaging.",
+    description: "Nozomi Luxury Facial tissue box delivers extra plushness and absorbent strength in an elegant emerald green and gold designer box. Ideal for front desks, executive cabins, and VIP lounges. Wholesale carton packing of 30 boxes per carton.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Ply",
+                "value": "2 Ply Luxury"
+          },
+          {
+                "name": "Sheet Count",
+                "value": "150 sheets"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "30 boxes / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzexec200",
+    slug: "nozomi-executive-facial-tissues-200s",
+    name: "Nozomi Executive Facial Tissues (200 Sheets x 2 Ply)",
+    brand: "Nozomi",
+    price: 275,
+    priceOnRequest: false,
+    category: "Facial Tissues",
+    categorySlug: "facial-tissues",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-EXEC-200",
+    image: "/rate-products/nozomi-facial-tissue-box.jpg",
+    gallery: ["/rate-products/nozomi-facial-tissue-box.jpg"],
+    unitsPerCarton: 30,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: true,
+    bestSeller: false,
+    shortDescription: "Nozomi Executive 200 sheets 2-ply high-capacity facial tissue box.",
+    description: "High capacity 200 sheets box designed for high-turnover executive suites and conference halls to reduce refill frequency while maintaining top-tier comfort.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Ply",
+                "value": "2 Ply Executive"
+          },
+          {
+                "name": "Sheet Count",
+                "value": "200 sheets"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "30 boxes / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzsofttwin",
+    slug: "nozomi-soft-pack-tissues-twin",
+    name: "Nozomi Soft Pack Tissues (Twin Pack)",
+    brand: "Nozomi",
+    price: 260,
+    priceOnRequest: false,
+    category: "Soft Pack Tissues",
+    categorySlug: "soft-pack-tissues",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-SOFT-TWIN",
+    image: "/rate-products/nozomi-soft-pack.jpg",
+    gallery: ["/rate-products/nozomi-soft-pack.jpg"],
+    unitsPerCarton: 24,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: true,
+    bestSeller: true,
+    shortDescription: "Nozomi Soft Pack twin pack tissues in flexible moisture-resistant wraps for vehicles and desks.",
+    description: "Nozomi Soft Pack twin pack tissues offer high portability in flexible, water-resistant packaging. A customer favorite for corporate vehicle fleets, travel kits, and compact workstations.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Format",
+                "value": "Soft Pack Twin"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "24 twin packs / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzsoft100",
+    slug: "nozomi-soft-pack-single-100s",
+    name: "Nozomi Soft Pack Single Tissues (100 Sheets)",
+    brand: "Nozomi",
+    price: 135,
+    priceOnRequest: false,
+    category: "Soft Pack Tissues",
+    categorySlug: "soft-pack-tissues",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-SOFT-100",
+    image: "/rate-products/nozomi-soft-pack.jpg",
+    gallery: ["/rate-products/nozomi-soft-pack.jpg"],
+    unitsPerCarton: 48,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: false,
+    bestSeller: false,
+    shortDescription: "Nozomi economical single soft pack tissue with 100 soft 2-ply sheets.",
+    description: "Compact single soft pack tissues for personal carry and everyday commercial use.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Format",
+                "value": "Single Soft Pack"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "48 packs / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzroll2pk",
+    slug: "nozomi-jumbo-kitchen-towel-2pk",
+    name: "Nozomi Jumbo Kitchen Towel (2 Large Rolls)",
+    brand: "Nozomi",
+    price: 360,
+    priceOnRequest: false,
+    category: "Tissue Rolls",
+    categorySlug: "tissue-rolls",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-ROLL-2PK",
+    image: "/rate-products/rose-petal-kitchen-roll.jpg",
+    gallery: ["/rate-products/rose-petal-kitchen-roll.jpg"],
+    unitsPerCarton: 12,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: true,
+    bestSeller: false,
+    shortDescription: "Nozomi ultra-absorbent embossed kitchen towel rolls for pantries and food prep.",
+    description: "Thick embossed kitchen paper towels engineered for quick liquid absorption and lint-free cleaning in workplace pantries and cafeterias.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Pack",
+                "value": "2 Large Rolls"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "12 packs / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nztoilet10",
+    slug: "nozomi-commercial-toilet-roll-10pk",
+    name: "Nozomi Commercial Toilet Roll (10 Rolls Pack)",
+    brand: "Nozomi",
+    price: 620,
+    priceOnRequest: false,
+    category: "Tissue Rolls",
+    categorySlug: "tissue-rolls",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-TOILET-10",
+    image: "/rate-products/softex-unwrapped-toilet-roll-regular.png",
+    gallery: ["/rate-products/softex-unwrapped-toilet-roll-regular.png"],
+    unitsPerCarton: 10,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: false,
+    bestSeller: true,
+    shortDescription: "Nozomi 2-ply soft washroom toilet tissue rolls pack for commercial facilities.",
+    description: "Safe, rapid-dissolving 2-ply toilet rolls designed for corporate buildings, shopping malls, and institutional washrooms.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Type",
+                "value": "Toilet Roll Pack"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "10 packs / carton (100 rolls)"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzmaxi200",
+    slug: "nozomi-autocut-maxi-roll-200m",
+    name: "Nozomi Autocut Maxi Roll Hand Towel (200m)",
+    brand: "Nozomi",
+    price: 490,
+    priceOnRequest: false,
+    category: "Tissue Rolls",
+    categorySlug: "tissue-rolls",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-MAXI-200",
+    image: "/rate-products/rose-petal-pop-up.jpg",
+    gallery: ["/rate-products/rose-petal-pop-up.jpg"],
+    unitsPerCarton: 6,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: true,
+    bestSeller: false,
+    shortDescription: "Nozomi 200m heavy-duty autocut hand towel paper roll for touchless washroom dispensers.",
+    description: "Industrial grade 200m hand drying roll compatible with all standard automatic and manual roll dispensers.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Roll Length",
+                "value": "200 meters"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "6 rolls / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nznap100",
+    slug: "nozomi-table-napkins-100s",
+    name: "Nozomi Table Napkins 1-Ply (100 Sheets)",
+    brand: "Nozomi",
+    price: 160,
+    priceOnRequest: false,
+    category: "Paper Napkins",
+    categorySlug: "paper-napkins",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-NAP-100",
+    image: "/rate-products/super-soft-table-napkin.png",
+    gallery: ["/rate-products/super-soft-table-napkin.png"],
+    unitsPerCarton: 50,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: false,
+    bestSeller: false,
+    shortDescription: "Nozomi 100 sheets embossed table napkins for dining and catering.",
+    description: "Embossed table napkins for office cafeterias, restaurants, and catered corporate lunches.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Sheet Count",
+                "value": "100 sheets"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "50 packs / carton"
+          }
+    ],
+  },
+  {
+    ...sharedProduct,
+    id: "prod-nz-nzparty300",
+    slug: "nozomi-party-pack-multipurpose-tissue",
+    name: "Nozomi Party Pack Multipurpose Tissue",
+    brand: "Nozomi",
+    price: 320,
+    priceOnRequest: false,
+    category: "Soft Pack Tissues",
+    categorySlug: "soft-pack-tissues",
+    parentCategorySlug: "tissue-paper-products",
+    sku: "NZ-PARTY-300",
+    image: "/rate-products/nozomi-soft-pack.jpg",
+    gallery: ["/rate-products/nozomi-soft-pack.jpg"],
+    unitsPerCarton: 20,
+    minimumOrderCartons: 1,
+    stock: 100,
+    featured: false,
+    bestSeller: false,
+    shortDescription: "Nozomi high-capacity multipurpose tissue pack for heavy-traffic office environments.",
+    description: "Generous multipurpose soft pack tissue designed for high-frequency use in workshops, studios, and staff rooms.",
+    attributes: [
+          {
+                "name": "Brand",
+                "value": "Nozomi"
+          },
+          {
+                "name": "Format",
+                "value": "Party Pack Soft Wrap"
+          },
+          {
+                "name": "Carton Packing",
+                "value": "20 packs / carton"
+          }
+    ],
+  },

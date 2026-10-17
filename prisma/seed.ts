@@ -7,17 +7,23 @@ import { categories, products } from "../src/lib/catalog";
 const prisma = new PrismaClient();
 
 async function main() {
-  const brand = await prisma.brand.upsert({
-    where: { slug: "unbranded" },
-    update: { name: "Unbranded", isActive: true },
-    create: { id: "brand-unbranded", slug: "unbranded", name: "Unbranded", isActive: true },
-  });
+  const brandIds = new Map<string, string>();
+  const uniqueBrands = [...new Set([...products.map((p) => p.brand), "Pak Multilinks", "Unbranded"])];
+  for (const brandName of uniqueBrands) {
+    const brandSlug = brandName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const savedBrand = await prisma.brand.upsert({
+      where: { slug: brandSlug },
+      update: { name: brandName, isActive: true },
+      create: { id: `brand-${brandSlug}`, slug: brandSlug, name: brandName, isActive: true },
+    });
+    brandIds.set(brandName, savedBrand.id);
+  }
 
   const categoryIds = new Map<string, string>();
   for (const [sortOrder, category] of categories.entries()) {
     const saved = await prisma.category.upsert({
       where: { slug: category.slug },
-      update: {},
+      update: { name: category.name, description: category.description, icon: category.icon, isActive: true },
       create: {
         id: category.id,
         parentId: category.parentId ? categoryIds.get(categories.find(parent => parent.id === category.parentId)!.slug) : null,
@@ -35,10 +41,28 @@ async function main() {
   for (const product of products) {
     const categoryId = categoryIds.get(product.categorySlug);
     if (!categoryId) throw new Error(`Missing seed category: ${product.categorySlug}`);
+    const bId = brandIds.get(product.brand) || brandIds.get("Pak Multilinks")!;
 
     await prisma.product.upsert({
       where: { sku: product.sku },
-      update: {},
+      update: {
+        name: product.name,
+        slug: product.slug,
+        shortDescription: product.shortDescription,
+        description: product.description,
+        price: product.price,
+        salePrice: product.salePrice ?? null,
+        priceOnRequest: product.priceOnRequest,
+        unitsPerCarton: product.unitsPerCarton,
+        minimumOrderCartons: product.minimumOrderCartons,
+        stock: product.stock,
+        lowStockThreshold: product.lowStockThreshold,
+        featured: product.featured ?? false,
+        bestSeller: product.bestSeller ?? false,
+        categoryId,
+        brandId: bId,
+        status: ProductStatus.ACTIVE,
+      },
       create: {
         id: product.id,
         name: product.name,
@@ -59,7 +83,7 @@ async function main() {
         bulkPricing: product.bulkPricing ?? false,
         status: ProductStatus.ACTIVE,
         categoryId,
-        brandId: brand.id,
+        brandId: bId,
         images: { create: product.gallery.map((url, sortOrder) => ({ url, alt: product.name, sortOrder })) },
         attributes: { create: product.attributes.map((attribute, sortOrder) => ({ ...attribute, sortOrder })) },
       },

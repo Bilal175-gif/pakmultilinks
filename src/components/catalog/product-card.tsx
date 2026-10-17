@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ShoppingCart } from "lucide-react";
+import { Check, ShoppingCart, ZoomIn } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -31,6 +31,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const { addToCart } = useStore();
   const [added, setAdded] = useState(false);
+  const [quickViewOpen, setQuickViewOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const price = getPrice(product);
   // Wholesale products are available on demand by carton; never block customer orders
@@ -64,13 +65,23 @@ export function ProductCard({
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}
     >
-      <Link
-        href={`/product/${product.slug}`}
+      {/* Clickable Image Box that opens Enhanced Modal */}
+      <div
+        onClick={() => setQuickViewOpen(true)}
         className={cn(
-          "product-card-image relative block aspect-square overflow-hidden rounded-lg bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus",
+          "product-card-image group/img relative block aspect-square cursor-pointer overflow-hidden rounded-lg bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus",
           layout === "list" && "sm:aspect-auto sm:min-h-56",
         )}
-        aria-label={`View ${product.name}`}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setQuickViewOpen(true);
+          }
+        }}
+        aria-label={`Click to enhance ${product.name}`}
+        title="Click to enhance image & see details"
       >
         {displayImage ? (
           <Image
@@ -80,11 +91,20 @@ export function ProductCard({
             unoptimized={displayImage.startsWith("https://")}
             priority={priority}
             sizes={layout === "list" ? "(max-width: 767px) 112px, 230px" : "(max-width: 767px) 46vw, (max-width: 1024px) 50vw, 33vw"}
-            className="object-contain p-3 sm:p-5 transition duration-500 group-hover:scale-[1.04]"
+            className="object-contain p-3 sm:p-5 transition duration-500 group-hover:scale-[1.06]"
           />
         ) : (
           <ProductMediaPlaceholder />
         )}
+
+        {/* Hover Enhance Badge */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/15 opacity-0 backdrop-blur-[1px] transition-opacity duration-200 group-hover/img:opacity-100">
+          <span className="flex items-center gap-1.5 rounded-full bg-surface/95 px-3 py-1.5 text-xs font-bold text-accent shadow-md">
+            <ZoomIn className="size-3.5 text-action" />
+            <span>Click to enhance</span>
+          </span>
+        </div>
+
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           {hasSale && (
             <span className="rounded-full bg-action px-2 py-0.5 text-[10px] font-bold text-white sm:px-2.5 sm:py-1 sm:text-xs">
@@ -97,7 +117,7 @@ export function ProductCard({
             </span>
           )}
         </div>
-      </Link>
+      </div>
 
       <div className={cn("product-card-details flex min-w-0 flex-col px-1 py-3 sm:px-0 sm:py-4", layout === "list" && "sm:p-6")}>
         <div className="product-card-meta mb-2 flex flex-wrap items-center justify-between gap-1.5 sm:mb-3 sm:gap-2">
@@ -181,6 +201,8 @@ export function ProductCard({
             product={product}
             onAddToCart={handleAddToCart}
             unavailable={isUnavailable}
+            isOpen={quickViewOpen}
+            onClose={() => setQuickViewOpen(false)}
           />
         </div>
         <span className="sr-only" aria-live="polite">

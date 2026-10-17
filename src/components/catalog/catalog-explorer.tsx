@@ -32,11 +32,12 @@ type CatalogExplorerProps = {
   description?: string;
   initialQuery?: string;
   fixedCategorySlug?: string;
+  initialBrand?: string;
   categoryOptions?: Category[];
   hideHero?: boolean;
 };
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 24;
 
 export function CatalogExplorer({
   products,
@@ -46,12 +47,13 @@ export function CatalogExplorer({
     "Browse practical hygiene, cleaning and workplace essentials for everyday and corporate supply needs.",
   initialQuery = "",
   fixedCategorySlug,
+  initialBrand = "",
   categoryOptions = developmentCategories,
   hideHero = false,
 }: CatalogExplorerProps) {
   const [search, setSearch] = useState(initialQuery);
   const [category, setCategory] = useState(fixedCategorySlug ?? "");
-  const [brand, setBrand] = useState("");
+  const [brand, setBrand] = useState(initialBrand);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -75,6 +77,7 @@ export function CatalogExplorer({
     const selectedCategory = fixedCategorySlug ?? category;
     const floor = minPrice === "" ? 0 : Number(minPrice);
     const ceiling = maxPrice === "" ? Number.POSITIVE_INFINITY : Number(maxPrice);
+    const targetBrandClean = brand.toLowerCase().replace(/[^a-z0-9]/g, "");
 
     const matches = products.filter((product) => {
       const searchableText = [
@@ -88,11 +91,26 @@ export function CatalogExplorer({
         .join(" ")
         .toLocaleLowerCase();
       const productPrice = getPrice(product);
+      const productBrandClean = product.brand.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const productNameLower = product.name.toLowerCase();
+
+      const brandMatches =
+        !brand ||
+        productBrandClean === targetBrandClean ||
+        (targetBrandClean === "rosepetal" &&
+          (productBrandClean.includes("rosepetal") ||
+            productNameLower.includes("rose petal") ||
+            productNameLower.includes("hi-jeen") ||
+            productNameLower.includes("zzoop") ||
+            productNameLower.includes("maxob"))) ||
+        (targetBrandClean === "nozomi" &&
+          (productBrandClean.includes("nozomi") ||
+            productNameLower.includes("nozomi")));
 
       return (
         (!query || searchableText.includes(query)) &&
         (!selectedCategory || (product.categorySlug === selectedCategory || product.parentCategorySlug === selectedCategory)) &&
-        (!brand || product.brand === brand) &&
+        brandMatches &&
         (!inStockOnly || product.stock >= minimumCartons(product) || Boolean(product.allowBackorder)) &&
         productPrice >= floor &&
         productPrice <= ceiling
@@ -373,6 +391,92 @@ export function CatalogExplorer({
             </aside>
 
             <div className="min-w-0">
+              {/* Brand Quick Selector Tabs */}
+              <div className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface p-3 shadow-xs">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-muted px-1.5">
+                  Brands:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBrand("");
+                    resetVisibleCount();
+                  }}
+                  className={cn(
+                    "rounded-xl px-3.5 py-2 text-xs font-bold transition",
+                    !brand
+                      ? "bg-action text-white shadow-xs"
+                      : "border border-line bg-surface-soft text-accent hover:border-action"
+                  )}
+                >
+                  All Brands
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBrand("Rose Petal");
+                    resetVisibleCount();
+                  }}
+                  className={cn(
+                    "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold transition shadow-xs",
+                    brand.toLowerCase().includes("rose")
+                      ? "bg-[#8c142e] text-white ring-2 ring-[#8c142e]/30"
+                      : "border border-line bg-surface-soft text-accent hover:border-[#8c142e] hover:text-[#8c142e]"
+                  )}
+                >
+                  <span>🌹 Rose Petal</span>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-bold",
+                      brand.toLowerCase().includes("rose")
+                        ? "bg-white/20 text-white"
+                        : "bg-line text-secondary"
+                    )}
+                  >
+                    28+ Items
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBrand("Nozomi");
+                    resetVisibleCount();
+                  }}
+                  className={cn(
+                    "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold transition shadow-xs",
+                    brand.toLowerCase().includes("nozomi")
+                      ? "bg-[#1b4d3e] text-white ring-2 ring-[#1b4d3e]/30"
+                      : "border border-line bg-surface-soft text-accent hover:border-[#1b4d3e] hover:text-[#1b4d3e]"
+                  )}
+                >
+                  <span>🌿 Nozomi</span>
+                  <span
+                    className={cn(
+                      "rounded-full px-2 py-0.5 text-[10px] font-bold",
+                      brand.toLowerCase().includes("nozomi")
+                        ? "bg-white/20 text-white"
+                        : "bg-line text-secondary"
+                    )}
+                  >
+                    10+ Items
+                  </span>
+                </button>
+
+                {brand && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBrand("");
+                      resetVisibleCount();
+                    }}
+                    className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-action px-2 py-1"
+                  >
+                    <X className="size-3" />
+                    <span>Clear brand</span>
+                  </button>
+                )}
+              </div>
+
               <div className="catalog-toolbar mb-6 flex flex-col gap-4 rounded-md border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-accent" role="status" aria-live="polite">
                   <span className="font-extrabold text-accent">{filteredProducts.length}</span>{" "}
