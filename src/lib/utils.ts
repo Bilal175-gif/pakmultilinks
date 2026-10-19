@@ -64,3 +64,15 @@ export function createReference(prefix: string) {
   const random = Math.random().toString(36).slice(2, 7).toUpperCase();
   return `${prefix}-${date}-${random}`;
 }
+
+export function detectUnitsFromName(name?: string, description?: string): number {
+  if (!name && !description) return 0;
+  const text = `${name || ""} ${description || ""}`;
+  const match = text.match(/(\d+)\s*(?:\/|\s)?(?:pcs|pieces|pack|packs|cans|bottles|boxes|rolls|ctn|carton)/i);
+  if (match) {
+    const val = parseInt(match[1], 10);
+    if (val > 1 && val <= 10000) return val;
+  }
+  return 0;
+}
+

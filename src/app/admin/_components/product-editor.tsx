@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 
+import { detectUnitsFromName } from "@/lib/utils";
 import { buttonClass, inputClass, panelClass, textareaClass } from "./ui";
 
 type Option = { id: string; name: string; parentId?: string | null };
@@ -259,11 +260,18 @@ export function ProductEditor({
               value={value.price > 0 && value.unitsPerCarton > 0 ? (value.price / value.unitsPerCarton).toFixed(2) : ""}
               onChange={(e) => {
                 const val = Number(e.target.value);
-                const units = value.unitsPerCarton > 0 ? value.unitsPerCarton : 1;
+                const units = value.unitsPerCarton > 1 ? value.unitsPerCarton : detectUnitsFromName(value.name);
                 if (!e.target.value) {
                   set("price", 0);
                 } else if (Number.isFinite(val)) {
-                  set("price", parseFloat((val * units).toFixed(2)));
+                  if (units > 1) {
+                    set("price", parseFloat((val * units).toFixed(2)));
+                    if (value.unitsPerCarton <= 1) {
+                      set("unitsPerCarton", units);
+                    }
+                  } else {
+                    set("price", val);
+                  }
                 }
               }}
               placeholder="0.00"
@@ -271,7 +279,7 @@ export function ProductEditor({
             />
             {value.unitsPerCarton <= 1 && (
               <span className="mt-1 block text-xs font-semibold text-amber-700 dark:text-amber-400">
-                ⚠️ 1 pc/carton set hai. Agar carton me zyada pieces hain to neechay &quot;Pieces / packs per carton&quot; me tadaad likhein (maslan 24, 30).
+                ⚠️ 1 pc/carton set hai. Agar carton me zyada pieces hain to neechay &quot;Pieces / packs per carton&quot; me tadaad likhein (maslan {detectUnitsFromName(value.name) || 24}).
               </span>
             )}
           </label>
@@ -290,11 +298,18 @@ export function ProductEditor({
               value={value.salePrice != null && value.salePrice > 0 && value.unitsPerCarton > 0 ? (value.salePrice / value.unitsPerCarton).toFixed(2) : ""}
               onChange={(e) => {
                 const val = Number(e.target.value);
-                const units = value.unitsPerCarton > 0 ? value.unitsPerCarton : 1;
+                const units = value.unitsPerCarton > 1 ? value.unitsPerCarton : detectUnitsFromName(value.name);
                 if (!e.target.value) {
                   set("salePrice", null);
                 } else if (Number.isFinite(val)) {
-                  set("salePrice", parseFloat((val * units).toFixed(2)));
+                  if (units > 1) {
+                    set("salePrice", parseFloat((val * units).toFixed(2)));
+                    if (value.unitsPerCarton <= 1) {
+                      set("unitsPerCarton", units);
+                    }
+                  } else {
+                    set("salePrice", val);
+                  }
                 }
               }}
               placeholder="No sale"

@@ -33,29 +33,53 @@ export type PricingRow = {
 
 type Draft = {
   price: string;
+  piecePrice: string;
   salePrice: string;
+  salePiecePrice: string;
   priceOnRequest: boolean;
   stock: string;
   unitsPerCarton: string;
   minimumOrderCartons: string;
 };
 
-const toDraft = (row: PricingRow): Draft => ({
-  price: String(row.price),
-  salePrice: row.salePrice === null ? "" : String(row.salePrice),
-  priceOnRequest: row.priceOnRequest,
-  stock: String(row.stock),
-  unitsPerCarton: String(row.unitsPerCarton),
-  minimumOrderCartons: String(row.minimumOrderCartons),
-});
+export function detectUnitsFromName(name: string): number {
+  if (!name) return 0;
+  const match = name.match(/(\d+)\s*(?:\/|\s)?(?:pcs|pieces|pack|packs|cans|bottles|boxes|rolls|ctn|carton)/i);
+  if (match) {
+    const val = parseInt(match[1], 10);
+    if (val > 1 && val <= 10000) return val;
+  }
+  return 0;
+}
 
 function calcPiece(cartonStr: string, units: number): string {
   if (!cartonStr || cartonStr.trim() === "") return "";
   const num = Number(cartonStr);
-  if (!Number.isFinite(num) || num <= 0 || units <= 0) return "";
+  if (!Number.isFinite(num) || num <= 0 || units <= 1) return "";
   const p = num / units;
   return Number.isInteger(p) ? String(p) : p.toFixed(2);
 }
+
+const toDraft = (row: PricingRow): Draft => {
+  let units = Number(row.unitsPerCarton) || 0;
+  if (units <= 1) {
+    const detected = detectUnitsFromName(row.name);
+    if (detected > 1) units = detected;
+  }
+  const regPiece = units > 1 ? calcPiece(String(row.price), units) : "";
+  const salePiece = units > 1 ? calcPiece(row.salePrice === null ? "" : String(row.salePrice), units) : "";
+
+  return {
+    price: String(row.price),
+    piecePrice: regPiece,
+    salePrice: row.salePrice === null ? "" : String(row.salePrice),
+    salePiecePrice: salePiece,
+    priceOnRequest: row.priceOnRequest,
+    stock: String(row.stock),
+    unitsPerCarton: units > 0 ? String(units) : String(row.unitsPerCarton),
+    minimumOrderCartons: String(row.minimumOrderCartons),
+  };
+};
 
 export function PricingEditor({
   initialRows,
@@ -131,6 +155,111 @@ export function PricingEditor({
     setMessage("");
   }
 
+  function handlePiecePriceChange(row: PricingRow, draft: Draft, val: string) {
+    const num = Number(val);
+    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    if (!val || val.trim() === "") {
+      edit(row, { piecePrice: "", price: "" });
+    } else if (Number.isFinite(num)) {
+      if (units > 1) {
+        // Multiply: Carton Price = Piece Price * Carton Pieces (e.g. 555 * 48 = 26,640)
+        const calculatedCarton = (num * units).toFixed(2);
+        edit(row, {
+          piecePrice: val,
+          price: calculatedCarton,
+          unitsPerCarton: String(units),
+        });
+      } else {
+        // Units not yet set (> 1), so DO NOT overwrite carton price with the same number!
+        edit(row, {
+          piecePrice: val,
+        });
+      }
+    }
+  }
+
+  function handleCartonPriceChange(row: PricingRow, draft: Draft, val: string) {
+    const num = Number(val);
+    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    if (!val || val.trim() === "") {
+      edit(row, { price: "", piecePrice: "" });
+    } else if (Number.isFinite(num)) {
+      if (units > 1) {
+        // Divide: Piece Price = Carton Price / Carton Pieces (e.g. 26640 / 48 = 555)
+        const calculatedPiece = (num / units).toFixed(2);
+        edit(row, {
+          price: val,
+          piecePrice: calculatedPiece,
+          unitsPerCarton: String(units),
+        });
+      } else {
+        edit(row, { price: val });
+      }
+    }
+  }
+
+  function handleUnitsChange(row: PricingRow, draft: Draft, val: string) {
+    const newUnits = Number(val) || 0;
+    const currentPiece = Number(draft.piecePrice);
+    const currentCarton = Number(draft.price);
+
+    if (newUnits > 1 && Number.isFinite(currentPiece) && currentPiece > 0) {
+      // Piece price is entered! Recalculate carton price: piece * units!
+      const newCarton = (currentPiece * newUnits).toFixed(2);
+      edit(row, {
+        unitsPerCarton: val,
+        price: newCarton,
+      });
+    } else if (newUnits > 1 && Number.isFinite(currentCarton) && currentCarton > 0) {
+      // Carton price is entered! Recalculate piece price: carton / units!
+      const newPiece = (currentCarton / newUnits).toFixed(2);
+      edit(row, {
+        unitsPerCarton: val,
+        piecePrice: newPiece,
+      });
+    } else {
+      edit(row, { unitsPerCarton: val });
+    }
+  }
+
+  function handleSalePiecePriceChange(row: PricingRow, draft: Draft, val: string) {
+    const num = Number(val);
+    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    if (!val || val.trim() === "") {
+      edit(row, { salePiecePrice: "", salePrice: "" });
+    } else if (Number.isFinite(num)) {
+      if (units > 1) {
+        const calculatedSaleCarton = (num * units).toFixed(2);
+        edit(row, {
+          salePiecePrice: val,
+          salePrice: calculatedSaleCarton,
+          unitsPerCarton: String(units),
+        });
+      } else {
+        edit(row, { salePiecePrice: val });
+      }
+    }
+  }
+
+  function handleSaleCartonPriceChange(row: PricingRow, draft: Draft, val: string) {
+    const num = Number(val);
+    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    if (!val || val.trim() === "") {
+      edit(row, { salePrice: "", salePiecePrice: "" });
+    } else if (Number.isFinite(num)) {
+      if (units > 1) {
+        const calculatedPiece = (num / units).toFixed(2);
+        edit(row, {
+          salePrice: val,
+          salePiecePrice: calculatedPiece,
+          unitsPerCarton: String(units),
+        });
+      } else {
+        edit(row, { salePrice: val });
+      }
+    }
+  }
+
   function applyAdjustment() {
     const percent = Number(adjustment);
     if (!adjustment || !Number.isFinite(percent) || percent < -100 || percent > 1000) {
@@ -166,6 +295,23 @@ export function PricingEditor({
       setError("Save up to 100 changed products at a time.");
       return;
     }
+
+    // If piece price was entered but carton price wasn't calculated because units was missing, resolve it
+    for (const id of dirtyIds) {
+      const draft = drafts[id];
+      const row = rows.find((r) => r.id === id);
+      const units = Number(draft.unitsPerCarton) || (row ? detectUnitsFromName(row.name) : 0);
+      if ((!draft.price || Number(draft.price) <= 0) && draft.piecePrice && Number(draft.piecePrice) > 0) {
+        if (units > 1) {
+          draft.price = (Number(draft.piecePrice) * units).toFixed(2);
+          draft.unitsPerCarton = String(units);
+        } else {
+          setError(`"${row?.name || "Product"}" ke liye carton ke pieces (Pcs / Ctn) enter karein taake Carton Rate calculate ho sake.`);
+          return;
+        }
+      }
+    }
+
     const products = dirtyIds.map((id) => {
       const draft = drafts[id];
       return {
@@ -184,7 +330,11 @@ export function PricingEditor({
       dirtyIds.some((id) =>
         Object.entries(drafts[id]).some(
           ([key, value]) =>
-            key !== "salePrice" && typeof value === "string" && value.trim() === "",
+            key !== "salePrice" &&
+            key !== "piecePrice" &&
+            key !== "salePiecePrice" &&
+            typeof value === "string" &&
+            value.trim() === "",
         ),
       )
     ) {
@@ -250,8 +400,8 @@ export function PricingEditor({
       ],
       ...visible.map((row) => {
         const draft = drafts[row.id] ?? toDraft(row);
-        const units = Number(draft.unitsPerCarton) || 1;
-        const pieceRate = calcPiece(draft.price, units);
+        const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+        const pieceRate = draft.piecePrice || (units > 1 ? calcPiece(draft.price, units) : "");
         return [
           row.name,
           row.sku,
@@ -541,9 +691,9 @@ export function PricingEditor({
               {visible.map((row) => {
                 const draft = drafts[row.id] ?? toDraft(row);
                 const isDirty = Boolean(drafts[row.id]);
-                const units = Number(draft.unitsPerCarton) || 1;
-                const regPiece = calcPiece(draft.price, units);
-                const salePiece = calcPiece(draft.salePrice, units);
+                const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+                const regPiece = draft.piecePrice || (units > 1 ? calcPiece(draft.price, units) : "");
+                const salePiece = draft.salePiecePrice || (units > 1 ? calcPiece(draft.salePrice, units) : "");
                 const isOutOfStock = Number(draft.stock) === 0;
 
                 return (
@@ -600,7 +750,7 @@ export function PricingEditor({
 
                     {/* Regular Price (Carton & Piece Linked) */}
                     <td className="p-3.5 align-top">
-                      <div className="w-44 space-y-1.5">
+                      <div className="w-48 space-y-1.5">
                         {/* Carton Rate Input */}
                         <div className="relative flex items-center">
                           <span className="pointer-events-none absolute left-2 text-[11px] font-bold text-muted">
@@ -613,8 +763,8 @@ export function PricingEditor({
                             aria-label={`${row.name} carton rate`}
                             value={draft.price}
                             disabled={disabled || pending}
-                            onChange={(e) => edit(row, { price: e.target.value })}
-                            placeholder="0.00"
+                            onChange={(e) => handleCartonPriceChange(row, draft, e.target.value)}
+                            placeholder={draft.piecePrice && units > 1 ? (Number(draft.piecePrice) * units).toFixed(2) : "0.00"}
                             className="h-8 w-full rounded-lg border border-line-strong/80 bg-surface pl-5 pr-9 text-xs font-bold text-content tabular-nums outline-none transition focus:border-action focus:ring-1 focus:ring-action"
                           />
                           <span className="pointer-events-none absolute right-1.5 text-[9px] font-bold uppercase tracking-wider text-muted">
@@ -634,19 +784,7 @@ export function PricingEditor({
                             aria-label={`${row.name} piece rate`}
                             value={regPiece}
                             disabled={disabled || pending}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (!val) {
-                                edit(row, { price: "" });
-                              } else {
-                                const num = Number(val);
-                                if (Number.isFinite(num)) {
-                                  edit(row, {
-                                    price: (num * units).toFixed(2),
-                                  });
-                                }
-                              }
-                            }}
+                            onChange={(e) => handlePiecePriceChange(row, draft, e.target.value)}
                             placeholder="0.00"
                             className="h-7 w-full rounded-lg border border-red-300 bg-red-50/90 pl-5 pr-8 text-[11px] font-extrabold text-red-700 tabular-nums outline-none transition focus:border-red-600 focus:ring-1 focus:ring-red-600 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300 placeholder:text-red-300"
                           />
@@ -668,13 +806,13 @@ export function PricingEditor({
                               aria-label={`${row.name} pieces per carton`}
                               value={draft.unitsPerCarton}
                               disabled={disabled || pending}
-                              onChange={(e) => edit(row, { unitsPerCarton: e.target.value })}
+                              onChange={(e) => handleUnitsChange(row, draft, e.target.value)}
                               className={`h-5 w-12 rounded border text-center text-[10px] font-black tabular-nums outline-none transition ${
                                 units <= 1
                                   ? "border-amber-400 bg-amber-50 text-amber-900 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 dark:border-amber-600 dark:bg-amber-950 dark:text-amber-200"
                                   : "border-line-strong/80 bg-surface text-content focus:border-action"
                               }`}
-                              title="1 Carton me kitne pieces hain? Yahan change karein!"
+                              title="1 Carton me kitne pieces hain? Yahan likhein taake piece rate multiply ho kar carton rate banay!"
                             />
                             <span className="font-bold text-muted">pcs</span>
                           </div>
@@ -682,11 +820,16 @@ export function PricingEditor({
 
                         {units <= 1 ? (
                           <div className="rounded border border-amber-300 bg-amber-50/95 px-1.5 py-1 text-[9px] font-bold leading-tight text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/50 dark:text-amber-200">
-                            ⚠️ 1 pc/ctn: Rate same hoga. Carton ke pieces likhein (e.g. 24, 30)!
+                            ⚠️ Carton me kitne pcs hain? (e.g. {detectUnitsFromName(row.name) || 48} likhein taake Piece Rate × {detectUnitsFromName(row.name) || 48} se Carton Rate calculate ho!)
                           </div>
                         ) : (
                           <div className="px-0.5 text-[9px] font-medium text-muted flex items-center justify-between">
-                            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">✓ 1 ctn = {units} pcs</span>
+                            <span className="text-emerald-700 dark:text-emerald-400 font-bold">✓ 1 ctn = {units} pcs</span>
+                            {draft.piecePrice && Number(draft.piecePrice) > 0 && (
+                              <span className="text-muted text-[8px]">
+                                (₨ {draft.piecePrice} × {units} = ₨ {(Number(draft.piecePrice) * units).toLocaleString()})
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>
@@ -694,7 +837,7 @@ export function PricingEditor({
 
                     {/* Sale Price (Carton & Piece) */}
                     <td className="p-3.5 align-top">
-                      <div className="w-36 space-y-1.5">
+                      <div className="w-40 space-y-1.5">
                         {/* Sale Carton Rate */}
                         <div className="relative flex items-center">
                           <span className="pointer-events-none absolute left-2 text-[11px] font-bold text-muted">
@@ -707,7 +850,7 @@ export function PricingEditor({
                             aria-label={`${row.name} sale carton rate`}
                             value={draft.salePrice}
                             disabled={disabled || pending}
-                            onChange={(e) => edit(row, { salePrice: e.target.value })}
+                            onChange={(e) => handleSaleCartonPriceChange(row, draft, e.target.value)}
                             placeholder="No sale"
                             className="h-8 w-full rounded-lg border border-line-strong/80 bg-surface pl-5 pr-9 text-xs font-bold text-content tabular-nums outline-none transition focus:border-action focus:ring-1 focus:ring-action placeholder:font-normal placeholder:text-muted/60"
                           />
@@ -728,19 +871,7 @@ export function PricingEditor({
                             aria-label={`${row.name} sale piece rate`}
                             value={salePiece}
                             disabled={disabled || pending}
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (!val) {
-                                edit(row, { salePrice: "" });
-                              } else {
-                                const num = Number(val);
-                                if (Number.isFinite(num)) {
-                                  edit(row, {
-                                    salePrice: (num * units).toFixed(2),
-                                  });
-                                }
-                              }
-                            }}
+                            onChange={(e) => handleSalePiecePriceChange(row, draft, e.target.value)}
                             placeholder="—"
                             className="h-7 w-full rounded-lg border border-line bg-surface-soft/60 pl-5 pr-8 text-[11px] font-medium text-secondary tabular-nums outline-none transition focus:border-action focus:ring-1 focus:ring-action placeholder:text-muted/40"
                           />
@@ -750,8 +881,8 @@ export function PricingEditor({
                         </div>
 
                         {draft.salePrice && Number(draft.salePrice) > 0 && units > 1 && (
-                          <div className="px-0.5 text-[9px] font-bold text-accent">
-                            Sale: ₨ {salePiece}/pc
+                          <div className="px-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-400">
+                            Sale: ₨ {salePiece}/pc (₨ {Number(draft.salePrice).toLocaleString()}/ctn)
                           </div>
                         )}
                       </div>
@@ -825,7 +956,7 @@ export function PricingEditor({
                           value={draft.unitsPerCarton}
                           disabled={disabled || pending}
                           onChange={(e) =>
-                            edit(row, { unitsPerCarton: e.target.value })
+                            handleUnitsChange(row, draft, e.target.value)
                           }
                           className={`h-8 w-full rounded-lg border px-2 text-xs font-bold tabular-nums outline-none transition ${
                             units <= 1
