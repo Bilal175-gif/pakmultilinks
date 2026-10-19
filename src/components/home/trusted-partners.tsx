@@ -13,7 +13,7 @@ const partners = [
 
 export function TrustedPartners() {
   return (
-    <section aria-labelledby="trusted-partners-title" className={styles.section}>
+    <section aria-labelledby="trusted-partners-title" className={`${styles.section} animate-page-enter`}>
       <div className="site-shell">
         <div className={styles.heading}>
           <h2 id="trusted-partners-title">Our Trusted Partners</h2>

@@ -42,7 +42,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
         role="region"
         aria-roledescription="carousel"
         aria-label="Current deals"
-        className="deals-slider-viewport relative isolate aspect-[3/4] sm:aspect-[1024/434] w-full overflow-hidden bg-surface-soft"
+        className="deals-slider-viewport relative isolate aspect-[3/4] sm:aspect-[1024/434] w-full overflow-hidden bg-surface-soft animate-scale-enter"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}

@@ -111,11 +111,11 @@ export function ShopByBrand() {
 
         {/* 6-Column Responsive Cards Grid with Extra Large Brand Images */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 sm:gap-4">
-          {BRAND_SHOWCASE.map((brand) => (
+          {BRAND_SHOWCASE.map((brand, idx) => (
             <Link
               key={brand.id}
               href={brand.mainHref}
-              className="group flex flex-col justify-between rounded-2xl border border-line bg-surface p-3.5 sm:p-4 shadow-xs transition-all duration-300 hover:border-action hover:shadow-lg hover:-translate-y-0.5"
+              className={`group flex flex-col justify-between rounded-2xl border border-line bg-surface p-3.5 sm:p-4 shadow-xs transition-all duration-300 hover:border-action hover:shadow-xl hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
             >
               {/* Card Header: Brand Title, Arrow Badge & Subtitle */}
               <div>

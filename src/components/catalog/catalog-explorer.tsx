@@ -553,12 +553,16 @@ export function CatalogExplorer({
                   )}
                 >
                   {visibleProducts.map((product, index) => (
-                    <ProductCard
+                    <div
                       key={product.id}
-                      product={product}
-                      layout={view}
-                      priority={index < 3}
-                    />
+                      className={`animate-page-enter stagger-${Math.min(index + 1, 8)}`}
+                    >
+                      <ProductCard
+                        product={product}
+                        layout={view}
+                        priority={index < 3}
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (
