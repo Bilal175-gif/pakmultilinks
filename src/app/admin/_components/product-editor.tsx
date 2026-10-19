@@ -269,6 +269,11 @@ export function ProductEditor({
               placeholder="0.00"
               className={`${inputClass} border-red-300 bg-red-50/90 dark:bg-red-950/40 font-bold text-red-700 dark:text-red-300 placeholder:text-red-300`}
             />
+            {value.unitsPerCarton <= 1 && (
+              <span className="mt-1 block text-xs font-semibold text-amber-700 dark:text-amber-400">
+                ⚠️ 1 pc/carton set hai. Agar carton me zyada pieces hain to neechay &quot;Pieces / packs per carton&quot; me tadaad likhein (maslan 24, 30).
+              </span>
+            )}
           </label>
           {field("Pieces / packs per carton", "unitsPerCarton", "number")}
           {field("Sale price per carton", "salePrice", "number")}

@@ -332,6 +332,25 @@ export function PricingEditor({
         </div>
       </div>
 
+      {/* Wholesale Pricing Formula Guidance Banner */}
+      <div className="rounded-2xl border border-action/20 bg-action-soft/30 p-3.5 text-xs text-secondary flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <div className="grid size-7 shrink-0 place-items-center rounded-lg bg-action text-white">
+            <Package className="size-4" />
+          </div>
+          <div>
+            <p className="font-bold text-accent">Wholesale Pricing Formula (Carton ⇄ Piece)</p>
+            <p className="text-[11px] text-muted">
+              1 Carton Rate = Piece Rate × Carton Pieces. Piece rate ya Carton rate me se koi bhi likhein, doosra khud calculate ho jata hai. Agar dono rate same aa rahe hon to &ldquo;1 Ctn = X pcs&rdquo; me carton ke pieces set karein!
+            </p>
+          </div>
+        </div>
+        <div className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-xl bg-surface px-3 py-1.5 border border-line text-[11px] font-bold text-accent shadow-2xs shrink-0">
+          <span>📦 Formula:</span>
+          <span className="text-action font-black">1 Ctn ÷ Pieces = Piece Rate</span>
+        </div>
+      </div>
+
       {/* Main Table Section */}
       <section className={`${panelClass} overflow-hidden rounded-2xl shadow-xs`}>
         {/* Top Control Bar: Filter Tabs & CSV Export */}
@@ -495,7 +514,7 @@ export function PricingEditor({
                   />
                 </th>
                 <th className="min-w-56 p-3.5">Product & SKU</th>
-                <th className="w-44 p-3.5">
+                <th className="w-48 p-3.5">
                   <div className="flex items-center gap-1">
                     <span>Regular Rate</span>
                     <span className="text-[10px] font-normal normal-case text-muted">
@@ -581,7 +600,7 @@ export function PricingEditor({
 
                     {/* Regular Price (Carton & Piece Linked) */}
                     <td className="p-3.5 align-top">
-                      <div className="w-36 space-y-1.5">
+                      <div className="w-44 space-y-1.5">
                         {/* Carton Rate Input */}
                         <div className="relative flex items-center">
                           <span className="pointer-events-none absolute left-2 text-[11px] font-bold text-muted">
@@ -635,6 +654,41 @@ export function PricingEditor({
                             /pc
                           </span>
                         </div>
+
+                        {/* Quick Carton Packing Control right in the rate cell */}
+                        <div className="flex items-center justify-between gap-1 rounded-md border border-line/80 bg-surface-soft/80 px-2 py-1 text-[10px]">
+                          <span className="font-semibold text-secondary flex items-center gap-1">
+                            <span>📦 1 Ctn =</span>
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="number"
+                              min="1"
+                              step="1"
+                              aria-label={`${row.name} pieces per carton`}
+                              value={draft.unitsPerCarton}
+                              disabled={disabled || pending}
+                              onChange={(e) => edit(row, { unitsPerCarton: e.target.value })}
+                              className={`h-5 w-12 rounded border text-center text-[10px] font-black tabular-nums outline-none transition ${
+                                units <= 1
+                                  ? "border-amber-400 bg-amber-50 text-amber-900 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 dark:border-amber-600 dark:bg-amber-950 dark:text-amber-200"
+                                  : "border-line-strong/80 bg-surface text-content focus:border-action"
+                              }`}
+                              title="1 Carton me kitne pieces hain? Yahan change karein!"
+                            />
+                            <span className="font-bold text-muted">pcs</span>
+                          </div>
+                        </div>
+
+                        {units <= 1 ? (
+                          <div className="rounded border border-amber-300 bg-amber-50/95 px-1.5 py-1 text-[9px] font-bold leading-tight text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/50 dark:text-amber-200">
+                            ⚠️ 1 pc/ctn: Rate same hoga. Carton ke pieces likhein (e.g. 24, 30)!
+                          </div>
+                        ) : (
+                          <div className="px-0.5 text-[9px] font-medium text-muted flex items-center justify-between">
+                            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">✓ 1 ctn = {units} pcs</span>
+                          </div>
+                        )}
                       </div>
                     </td>
 
@@ -694,6 +748,12 @@ export function PricingEditor({
                             /pc
                           </span>
                         </div>
+
+                        {draft.salePrice && Number(draft.salePrice) > 0 && units > 1 && (
+                          <div className="px-0.5 text-[9px] font-bold text-accent">
+                            Sale: ₨ {salePiece}/pc
+                          </div>
+                        )}
                       </div>
                     </td>
 
@@ -767,8 +827,17 @@ export function PricingEditor({
                           onChange={(e) =>
                             edit(row, { unitsPerCarton: e.target.value })
                           }
-                          className="h-8 w-full rounded-lg border border-line-strong/80 bg-surface px-2 text-xs font-bold text-content tabular-nums outline-none transition focus:border-action focus:ring-1 focus:ring-action"
+                          className={`h-8 w-full rounded-lg border px-2 text-xs font-bold tabular-nums outline-none transition ${
+                            units <= 1
+                              ? "border-amber-400 bg-amber-50 text-amber-900 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 dark:border-amber-600 dark:bg-amber-950 dark:text-amber-200"
+                              : "border-line-strong/80 bg-surface text-content focus:border-action focus:ring-1 focus:ring-action"
+                          }`}
                         />
+                        {units <= 1 && (
+                          <span className="mt-1 block text-[9px] font-bold text-amber-800 dark:text-amber-300">
+                            Set pcs/ctn
+                          </span>
+                        )}
                       </div>
                     </td>
 
