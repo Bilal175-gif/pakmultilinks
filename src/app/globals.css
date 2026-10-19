@@ -221,6 +221,91 @@ summary::-webkit-details-marker {
   box-shadow: 0 12px 28px -6px rgba(17, 75, 47, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
 }
 
+/* High-Level Animations & Interactive Polish */
+@keyframes ambient-glow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.22;
+  }
+  50% {
+    transform: translate(25px, -15px) scale(1.12);
+    opacity: 0.38;
+  }
+}
+
+@keyframes float-levitate {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes beacon-ping {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.ambient-glow-orb {
+  animation: ambient-glow 7s ease-in-out infinite alternate;
+  filter: blur(55px);
+  pointer-events: none;
+}
+
+.animate-float {
+  animation: float-levitate 4s ease-in-out infinite;
+}
+
+.beacon-dot {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #22c55e;
+  animation: beacon-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Light beam shine sweep effect on card hover */
+.shine-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.shine-card::after {
+  content: "";
+  position: absolute;
+  inset: -100% -50% -100% -50%;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 42%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 58%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  pointer-events: none;
+  z-index: 10;
+  transition: transform 0.75s ease-out;
+}
+
+.shine-card:hover::after {
+  transform: translateX(100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

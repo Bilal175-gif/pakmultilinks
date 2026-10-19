@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/catalog/product-card";
 import { TrustedPartners } from "@/components/home/trusted-partners";
 import { DealsSlider } from "@/components/home/deals-slider";
+import { PerksStrip } from "@/components/home/perks-strip";
 import { ShopByBrand } from "@/components/home/shop-by-brand";
 import { CustomBrandingSection } from "@/components/home/custom-branding-section";
 import { listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
@@ -21,6 +22,7 @@ export default async function HomePage() {
   return (
     <>
       <DealsSlider deals={deals} />
+      <PerksStrip />
       <TrustedPartners />
       <ShopByBrand />
 

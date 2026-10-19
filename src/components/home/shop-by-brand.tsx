@@ -115,7 +115,7 @@ export function ShopByBrand() {
             <Link
               key={brand.id}
               href={brand.mainHref}
-              className={`group flex flex-col justify-between rounded-2xl border border-line bg-surface p-3.5 sm:p-4 shadow-xs transition-all duration-300 hover:border-action hover:shadow-xl hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
+              className={`shine-card group flex flex-col justify-between rounded-2xl border border-line bg-surface p-3.5 sm:p-4 shadow-xs transition-all duration-300 hover:border-action hover:shadow-xl hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
             >
               {/* Card Header: Brand Title, Arrow Badge & Subtitle */}
               <div>
@@ -123,8 +123,8 @@ export function ShopByBrand() {
                   <h3 className="text-sm sm:text-base font-extrabold text-content transition-colors group-hover:text-action line-clamp-1">
                     {brand.name}
                   </h3>
-                  <span className="grid size-5 sm:size-6 shrink-0 place-items-center rounded-full bg-surface-soft text-muted transition-all duration-200 group-hover:bg-action group-hover:text-white">
-                    <ArrowRight className="size-2.5 sm:size-3" />
+                  <span className="grid size-5 sm:size-6 shrink-0 place-items-center rounded-full bg-surface-soft text-muted transition-all duration-300 group-hover:bg-action group-hover:text-white group-hover:scale-110">
+                    <ArrowRight className="size-2.5 sm:size-3 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </span>
                 </div>
                 <p className="mt-0.5 line-clamp-1 text-[11px] font-medium text-muted">
