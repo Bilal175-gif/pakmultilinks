@@ -28,7 +28,7 @@ export const BRAND_SHOWCASE: BrandCardData[] = [
     id: "nozomi",
     name: "Nozomi",
     subtitle: "Commercial Pure Soft Tissues",
-    image: "/images/brands/nozomi.jpg",
+    image: "/images/brands/nozomi-logo.png",
     mainHref: "/shop?brand=Nozomi",
     popularCategories: [
       { label: "Pop-Up Tissues (100 Sheets x 2Ply)", href: "/shop?brand=Nozomi&category=facial-tissues" },
