@@ -18,26 +18,7 @@ export function Footer() {
   }, []);
   return (
     <footer className="border-t border-line bg-surface text-secondary pb-24 md:pb-0">
-      {/* Reassurance Strip */}
-      <div className="border-b border-line bg-surface-soft/60 py-4">
-        <div className="site-shell grid grid-cols-1 gap-3 sm:grid-cols-3 sm:divide-x sm:divide-line text-xs font-medium">
-          <div className="flex items-center gap-2.5 sm:justify-center">
-            <span className="size-2 rounded-full bg-action shrink-0" />
-            <span className="font-bold text-content">Carton Supply:</span>
-            <span className="text-muted">Direct wholesale packing</span>
-          </div>
-          <div className="flex items-center gap-2.5 sm:justify-center">
-            <span className="size-2 rounded-full bg-action shrink-0" />
-            <span className="font-bold text-content">Lahore Delivery:</span>
-            <span className="text-muted">Express warehouse dispatch</span>
-          </div>
-          <div className="flex items-center gap-2.5 sm:justify-center">
-            <span className="size-2 rounded-full bg-action shrink-0" />
-            <span className="font-bold text-content">B2B Support:</span>
-            <span className="text-muted">GST invoices & custom quotes</span>
-          </div>
-        </div>
-      </div>
+
 
       <div className="site-shell grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_.8fr_1fr_1.1fr] lg:py-16">
         <div>

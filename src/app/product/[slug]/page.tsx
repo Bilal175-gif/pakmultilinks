@@ -228,14 +228,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <p className="mt-5 leading-8 text-secondary">{product.description}</p>
 
             {product.bulkPricing && (
-              <div className="mt-7 flex items-start gap-3 rounded-md bg-surface-soft p-4">
-                <Building2 className="mt-0.5 size-5 shrink-0 text-accent" aria-hidden="true" />
-                <div>
-                  <p className="font-bold text-accent">Corporate supply support</p>
-                  <p className="mt-1 text-sm leading-6 text-secondary">
-                    This product is supplied by carton. Packing, minimum quantity, wholesale pricing and delivery are confirmed before fulfilment.
-                  </p>
-                </div>
+              <div className="mt-7 flex items-center gap-3 rounded-md bg-surface-soft p-4">
+                <Building2 className="size-5 shrink-0 text-accent" aria-hidden="true" />
+                <p className="font-bold text-accent">Corporate & bulk supply available</p>
               </div>
             )}
           </div>
@@ -275,10 +270,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <section className="mt-16" aria-labelledby="related-products-heading">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
-                <p className="text-xs font-extrabold uppercase tracking-[0.17em] text-accent">
-                  Complete your supply list
-                </p>
-                <h2 id="related-products-heading" className="mt-2 text-3xl font-extrabold tracking-[-0.035em] text-content">
+                <h2 id="related-products-heading" className="text-3xl font-extrabold tracking-[-0.035em] text-content">
                   Related products
                 </h2>
               </div>

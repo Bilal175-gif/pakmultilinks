@@ -143,14 +143,7 @@ export function ProductCard({
             {product.name}
           </Link>
         </Heading>
-        <p
-          className={cn(
-            "product-card-description mt-1.5 text-[11px] leading-4 text-secondary sm:text-xs sm:leading-5",
-            layout === "grid" && "line-clamp-1 sm:line-clamp-2",
-          )}
-        >
-          {product.shortDescription}
-        </p>
+
 
         <div className="product-card-packing mt-2 space-y-0.5 text-[11px] font-medium text-accent sm:mt-3 sm:space-y-1 sm:text-xs sm:font-semibold">
           <p className="truncate">{cartonPacking(product)}</p>

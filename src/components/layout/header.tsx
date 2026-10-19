@@ -309,14 +309,14 @@ export function Header() {
                 <div className="mb-6 flex items-center justify-between border-b border-line pb-4">
                   <div>
                     <p className="text-base font-extrabold text-content">Shop by Brand</p>
-                    <p className="text-xs text-secondary">Official Rose Petal & Nozomi Tissue Collections with Direct Wholesale Rates</p>
+                    <p className="text-xs text-secondary">Official Bulk &amp; Retail Brand Collections with Direct Wholesale Rates</p>
                   </div>
                   <Link
                     href="/shop"
                     onClick={() => categoryMenuRef.current?.removeAttribute("open")}
                     className="focus-ring rounded-xl bg-surface-soft border border-line px-4 py-2 text-xs font-bold text-accent transition hover:border-action hover:text-action"
                   >
-                    Browse all products →
+                    Browse all brands →
                   </Link>
                 </div>
                 <BrandNavigation onNavigate={() => categoryMenuRef.current?.removeAttribute("open")} />

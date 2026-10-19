@@ -1,10 +1,10 @@
-import { ArrowRight, PackageCheck, Phone, Truck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ProductCard } from "@/components/catalog/product-card";
 import { TrustedPartners } from "@/components/home/trusted-partners";
 import { DealsSlider } from "@/components/home/deals-slider";
-import { ProductsCatalogTable } from "@/components/home/products-catalog-table";
+import { ShopByBrand } from "@/components/home/shop-by-brand";
 import { CustomBrandingSection } from "@/components/home/custom-branding-section";
 import { listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
 import { company } from "@/lib/company";
@@ -22,61 +22,12 @@ export default async function HomePage() {
     <>
       <DealsSlider deals={deals} />
       <TrustedPartners />
-        <div className="border-y border-line bg-surface">
-          <div className="site-shell grid grid-cols-3 divide-x divide-line py-3 sm:py-5">
-            {[
-              { Icon: PackageCheck, title: "Carton Supply", fullTitle: "Supplied by the carton", text: "Wholesale packing details" },
-              { Icon: Truck, title: "Bulk Delivery", fullTitle: "Business orders welcome", text: "Lahore warehouse dispatch" },
-              { Icon: Phone, title: "Live Support", fullTitle: "Direct sales desk", text: company.phone },
-            ].map(({ Icon, title, fullTitle, text }) => (
-              <div key={title} className="flex flex-col items-center justify-center gap-1.5 px-1 text-center sm:flex-row sm:gap-3 sm:text-left sm:px-4">
-                <span className="grid size-7 sm:size-9 place-items-center rounded-xl bg-action/10 text-action shrink-0">
-                  <Icon className="size-3.5 sm:size-4" strokeWidth={2} />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-[11px] font-bold text-content sm:text-xs">
-                    <span className="sm:hidden">{title}</span>
-                    <span className="hidden sm:inline">{fullTitle}</span>
-                  </p>
-                  <p className="text-[10px] text-muted sm:text-[11px] truncate">{text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="rate-list-bar border-b border-line bg-surface-soft py-3 sm:py-4">
-          <div className="site-shell flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent/15 px-2.5 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-accent">
-                <span className="size-1.5 rounded-full bg-action" />
-                2026 Reference
-              </span>
-              <p className="text-xs font-semibold text-content sm:text-sm">
-                Official Wholesale Rate List (52 Items)
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-              <a
-                href="/rate-list.pdf"
-                download="Pak-Multilinks-Official-Rate-List.pdf"
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-action px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-action transition text-center"
-              >
-                Download PDF
-              </a>
-              <Link
-                href="/rate-list"
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-bold text-content hover:bg-surface-soft transition text-center"
-              >
-                View Rate List <ArrowRight className="size-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
+      <ShopByBrand />
+
         <section className="site-shell py-8 sm:py-16">
           <div className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted">Find what you need</p>
-              <h2 className="mobile-section-title mt-1 font-serif text-2xl text-content sm:text-4xl">Shop by category</h2>
+              <h2 className="mobile-section-title font-serif text-2xl text-content sm:text-4xl">Shop by category</h2>
             </div>
             <Link href="/shop" className="flex items-center gap-1.5 text-xs font-bold text-action hover:underline">
               Shop all<ArrowRight className="size-3.5" />
@@ -88,7 +39,6 @@ export default async function HomePage() {
                 <Link href={`/shop/${category.slug}`} className="flex items-center justify-between gap-3 text-sm font-bold text-accent hover:text-action">
                   {category.name}<ArrowRight className="size-4 text-muted" />
                 </Link>
-                <p className="mt-2 text-xs leading-5 text-muted sm:mt-3 sm:leading-6">{category.description}</p>
                 <ul className="mt-3 flex flex-wrap gap-1.5 sm:block sm:space-y-2">
                   {categories.filter(child => child.parentId === category.id).slice(0, 5).map(child => (
                     <li key={child.id}>
@@ -106,8 +56,7 @@ export default async function HomePage() {
           <div className="site-shell">
             <div className="mb-8 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs text-muted">For your everyday spaces</p>
-                <h2 className="mobile-section-title mt-2 font-serif text-3xl text-content sm:text-4xl">From our collection</h2>
+                <h2 className="mobile-section-title font-serif text-3xl text-content sm:text-4xl">From our collection</h2>
               </div>
               <Link href="/shop" className="text-xs underline underline-offset-4">View all products</Link>
             </div>
@@ -118,8 +67,6 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-        {/* Content-wise HTML Table Form for Complete Product Reference */}
-        <ProductsCatalogTable products={products} />
 
         {/* Custom Branding Animated Tissue Box Showcase */}
         <CustomBrandingSection />
