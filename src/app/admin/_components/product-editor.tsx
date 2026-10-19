@@ -238,16 +238,93 @@ export function ProductEditor({
       </section>
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
-        <div className="mb-5"><h2 className="font-bold">Carton pricing & inventory</h2><p className="mt-1 text-xs text-muted">Prices are in PKR per carton. Clear sale price to end a discount; turn off “Price on request” to publish a price.</p></div>
+        <div className="mb-5">
+          <h2 className="font-bold">Pricing, packing & inventory</h2>
+          <p className="mt-1 text-xs text-muted">
+            Set rates by carton or per-piece — both automatically synchronize based on pieces per carton. Toggle &ldquo;Price on request&rdquo; for products requiring custom wholesale quotation.
+          </p>
+        </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {field("Carton price (PKR)", "price", "number")}
-          {field("Sale price per carton", "salePrice", "number")}
+          <label className="block text-sm font-semibold text-secondary">
+            <span className="flex items-center justify-between">
+              <span>Per piece price (PKR)</span>
+              <span className="text-[11px] font-bold text-red-600 dark:text-red-400">Calculated</span>
+            </span>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              disabled={disabled}
+              value={value.price > 0 && value.unitsPerCarton > 0 ? (value.price / value.unitsPerCarton).toFixed(2) : ""}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                const units = value.unitsPerCarton > 0 ? value.unitsPerCarton : 1;
+                if (!e.target.value) {
+                  set("price", 0);
+                } else if (Number.isFinite(val)) {
+                  set("price", parseFloat((val * units).toFixed(2)));
+                }
+              }}
+              placeholder="0.00"
+              className={`${inputClass} border-red-300 bg-red-50/90 dark:bg-red-950/40 font-bold text-red-700 dark:text-red-300 placeholder:text-red-300`}
+            />
+          </label>
           {field("Pieces / packs per carton", "unitsPerCarton", "number")}
+          {field("Sale price per carton", "salePrice", "number")}
+          <label className="block text-sm font-semibold text-secondary">
+            <span className="flex items-center justify-between">
+              <span>Sale price per piece (PKR)</span>
+              <span className="text-[11px] font-normal text-muted">Calculated</span>
+            </span>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              disabled={disabled}
+              value={value.salePrice != null && value.salePrice > 0 && value.unitsPerCarton > 0 ? (value.salePrice / value.unitsPerCarton).toFixed(2) : ""}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                const units = value.unitsPerCarton > 0 ? value.unitsPerCarton : 1;
+                if (!e.target.value) {
+                  set("salePrice", null);
+                } else if (Number.isFinite(val)) {
+                  set("salePrice", parseFloat((val * units).toFixed(2)));
+                }
+              }}
+              placeholder="No sale"
+              className={`${inputClass} border-line bg-surface font-semibold text-secondary`}
+            />
+          </label>
           {field("Minimum order (cartons)", "minimumOrderCartons", "number", 1)}
           {field("Available stock (cartons)", "stock", "number")}
           {field("Low-stock alert (cartons)", "lowStockThreshold", "number")}
         </div>
-        <div className="mt-5 rounded-lg border border-line bg-surface-soft p-4 text-sm"><span className="text-muted">Customer sees </span><strong>{value.priceOnRequest ? "Price on request" : `Rs ${(value.salePrice ?? value.price).toLocaleString("en-PK")} / carton`}</strong>{!value.priceOnRequest && value.unitsPerCarton > 0 && <span className="ml-3 text-xs text-muted">Rs {((value.salePrice ?? value.price) / value.unitsPerCarton).toFixed(2)} per unit</span>}{value.salePrice !== null && value.price > 0 && <span className="ml-3 text-xs text-muted">{Math.round((1 - value.salePrice / value.price) * 100)}% discount</span>}</div>
+        <div className="mt-5 rounded-2xl border border-line bg-surface-soft p-4 text-sm">
+          <span className="text-muted font-medium">Customer sees in storefront: </span>
+          {value.priceOnRequest ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+              <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+              Price on request (Wholesale Quotation)
+            </span>
+          ) : (
+            <span className="inline-flex flex-wrap items-center gap-2">
+              <strong className="text-action">
+                Rs {(value.salePrice ?? value.price).toLocaleString("en-PK")} / carton
+              </strong>
+              {value.unitsPerCarton > 1 && (
+                <span className="rounded-md bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:bg-red-950/40 dark:text-red-300">
+                  Rs {((value.salePrice ?? value.price) / value.unitsPerCarton).toFixed(2)} / piece ({value.unitsPerCarton} pcs/carton)
+                </span>
+              )}
+              {value.salePrice !== null && value.price > 0 && (
+                <span className="rounded-full bg-action px-2 py-0.5 text-xs font-bold text-white">
+                  {Math.round((1 - value.salePrice / value.price) * 100)}% discount
+                </span>
+              )}
+            </span>
+          )}
+        </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {([
             ["priceOnRequest", "Price on request"],

@@ -7,7 +7,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { getPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/types";
-import { cartonPacking, formatPrice, formatProductPrice, minimumCartons } from "@/lib/utils";
+import { cartonPacking, formatPiecePrice, formatPrice, formatProductPrice, getPerPiecePrice, minimumCartons } from "@/lib/utils";
 
 import { StockStatus } from "./stock-status";
 import { ProductMediaPlaceholder } from "./product-media-placeholder";
@@ -33,6 +33,7 @@ export function ProductQuickView({
   const headingId = useId();
   const [isZoomed, setIsZoomed] = useState(false);
   const hasSale = product.salePrice != null && product.salePrice < product.price;
+  const perPiece = getPerPiecePrice(product);
 
   useEffect(() => {
     if (isOpen !== undefined) {
@@ -64,13 +65,13 @@ export function ProductQuickView({
           onClick={() => {
             dialogRef.current?.showModal();
           }}
-          className="commerce-button commerce-button-secondary commerce-button-sm inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl border border-line px-3 text-xs sm:text-sm font-bold text-accent transition hover:border-focus hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 text-xs font-semibold text-accent transition hover:border-action/40 hover:bg-surface-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus active:scale-95"
           aria-haspopup="dialog"
           aria-label={`Enhance / Quick view ${product.name}`}
           title="Click to enhance image & view details"
         >
-          <Eye className="size-4" aria-hidden="true" />
-          <span className="sr-only sm:not-sr-only">Enhance</span>
+          <Eye className="size-3.5" aria-hidden="true" />
+          <span className="sr-only sm:not-sr-only">Quick view</span>
         </button>
       )}
 
@@ -174,18 +175,40 @@ export function ProductQuickView({
 
             {/* Price Box */}
             <div className="mt-5 rounded-2xl border border-line bg-surface-soft/60 p-4">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-muted">Wholesale Rate</p>
-              <div className="mt-1 flex items-baseline gap-2.5">
-                <span className="text-3xl font-extrabold text-content tracking-tight">
-                  {formatProductPrice(product)}
-                </span>
-                {hasSale && (
-                  <span className="text-base text-muted line-through">
-                    {formatPrice(product.price)}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
+                  {product.priceOnRequest ? "Pricing Status" : "Wholesale Rate"}
+                </p>
+                {!product.priceOnRequest && (
+                  <span className="text-[10px] font-bold text-action bg-action/10 px-2 py-0.5 rounded-full">
+                    Min. order PKR 5,000
                   </span>
                 )}
-                <span className="text-xs font-semibold text-secondary">/ carton</span>
               </div>
+              <div className="mt-1.5 flex flex-wrap items-baseline gap-2.5">
+                {product.priceOnRequest ? (
+                  <span className="inline-flex items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-lg sm:text-xl font-extrabold text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
+                    Price on request
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-2xl sm:text-3xl font-extrabold text-content tracking-tight">
+                      {formatProductPrice(product)}
+                    </span>
+                    {hasSale && (
+                      <span className="text-base text-muted line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+              {!product.priceOnRequest && perPiece != null && product.unitsPerCarton > 1 && (
+                <div className="mt-2.5 inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-100/90 px-3 py-1 text-xs font-bold text-red-950 shadow-2xs dark:border-red-600 dark:bg-red-950 dark:text-red-100">
+                  <span className="font-semibold text-red-800 dark:text-red-300">Per piece rate:</span>
+                  <span className="text-sm font-black text-red-950 dark:text-white">{formatPiecePrice(perPiece)}</span>
+                </div>
+              )}
             </div>
 
             {/* Specifications Grid */}
@@ -207,18 +230,28 @@ export function ProductQuickView({
             {/* Action Buttons */}
             <div className="mt-6 flex flex-col gap-2.5">
               <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  disabled={unavailable}
-                  onClick={() => {
-                    onAddToCart();
-                    closeDialog();
-                  }}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-action px-4 text-xs sm:text-sm font-extrabold text-white transition hover:bg-action-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-not-allowed disabled:bg-disabled shadow-xs active:scale-98"
-                >
-                  <ShoppingCart className="size-4" aria-hidden="true" />
-                  <span>{unavailable ? "Out of Stock" : "Add to Cart"}</span>
-                </button>
+                {product.priceOnRequest ? (
+                  <Link
+                    href={`/request-quote?product=${encodeURIComponent(product.slug)}`}
+                    onClick={closeDialog}
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-action px-4 text-xs sm:text-sm font-extrabold text-white transition hover:bg-action-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus shadow-xs active:scale-98 text-center"
+                  >
+                    <span>Request Quote</span>
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={unavailable}
+                    onClick={() => {
+                      onAddToCart();
+                      closeDialog();
+                    }}
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-action px-4 text-xs sm:text-sm font-extrabold text-white transition hover:bg-action-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-not-allowed disabled:bg-disabled shadow-xs active:scale-98"
+                  >
+                    <ShoppingCart className="size-4" aria-hidden="true" />
+                    <span>{unavailable ? "Out of Stock" : "Add to Cart"}</span>
+                  </button>
+                )}
 
                 <a
                   href={whatsappUrl}

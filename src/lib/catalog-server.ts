@@ -101,6 +101,30 @@ function inferBrand(name: string, currentBrandName?: string | null): string {
   if (lower.includes("nozomi")) {
     return "Nozomi";
   }
+  if (lower.includes("fresco")) {
+    return "Fresco";
+  }
+  if (lower.includes("germi cure") || lower.includes("germicure")) {
+    return "Germi Cure";
+  }
+  if (lower.includes("shine well") || lower.includes("shinewell")) {
+    return "Shine Well";
+  }
+  if (lower.includes("airnergy") || lower.includes("air energy")) {
+    return "Airnergy";
+  }
+  if (lower.includes("super soft")) {
+    return "Super Soft";
+  }
+  if (lower.includes("softex")) {
+    return "Softex";
+  }
+  if (lower.includes("sicura")) {
+    return "Sicura";
+  }
+  if (lower.includes("glad")) {
+    return "Glad";
+  }
   return currentBrandName || "Pak Multilinks";
 }
 

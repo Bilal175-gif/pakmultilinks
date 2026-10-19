@@ -7,6 +7,7 @@ function applyTheme(preference: ThemePreference) {
   const dark = preference === "dark" || (preference === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   document.documentElement.dataset.theme = dark ? "dark" : "light";
   document.documentElement.dataset.themePreference = preference;
+  document.documentElement.classList.toggle("dark", dark);
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#101914" : "#114b2f");
   window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }

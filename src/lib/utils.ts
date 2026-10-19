@@ -15,8 +15,35 @@ export function formatPrice(amount: number) {
   }).format(amount);
 }
 
-export function formatProductPrice(product: Product) {
-  return product.priceOnRequest ? "Price on request" : `${formatPrice(product.salePrice ?? product.price)} / carton`;
+export const MINIMUM_ORDER_AMOUNT = 5000;
+
+export function getPerPiecePrice(
+  product: { price: number; salePrice?: number | null; unitsPerCarton: number },
+  useSale = true,
+): number | null {
+  if (!product.unitsPerCarton || product.unitsPerCarton <= 0) return null;
+  const price =
+    useSale && product.salePrice != null && product.salePrice > 0
+      ? product.salePrice
+      : product.price;
+  if (!price || price <= 0) return null;
+  return price / product.unitsPerCarton;
+}
+
+export function formatPiecePrice(amount: number) {
+  return `${formatPrice(amount)} / piece`;
+}
+
+export function formatProductPrice(product: {
+  price: number;
+  salePrice?: number | null;
+  priceOnRequest?: boolean;
+  unitsPerCarton?: number;
+}) {
+  if (product.priceOnRequest) return "Price on request";
+  const effective = product.salePrice ?? product.price;
+  const isSingle = !product.unitsPerCarton || product.unitsPerCarton <= 1;
+  return `${formatPrice(effective)} / ${isSingle ? "piece" : "carton"}`;
 }
 
 export function minimumCartons(product: Product) {
