@@ -664,7 +664,7 @@ export function PricingEditor({
                   />
                 </th>
                 <th className="min-w-56 p-3.5">Product & SKU</th>
-                <th className="w-48 p-3.5">
+                <th className="w-40 p-3.5">
                   <div className="flex items-center gap-1">
                     <span>Regular Rate</span>
                     <span className="text-[10px] font-normal normal-case text-muted">
@@ -672,7 +672,7 @@ export function PricingEditor({
                     </span>
                   </div>
                 </th>
-                <th className="w-44 p-3.5">
+                <th className="w-40 p-3.5">
                   <div className="flex items-center gap-1">
                     <span>Sale Rate</span>
                     <span className="text-[10px] font-normal normal-case text-muted">
@@ -750,7 +750,7 @@ export function PricingEditor({
 
                     {/* Regular Price (Carton & Piece Linked) */}
                     <td className="p-3.5 align-top">
-                      <div className="w-48 space-y-1.5">
+                      <div className="w-36 space-y-1.5">
                         {/* Carton Rate Input */}
                         <div className="relative flex items-center">
                           <span className="pointer-events-none absolute left-2 text-[11px] font-bold text-muted">
@@ -792,52 +792,12 @@ export function PricingEditor({
                             /pc
                           </span>
                         </div>
-
-                        {/* Quick Carton Packing Control right in the rate cell */}
-                        <div className="flex items-center justify-between gap-1 rounded-md border border-line/80 bg-surface-soft/80 px-2 py-1 text-[10px]">
-                          <span className="font-semibold text-secondary flex items-center gap-1">
-                            <span>📦 1 Ctn =</span>
-                          </span>
-                          <div className="flex items-center gap-1">
-                            <input
-                              type="number"
-                              min="1"
-                              step="1"
-                              aria-label={`${row.name} pieces per carton`}
-                              value={draft.unitsPerCarton}
-                              disabled={disabled || pending}
-                              onChange={(e) => handleUnitsChange(row, draft, e.target.value)}
-                              className={`h-5 w-12 rounded border text-center text-[10px] font-black tabular-nums outline-none transition ${
-                                units <= 1
-                                  ? "border-amber-400 bg-amber-50 text-amber-900 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 dark:border-amber-600 dark:bg-amber-950 dark:text-amber-200"
-                                  : "border-line-strong/80 bg-surface text-content focus:border-action"
-                              }`}
-                              title="1 Carton me kitne pieces hain? Yahan likhein taake piece rate multiply ho kar carton rate banay!"
-                            />
-                            <span className="font-bold text-muted">pcs</span>
-                          </div>
-                        </div>
-
-                        {units <= 1 ? (
-                          <div className="rounded border border-amber-300 bg-amber-50/95 px-1.5 py-1 text-[9px] font-bold leading-tight text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/50 dark:text-amber-200">
-                            ⚠️ Carton me kitne pcs hain? (e.g. {detectUnitsFromName(row.name) || 48} likhein taake Piece Rate × {detectUnitsFromName(row.name) || 48} se Carton Rate calculate ho!)
-                          </div>
-                        ) : (
-                          <div className="px-0.5 text-[9px] font-medium text-muted flex items-center justify-between">
-                            <span className="text-emerald-700 dark:text-emerald-400 font-bold">✓ 1 ctn = {units} pcs</span>
-                            {draft.piecePrice && Number(draft.piecePrice) > 0 && (
-                              <span className="text-muted text-[8px]">
-                                (₨ {draft.piecePrice} × {units} = ₨ {(Number(draft.piecePrice) * units).toLocaleString()})
-                              </span>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </td>
 
                     {/* Sale Price (Carton & Piece) */}
                     <td className="p-3.5 align-top">
-                      <div className="w-40 space-y-1.5">
+                      <div className="w-36 space-y-1.5">
                         {/* Sale Carton Rate */}
                         <div className="relative flex items-center">
                           <span className="pointer-events-none absolute left-2 text-[11px] font-bold text-muted">
@@ -879,12 +839,6 @@ export function PricingEditor({
                             /pc
                           </span>
                         </div>
-
-                        {draft.salePrice && Number(draft.salePrice) > 0 && units > 1 && (
-                          <div className="px-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-400">
-                            Sale: ₨ {salePiece}/pc (₨ {Number(draft.salePrice).toLocaleString()}/ctn)
-                          </div>
-                        )}
                       </div>
                     </td>
 
