@@ -36,35 +36,6 @@
   --white: var(--surface);
 }
 
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --canvas: #0b0f14;
-  --surface: #121820;
-  --surface-soft: #17222c;
-  --surface-hover: #1e2c38;
-  --content: #f8fafc;
-  --secondary: #cbd5e1;
-  --muted: #94a3b8;
-  --accent: #22c55e;
-  --accent-soft: #143522;
-  --line: #22303e;
-  --line-strong: #334556;
-  --action: #16a34a;
-  --action-hover: #15803d;
-  --disabled: #1e293b;
-  --warning: #fbbf24;
-  --warning-soft: #2e2410;
-  --warning-line: #5c4316;
-  --danger: #f87171;
-  --danger-soft: #37171a;
-  --danger-line: #6e252c;
-  --info: #38bdf8;
-  --info-soft: #102a3a;
-  --focus: #4ade80;
-  --image-surface: #141d26;
-  --hero-tint: #0d1e15;
-}
-
 @theme inline {
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
@@ -92,26 +63,6 @@
   --color-image-surface: var(--image-surface);
 }
 
-.theme-switch { position: relative; display: inline-flex; flex-shrink: 0; align-items: center; min-height: 44px; border: 1px solid var(--line); border-radius: var(--control-radius); background: var(--surface); color: var(--content); }
-.theme-switch-icon { position: absolute; left: 12px; pointer-events: none; color: var(--accent); }
-.theme-switch select { min-height: 44px; min-width: 112px; padding: 8px 12px 8px 36px; border: 0; border-radius: inherit; background: transparent; color: inherit; font-size: 14px; cursor: pointer; }
-.theme-switch select:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-.theme-switch-compact { width: 44px; height: 44px; }
-.theme-switch-compact select { position: absolute; inset: 0; min-width: 0; width: 100%; padding: 0; opacity: 0; }
-.theme-switch-compact:focus-within { outline: 2px solid var(--focus); outline-offset: 3px; }
-.theme-switch-icon > svg { display: none; }
-:root:not([data-theme-preference]) .theme-icon-system,
-:root[data-theme-preference="system"] .theme-icon-system,
-:root[data-theme-preference="light"] .theme-icon-light,
-:root[data-theme-preference="dark"] .theme-icon-dark { display: block; }
 .brand-logo-dark { display: none !important; }
 .brand-logo-light { display: block !important; }
-
-:root[data-theme="dark"] .brand-logo-light { display: none !important; }
-:root[data-theme="dark"] .brand-logo-dark { display: block !important; }
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .brand-logo-light { display: none !important; }
-  :root:not([data-theme="light"]) .brand-logo-dark { display: block !important; }
-}
 

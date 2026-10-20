@@ -9,12 +9,10 @@ export function isThemePreference(value: unknown): value is ThemePreference {
 // Runs synchronously in <head>, before the first paint. Keep storage optional:
 // private browsing and blocked storage must not prevent the page from rendering.
 export const themeInitializationScript = `(() => {
-  let preference = "system";
   try {
-    const saved = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});
-    if (saved === "light" || saved === "dark" || saved === "system") preference = saved;
+    localStorage.removeItem(${JSON.stringify(THEME_STORAGE_KEY)});
   } catch {}
-  const dark = preference === "dark" || (preference === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-  document.documentElement.dataset.theme = dark ? "dark" : "light";
-  document.documentElement.dataset.themePreference = preference;
+  document.documentElement.dataset.theme = "light";
+  document.documentElement.dataset.themePreference = "light";
+  document.documentElement.classList.remove("dark");
 })();`;

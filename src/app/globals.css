@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "./theme.css";
-
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+@custom-variant dark (&:where([data-theme="never-dark"]));
 
 
 
@@ -690,8 +689,6 @@ summary::-webkit-details-marker {
   .storefront-header .brand-logo { width: clamp(100px, 32vw, 145px); }
   .storefront-header .site-shell { gap: 4px; }
   .storefront-header .commerce-icon-button { width: 40px; height: 44px; }
-  .storefront-header .theme-switch-compact { width: 40px; }
-  .storefront-header .theme-switch-icon { left: 10px; }
   .storefront-shell :is(input, select, textarea, button, a) { scroll-margin-top: 80px; }
 
   /* ── Prevent horizontal scroll globally on mobile ── */
