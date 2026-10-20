@@ -94,6 +94,8 @@ export function CatalogExplorer({
     const ceiling = maxPrice === "" ? Number.POSITIVE_INFINITY : Number(maxPrice);
     const targetBrandClean = brand.toLowerCase().replace(/[^a-z0-9]/g, "");
 
+    const queryWords = query.split(/\s+/).filter(Boolean);
+
     const matches = products.filter((product) => {
       const searchableText = [
         product.name,
@@ -102,6 +104,7 @@ export function CatalogExplorer({
         product.brand,
         product.shortDescription,
         product.description,
+        ...(product.attributes?.map((a) => `${a.name} ${a.value}`) || []),
       ]
         .join(" ")
         .toLocaleLowerCase();
@@ -113,6 +116,8 @@ export function CatalogExplorer({
         !brand ||
         product.brand.toLowerCase() === brand.toLowerCase() ||
         productBrandClean === targetBrandClean ||
+        productBrandClean.includes(targetBrandClean) ||
+        productNameLower.includes(brand.toLowerCase()) ||
         (targetBrandClean === "rosepetal" &&
           (productBrandClean.includes("rosepetal") ||
             productNameLower.includes("rose petal") ||
@@ -121,11 +126,35 @@ export function CatalogExplorer({
             productNameLower.includes("maxob"))) ||
         (targetBrandClean === "nozomi" &&
           (productBrandClean.includes("nozomi") ||
-            productNameLower.includes("nozomi")));
+            productNameLower.includes("nozomi"))) ||
+        (targetBrandClean === "germicure" &&
+          (productNameLower.includes("germi cure") || productNameLower.includes("germicure"))) ||
+        (targetBrandClean === "shinewell" &&
+          (productNameLower.includes("shine well") || productNameLower.includes("shinewell"))) ||
+        (targetBrandClean === "airnergy" &&
+          (productNameLower.includes("air energy") || productNameLower.includes("airnergy"))) ||
+        (targetBrandClean === "supersoft" &&
+          (productNameLower.includes("super soft") || productNameLower.includes("supersoft")));
+
+      const categoryMatches =
+        !selectedCategory ||
+        product.categorySlug === selectedCategory ||
+        product.parentCategorySlug === selectedCategory ||
+        categoryOptions.some(
+          (c) =>
+            c.parentId &&
+            categoryOptions.find((p) => p.id === c.parentId)?.slug === selectedCategory &&
+            (product.categorySlug === c.slug || product.category.toLowerCase() === c.name.toLowerCase()),
+        ) ||
+        product.category.toLowerCase().replace(/[^a-z0-9]+/g, "-") === selectedCategory;
+
+      const matchesQuery =
+        queryWords.length === 0 ||
+        queryWords.every((word) => searchableText.includes(word));
 
       return (
-        (!query || searchableText.includes(query)) &&
-        (!selectedCategory || (product.categorySlug === selectedCategory || product.parentCategorySlug === selectedCategory)) &&
+        matchesQuery &&
+        categoryMatches &&
         brandMatches &&
         (!inStockOnly || product.stock >= minimumCartons(product) || Boolean(product.allowBackorder)) &&
         productPrice >= floor &&

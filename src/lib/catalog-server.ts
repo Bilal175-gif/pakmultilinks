@@ -44,11 +44,11 @@ type PublicProductRow = Prisma.ProductGetPayload<{
 }>;
 
 function inferProductTaxonomy(name: string, currentCategory: { name: string; slug: string; parent?: { slug: string } | null }) {
-  if (currentCategory.slug !== "general" && currentCategory.slug !== "uncategorized" && currentCategory.parent?.slug) {
+  if (currentCategory.slug && currentCategory.slug !== "general" && currentCategory.slug !== "uncategorized") {
     return {
       category: currentCategory.name,
       categorySlug: currentCategory.slug,
-      parentCategorySlug: currentCategory.parent.slug,
+      parentCategorySlug: currentCategory.parent?.slug || currentCategory.slug,
     };
   }
 
@@ -84,9 +84,9 @@ function inferProductTaxonomy(name: string, currentCategory: { name: string; slu
   }
 
   return {
-    category: "Facial Tissues",
-    categorySlug: "facial-tissues",
-    parentCategorySlug: "tissue-paper-products",
+    category: currentCategory.name || "Facial Tissues",
+    categorySlug: currentCategory.slug || "facial-tissues",
+    parentCategorySlug: currentCategory.parent?.slug || "tissue-paper-products",
   };
 }
 
@@ -113,7 +113,7 @@ function inferBrand(name: string, currentBrandName?: string | null): string {
   if (lower.includes("airnergy") || lower.includes("air energy")) {
     return "Airnergy";
   }
-  if (lower.includes("super soft")) {
+  if (lower.includes("super soft") || lower.includes("supersoft")) {
     return "Super Soft";
   }
   if (lower.includes("softex")) {
@@ -125,6 +125,19 @@ function inferBrand(name: string, currentBrandName?: string | null): string {
   if (lower.includes("glad")) {
     return "Glad";
   }
+  if (lower.includes("harpic")) return "Harpic";
+  if (lower.includes("dettol")) return "Dettol";
+  if (lower.includes("vim")) return "Vim";
+  if (lower.includes("bonus")) return "Bonus";
+  if (lower.includes("glint")) return "Glint";
+  if (lower.includes("colin")) return "Colin";
+  if (lower.includes("finis")) return "Finis";
+  if (lower.includes("shield")) return "Shield";
+  if (lower.includes("robin")) return "Robin";
+  if (lower.includes("ariel")) return "Ariel";
+  if (lower.includes("surf excel")) return "Surf Excel";
+  if (lower.includes("safeguard")) return "Safeguard";
+  if (lower.includes("lifebuoy")) return "Lifebuoy";
   return currentBrandName || "Pak Multilinks";
 }
 

@@ -13,8 +13,22 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   let products: Array<{ id: string; name: string; sku: string; category: string; price: number; salePrice: number | null; priceOnRequest: boolean; unitsPerCarton: number; minimumOrderCartons: number; stock: number; threshold: number; status: string }> = [];
   if (connected) {
     try {
+      const qWords = q.trim().split(/\s+/).filter(Boolean).slice(0, 5);
+      const whereClause = qWords.length
+        ? {
+            AND: qWords.map((word) => ({
+              OR: [
+                { name: { contains: word, mode: "insensitive" as const } },
+                { sku: { contains: word, mode: "insensitive" as const } },
+                { category: { name: { contains: word, mode: "insensitive" as const } } },
+                { brand: { name: { contains: word, mode: "insensitive" as const } } },
+              ],
+            })),
+          }
+        : undefined;
+
       const rows = await db.product.findMany({
-        where: q ? { OR: [{ name: { contains: q.slice(0, 100), mode: "insensitive" } }, { sku: { contains: q.slice(0, 100), mode: "insensitive" } }] } : undefined,
+        where: whereClause,
         orderBy: { updatedAt: "desc" },
         take: 100,
         include: { category: { select: { name: true } } },
@@ -25,7 +39,14 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
     }
   }
   if (!connected) {
-    products = seedProducts.filter((item) => !q || `${item.name} ${item.sku}`.toLowerCase().includes(q.toLowerCase())).map((item) => ({ id: item.id, name: item.name, sku: item.sku, category: item.category, price: item.price, salePrice: item.salePrice ?? null, priceOnRequest: item.priceOnRequest, unitsPerCarton: item.unitsPerCarton, minimumOrderCartons: item.minimumOrderCartons, stock: item.stock, threshold: item.lowStockThreshold, status: "DEMO" }));
+    const qWords = q.toLowerCase().split(/\s+/).filter(Boolean);
+    products = seedProducts
+      .filter((item) => {
+        if (!qWords.length) return true;
+        const text = `${item.name} ${item.sku} ${item.category} ${item.brand || ""}`.toLowerCase();
+        return qWords.every((word) => text.includes(word));
+      })
+      .map((item) => ({ id: item.id, name: item.name, sku: item.sku, category: item.category, price: item.price, salePrice: item.salePrice ?? null, priceOnRequest: item.priceOnRequest, unitsPerCarton: item.unitsPerCarton, minimumOrderCartons: item.minimumOrderCartons, stock: item.stock, threshold: item.lowStockThreshold, status: "DEMO" }));
   }
 
   return (

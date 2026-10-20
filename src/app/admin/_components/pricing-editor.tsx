@@ -22,6 +22,7 @@ export type PricingRow = {
   name: string;
   sku: string;
   category: string;
+  brand?: string;
   updatedAt: string;
   price: number;
   salePrice: number | null;
@@ -30,6 +31,27 @@ export type PricingRow = {
   unitsPerCarton: number;
   minimumOrderCartons: number;
 };
+
+export function inferBrandFromName(name: string, brand?: string): string {
+  if (brand && brand !== "Unbranded" && brand !== "Pak Multilinks") return brand;
+  const lower = name.toLowerCase();
+  if (lower.includes("rose petal") || lower.includes("hi-jeen") || lower.includes("zzoop") || lower.includes("maxob")) return "Rose Petal";
+  if (lower.includes("nozomi")) return "Nozomi";
+  if (lower.includes("fresco")) return "Fresco";
+  if (lower.includes("germi cure") || lower.includes("germicure")) return "Germi Cure";
+  if (lower.includes("shine well") || lower.includes("shinewell")) return "Shine Well";
+  if (lower.includes("airnergy") || lower.includes("air energy")) return "Airnergy";
+  if (lower.includes("super soft") || lower.includes("supersoft")) return "Super Soft";
+  if (lower.includes("softex")) return "Softex";
+  if (lower.includes("sicura")) return "Sicura";
+  if (lower.includes("glad")) return "Glad";
+  if (lower.includes("harpic")) return "Harpic";
+  if (lower.includes("dettol")) return "Dettol";
+  if (lower.includes("vim")) return "Vim";
+  if (lower.includes("bonus")) return "Bonus";
+  if (lower.includes("glint")) return "Glint";
+  return brand || "Other";
+}
 
 type Draft = {
   price: string;
@@ -93,6 +115,7 @@ export function PricingEditor({
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [category, setCategory] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [adjustment, setAdjustment] = useState("");
   const [pending, setPending] = useState(false);
@@ -101,36 +124,91 @@ export function PricingEditor({
 
   const dirtyIds = Object.keys(drafts);
 
+  const totalCount = rows.length;
+  const quoteOnlyCount = rows.filter(
+    (row) => (drafts[row.id]?.priceOnRequest ?? row.priceOnRequest),
+  ).length;
+  const publishedCount = totalCount - quoteOnlyCount;
+  const onSaleCount = rows.filter((row) => {
+    const sale = drafts[row.id]?.salePrice ?? row.salePrice;
+    return sale !== null && sale !== "" && Number(sale) > 0;
+  }).length;
+  const outOfStockCount = rows.filter(
+    (row) => Number(drafts[row.id]?.stock ?? row.stock) === 0,
+  ).length;
+  const missingUnitsCount = rows.filter((row) => {
+    const units = Number(drafts[row.id]?.unitsPerCarton ?? row.unitsPerCarton) || detectUnitsFromName(row.name);
+    return units <= 1;
+  }).length;
+
+  const brands = useMemo(() => {
+    const counts = new Map<string, number>();
+    rows.forEach((row) => {
+      const b = inferBrandFromName(row.name, row.brand);
+      if (b && b !== "Other") {
+        counts.set(b, (counts.get(b) || 0) + 1);
+      }
+    });
+    return Array.from(counts.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [rows]);
+
+  const categoriesWithCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    rows.forEach((row) => {
+      if (row.category) {
+        counts.set(row.category, (counts.get(row.category) || 0) + 1);
+      }
+    });
+    return Array.from(counts.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [rows]);
+
   const visible = useMemo(
     () =>
       rows.filter((row) => {
-        const matchesQuery = `${row.name} ${row.sku} ${row.category}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
+        const rowBrand = inferBrandFromName(row.name, row.brand);
+
+        // Multi-word smart search: every typed word matches anywhere in product info
+        const queryWords = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        const searchable = `${row.name} ${row.sku} ${row.category} ${rowBrand} ${row.unitsPerCarton > 0 ? `${row.unitsPerCarton} pcs` : ""}`.toLowerCase();
+        const matchesQuery =
+          queryWords.length === 0 ||
+          queryWords.every((word) => searchable.includes(word));
+
+        // Category filter
         const matchesCategory = !category || row.category === category;
+
+        // Brand filter
+        const matchesBrand =
+          !selectedBrand ||
+          rowBrand.toLowerCase() === selectedBrand.toLowerCase() ||
+          row.name.toLowerCase().includes(selectedBrand.toLowerCase());
+
+        // Status filter
         const currentQuote = drafts[row.id]?.priceOnRequest ?? row.priceOnRequest;
         const currentStock = Number(drafts[row.id]?.stock ?? row.stock);
+        const currentSale = drafts[row.id]?.salePrice ?? row.salePrice;
+        const currentUnits = Number(drafts[row.id]?.unitsPerCarton ?? row.unitsPerCarton) || detectUnitsFromName(row.name);
 
         let matchesFilter = true;
         if (filter === "quote") matchesFilter = currentQuote;
         else if (filter === "priced") matchesFilter = !currentQuote;
+        else if (filter === "sale") matchesFilter = Boolean(currentSale && Number(currentSale) > 0);
         else if (filter === "stock") matchesFilter = currentStock === 0;
+        else if (filter === "missing-units") matchesFilter = currentUnits <= 1;
 
-        return matchesQuery && matchesCategory && matchesFilter;
+        return matchesQuery && matchesCategory && matchesBrand && matchesFilter;
       }),
-    [rows, drafts, query, category, filter],
+    [rows, drafts, query, category, selectedBrand, filter],
   );
 
   const categories = useMemo(
     () => [...new Set(rows.map((row) => row.category))].sort(),
     [rows],
   );
-
-  const totalCount = rows.length;
-  const quoteOnlyCount = rows.filter(
-    (row) => (drafts[row.id]?.priceOnRequest ?? row.priceOnRequest),
-  ).length;
-  const publishedCount = totalCount - quoteOnlyCount;
 
   useEffect(() => {
     if (!dirtyIds.length) return;
@@ -507,20 +585,19 @@ export function PricingEditor({
         <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-line bg-surface p-3 sm:px-4">
           <div className="flex flex-wrap items-center gap-1.5">
             {[
-              { id: "all", label: `All products (${totalCount})` },
+              { id: "all", label: `All (${totalCount})` },
               { id: "priced", label: `Published (${publishedCount})` },
               { id: "quote", label: `Quote only (${quoteOnlyCount})` },
-              {
-                id: "stock",
-                label: `Out of stock (${rows.filter((r) => r.stock === 0).length})`,
-              },
+              { id: "sale", label: `On Sale (${onSaleCount})` },
+              { id: "stock", label: `Out of stock (${outOfStockCount})` },
+              { id: "missing-units", label: `Missing Pcs/Ctn (${missingUnitsCount})` },
             ].map(({ id, label }) => {
               const active = filter === id;
               return (
                 <button
                   key={id}
                   onClick={() => setFilter(id)}
-                  className={`rounded-xl px-3.5 py-1.5 text-xs font-bold transition ${
+                  className={`rounded-xl px-3 py-1.5 text-xs font-bold transition ${
                     active
                       ? "bg-action text-white shadow-xs"
                       : "border border-line bg-surface text-secondary hover:bg-surface-soft hover:text-content"
@@ -534,12 +611,55 @@ export function PricingEditor({
 
           <button
             onClick={exportCsv}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-secondary shadow-xs transition hover:border-action hover:text-action"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-bold text-secondary shadow-xs transition hover:border-action hover:text-action shrink-0"
           >
             <Download className="size-3.5 text-muted" />
             <span>Export CSV</span>
           </button>
         </div>
+
+        {/* Brand Quick-Filter Pills Row */}
+        {brands.length > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto border-b border-line bg-surface px-3 py-2 sm:px-4 scrollbar-thin">
+            <span className="shrink-0 text-[11px] font-extrabold uppercase tracking-wider text-muted pr-2 border-r border-line/60">
+              Brands
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelectedBrand("")}
+              className={`shrink-0 inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+                !selectedBrand
+                  ? "bg-action text-white shadow-2xs"
+                  : "border border-line bg-surface-soft text-secondary hover:text-content hover:bg-surface"
+              }`}
+            >
+              <span>All Brands</span>
+              <span className={`rounded-full px-1.5 text-[10px] font-bold ${!selectedBrand ? "bg-white/20 text-white" : "bg-line text-muted"}`}>
+                {totalCount}
+              </span>
+            </button>
+            {brands.map(({ name, count }) => {
+              const active = selectedBrand.toLowerCase() === name.toLowerCase();
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => setSelectedBrand(active ? "" : name)}
+                  className={`shrink-0 inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+                    active
+                      ? "bg-action text-white shadow-2xs"
+                      : "border border-line bg-surface-soft text-secondary hover:text-content hover:bg-surface"
+                  }`}
+                >
+                  <span>{name}</span>
+                  <span className={`rounded-full px-1.5 text-[10px] font-bold ${active ? "bg-white/20 text-white" : "bg-line text-muted"}`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Search & Category Filter Row */}
         <div className="flex flex-col gap-2.5 border-b border-line bg-surface-soft/40 p-3 sm:flex-row sm:items-center sm:px-4">
@@ -548,7 +668,7 @@ export function PricingEditor({
             <Search className="pointer-events-none absolute left-3 size-4 text-muted" />
             <input
               aria-label="Search products"
-              placeholder="Search by product name, SKU or category…"
+              placeholder="Search by any word, name, brand, SKU or pieces (e.g. Fresco 300, 36 pcs)..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="h-10 w-full rounded-xl border border-line-strong/80 bg-surface pl-9 pr-8 text-xs font-medium text-content outline-none transition focus:border-action focus:ring-1 focus:ring-action sm:text-sm"
@@ -557,6 +677,7 @@ export function PricingEditor({
               <button
                 onClick={() => setQuery("")}
                 className="absolute right-2.5 rounded-full p-1 text-muted hover:text-content"
+                title="Clear search query"
               >
                 <X className="size-3.5" />
               </button>
@@ -564,22 +685,96 @@ export function PricingEditor({
           </div>
 
           {/* Category Dropdown */}
-          <div className="sm:w-60">
+          <div className="sm:w-64">
             <select
               aria-label="Filter by category"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="h-10 w-full rounded-xl border border-line-strong/80 bg-surface px-3 text-xs font-medium text-content outline-none transition focus:border-action focus:ring-1 focus:ring-action sm:text-sm"
             >
-              <option value="">All categories ({categories.length})</option>
-              {categories.map((name) => (
+              <option value="">All categories ({totalCount})</option>
+              {categoriesWithCounts.map(({ name, count }) => (
                 <option key={name} value={name}>
-                  {name}
+                  {name} ({count})
                 </option>
               ))}
             </select>
           </div>
         </div>
+
+        {/* Active Filters Summary & Clear Filter Bar */}
+        {(selectedBrand || category || query.trim() || filter !== "all") && (
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-action-soft/20 px-4 py-2 text-xs">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="font-bold text-accent">
+                Showing {visible.length} of {totalCount} items
+              </span>
+              <span className="text-muted">•</span>
+              {selectedBrand && (
+                <span className="inline-flex items-center gap-1 rounded-md border border-action/30 bg-action/10 px-2 py-0.5 text-[11px] font-bold text-action">
+                  Brand: {selectedBrand}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBrand("")}
+                    className="hover:text-action-hover"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </span>
+              )}
+              {category && (
+                <span className="inline-flex items-center gap-1 rounded-md border border-line bg-surface px-2 py-0.5 text-[11px] font-bold text-content">
+                  Category: {category}
+                  <button
+                    type="button"
+                    onClick={() => setCategory("")}
+                    className="hover:text-action"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </span>
+              )}
+              {filter !== "all" && (
+                <span className="inline-flex items-center gap-1 rounded-md border border-line bg-surface px-2 py-0.5 text-[11px] font-bold text-content">
+                  Status: {filter === "priced" ? "Published" : filter === "quote" ? "Quote only" : filter === "sale" ? "On Sale" : filter === "stock" ? "Out of stock" : "Missing Pcs/Ctn"}
+                  <button
+                    type="button"
+                    onClick={() => setFilter("all")}
+                    className="hover:text-action"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </span>
+              )}
+              {query.trim() && (
+                <span className="inline-flex items-center gap-1 rounded-md border border-line bg-surface px-2 py-0.5 text-[11px] font-bold text-content">
+                  &ldquo;{query}&rdquo;
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="hover:text-action"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </span>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedBrand("");
+                setCategory("");
+                setFilter("all");
+                setQuery("");
+              }}
+              className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-2.5 py-1 text-[11px] font-bold text-action transition hover:bg-surface-soft"
+            >
+              <X className="size-3" />
+              <span>Clear all filters</span>
+            </button>
+          </div>
+        )}
 
         {/* Bulk Selection Actions Banner */}
         {selected.length > 0 && (
@@ -736,9 +931,24 @@ export function PricingEditor({
                             {row.sku}
                           </span>
                           <span className="text-muted/40">•</span>
-                          <span className="rounded-md bg-surface-soft px-1.5 py-0.5 text-[10px] font-semibold text-secondary">
+                          {inferBrandFromName(row.name, row.brand) && inferBrandFromName(row.name, row.brand) !== "Other" && (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedBrand(inferBrandFromName(row.name, row.brand))}
+                              className="rounded-md bg-action/10 px-1.5 py-0.5 text-[10px] font-bold text-action hover:bg-action hover:text-white transition"
+                              title={`Filter by brand: ${inferBrandFromName(row.name, row.brand)}`}
+                            >
+                              {inferBrandFromName(row.name, row.brand)}
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setCategory(row.category)}
+                            className="rounded-md bg-surface-soft px-1.5 py-0.5 text-[10px] font-semibold text-secondary hover:text-action transition"
+                            title={`Filter by category: ${row.category}`}
+                          >
                             {row.category}
-                          </span>
+                          </button>
                           {isDirty && (
                             <span className="rounded-full bg-amber-100 px-1.5 py-0.2 text-[9px] font-bold text-amber-900 dark:bg-amber-900/60 dark:text-amber-200">
                               Unsaved
@@ -950,8 +1160,29 @@ export function PricingEditor({
           </table>
 
           {!visible.length && (
-            <div className="p-12 text-center text-sm text-muted">
-              No products match your search or filter criteria.
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+              <div className="grid size-12 place-items-center rounded-2xl bg-surface-soft text-muted mb-3">
+                <Search className="size-6" />
+              </div>
+              <p className="text-sm font-bold text-content">No products match your active filters</p>
+              <p className="mt-1 text-xs text-muted max-w-sm">
+                Try clearing the search query or selecting a different brand or category to see more products.
+              </p>
+              {(selectedBrand || category || query.trim() || filter !== "all") && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedBrand("");
+                    setCategory("");
+                    setFilter("all");
+                    setQuery("");
+                  }}
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-action px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-action-hover"
+                >
+                  <X className="size-3.5" />
+                  <span>Clear all filters ({totalCount} total products)</span>
+                </button>
+              )}
             </div>
           )}
         </div>
