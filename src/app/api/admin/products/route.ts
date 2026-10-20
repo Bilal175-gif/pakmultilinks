@@ -43,6 +43,10 @@ export async function POST(request: NextRequest) {
     ]);
     if (!categoryExists) return jsonError("The selected category does not exist. Please refresh and choose a valid category.", 400);
     if (data.brandId && !brandOk) return jsonError("The selected brand does not exist. Please refresh and choose a valid brand.", 400);
+    const rawPrice = Math.round(Number(data.price) * 100) / 100;
+    const rawSale = data.salePrice != null ? Math.round(Number(data.salePrice) * 100) / 100 : null;
+    const salePrice = rawSale != null && rawSale > 0 && rawSale < rawPrice ? rawSale : null;
+
     const product = await database.product.create({
       data: {
         name: data.name,
@@ -50,13 +54,13 @@ export async function POST(request: NextRequest) {
         sku: data.sku,
         shortDescription: data.shortDescription || null,
         description: data.description,
-        price: data.price,
-        salePrice: data.salePrice,
+        price: rawPrice,
+        salePrice,
         priceOnRequest: data.priceOnRequest,
-        unitsPerCarton: data.unitsPerCarton,
-        minimumOrderCartons: data.minimumOrderCartons,
-        stock: data.stock,
-        lowStockThreshold: data.lowStockThreshold,
+        unitsPerCarton: Math.max(0, Math.floor(Number(data.unitsPerCarton) || 0)),
+        minimumOrderCartons: Math.max(1, Math.floor(Number(data.minimumOrderCartons) || 1)),
+        stock: Math.max(0, Math.floor(Number(data.stock) || 0)),
+        lowStockThreshold: Math.max(0, Math.floor(Number(data.lowStockThreshold) || 5)),
         allowBackorder: data.allowBackorder,
         featured: data.featured,
         bestSeller: data.bestSeller,
@@ -69,9 +73,13 @@ export async function POST(request: NextRequest) {
       },
       include: { category: true, brand: true, images: true, attributes: true },
     });
+    revalidatePath("/", "layout");
     revalidatePath("/");
     revalidatePath("/shop");
+    revalidatePath("/shop/[category]", "page");
     revalidatePath("/rate-list");
+    revalidatePath("/admin/products");
+    revalidatePath("/admin/pricing");
     revalidatePath(`/product/${product.slug}`);
     return NextResponse.json({ product: serialize(product) }, { status: 201, headers: noStoreHeaders });
   } catch (error) {

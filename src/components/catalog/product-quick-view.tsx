@@ -21,6 +21,8 @@ type ProductQuickViewProps = {
   showTrigger?: boolean;
 };
 
+import { isProductAvailable } from "@/lib/pricing";
+
 export function ProductQuickView({
   product,
   onAddToCart,
@@ -32,7 +34,8 @@ export function ProductQuickView({
   const dialogRef = useRef<HTMLDialogElement>(null);
   const headingId = useId();
   const [isZoomed, setIsZoomed] = useState(false);
-  const hasSale = product.salePrice != null && product.salePrice < product.price;
+  const isUnavailable = unavailable || !isProductAvailable(product);
+  const hasSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
   const perPiece = getPerPiecePrice(product);
 
   useEffect(() => {
@@ -241,7 +244,7 @@ export function ProductQuickView({
                 ) : (
                   <button
                     type="button"
-                    disabled={unavailable}
+                    disabled={isUnavailable}
                     onClick={() => {
                       onAddToCart();
                       closeDialog();
@@ -249,7 +252,7 @@ export function ProductQuickView({
                     className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-action px-4 text-xs sm:text-sm font-extrabold text-white transition hover:bg-action-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:cursor-not-allowed disabled:bg-disabled shadow-xs active:scale-98"
                   >
                     <ShoppingCart className="size-4" aria-hidden="true" />
-                    <span>{unavailable ? "Out of Stock" : "Add to Cart"}</span>
+                    <span>{isUnavailable ? "Out of Stock" : "Add to Cart"}</span>
                   </button>
                 )}
 

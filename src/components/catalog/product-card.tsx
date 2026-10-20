@@ -23,6 +23,8 @@ type ProductCardProps = {
   headingLevel?: "h2" | "h3";
 };
 
+import { isProductAvailable } from "@/lib/pricing";
+
 export function ProductCard({
   product,
   layout = "grid",
@@ -35,9 +37,8 @@ export function ProductCard({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const price = getPrice(product);
   const perPiece = getPerPiecePrice(product);
-  // Wholesale products are available on demand by carton; never block customer orders
-  const isUnavailable = false;
-  const hasSale = product.salePrice != null && product.salePrice < product.price;
+  const isUnavailable = !isProductAvailable(product);
+  const hasSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
   const discount = hasSale
     ? Math.round(((product.price - price) / product.price) * 100)
     : 0;

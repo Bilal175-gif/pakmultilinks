@@ -1,4 +1,5 @@
 import type { Category, Product } from "@/lib/types";
+import { getEffectivePrice } from "@/lib/pricing";
 
 export const categories: Category[] = [
   {
@@ -2078,5 +2079,5 @@ export function getCategory(slug: string) {
 }
 
 export function getPrice(product: Product) {
-  return product.salePrice ?? product.price;
+  return getEffectivePrice(product.price, product.salePrice);
 }

@@ -21,6 +21,8 @@ import { trackStorefrontEvent } from "@/lib/analytics";
 import { StockStatus } from "./stock-status";
 import { SalesContactLink } from "@/components/commerce/sales-contact";
 
+import { isProductAvailable, getEffectivePrice } from "@/lib/pricing";
+
 type ProductPurchaseProps = {
   product: Product;
 };
@@ -42,10 +44,11 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   useEffect(() => {
     return () => { if (addedTimer.current) clearTimeout(addedTimer.current); };
   }, []);
-  const hasSale = product.salePrice != null && product.salePrice < product.price;
-  const isUnavailable = false;
+  const hasSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
+  const isUnavailable = !isProductAvailable(product);
   const maxQuantity = 10_000;
-  const itemTotal = (product.salePrice ?? product.price) * quantity;
+  const effectivePrice = getEffectivePrice(product.price, product.salePrice);
+  const itemTotal = effectivePrice * quantity;
   const belowMinOrder = !product.priceOnRequest && itemTotal < MINIMUM_ORDER_AMOUNT;
 
   function setSafeQuantity(nextQuantity: number) {

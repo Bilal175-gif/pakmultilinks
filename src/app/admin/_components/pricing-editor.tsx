@@ -78,8 +78,9 @@ export function detectUnitsFromName(name: string): number {
 function calcPiece(cartonStr: string, units: number): string {
   if (!cartonStr || cartonStr.trim() === "") return "";
   const num = Number(cartonStr);
-  if (!Number.isFinite(num) || num <= 0 || units <= 1) return "";
-  const p = num / units;
+  const safeUnits = Math.max(1, Math.floor(units || 1));
+  if (!Number.isFinite(num) || num <= 0) return "";
+  const p = num / safeUnits;
   return Number.isInteger(p) ? String(p) : p.toFixed(2);
 }
 
@@ -89,8 +90,9 @@ const toDraft = (row: PricingRow): Draft => {
     const detected = detectUnitsFromName(row.name);
     if (detected > 1) units = detected;
   }
-  const regPiece = units > 1 ? calcPiece(String(row.price), units) : "";
-  const salePiece = units > 1 ? calcPiece(row.salePrice === null ? "" : String(row.salePrice), units) : "";
+  const safeUnits = units > 0 ? units : 1;
+  const regPiece = calcPiece(String(row.price), safeUnits);
+  const salePiece = row.salePrice === null ? "" : calcPiece(String(row.salePrice), safeUnits);
 
   return {
     price: String(row.price),
@@ -99,8 +101,8 @@ const toDraft = (row: PricingRow): Draft => {
     salePiecePrice: salePiece,
     priceOnRequest: row.priceOnRequest,
     stock: String(row.stock),
-    unitsPerCarton: units > 0 ? String(units) : String(row.unitsPerCarton),
-    minimumOrderCartons: String(row.minimumOrderCartons),
+    unitsPerCarton: String(safeUnits),
+    minimumOrderCartons: String(row.minimumOrderCartons || 1),
   };
 };
 
@@ -236,65 +238,60 @@ export function PricingEditor({
 
   function handlePiecePriceChange(row: PricingRow, draft: Draft, val: string) {
     const num = Number(val);
-    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    const units = Number(draft.unitsPerCarton) > 0 ? Number(draft.unitsPerCarton) : (detectUnitsFromName(row.name) || 1);
     if (!val || val.trim() === "") {
       edit(row, { piecePrice: "", price: "" });
     } else if (Number.isFinite(num)) {
-      if (units > 1) {
-        // Multiply: Carton Price = Piece Price * Carton Pieces (e.g. 555 * 48 = 26,640)
-        const calculatedCarton = (num * units).toFixed(2);
-        edit(row, {
-          piecePrice: val,
-          price: calculatedCarton,
-          unitsPerCarton: String(units),
-        });
-      } else {
-        // Units not yet set (> 1), so DO NOT overwrite carton price with the same number!
-        edit(row, {
-          piecePrice: val,
-        });
-      }
+      const calculatedCarton = (num * units).toFixed(2);
+      edit(row, {
+        piecePrice: val,
+        price: calculatedCarton,
+        unitsPerCarton: String(units),
+      });
     }
   }
 
   function handleCartonPriceChange(row: PricingRow, draft: Draft, val: string) {
     const num = Number(val);
-    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    const units = Number(draft.unitsPerCarton) > 0 ? Number(draft.unitsPerCarton) : (detectUnitsFromName(row.name) || 1);
     if (!val || val.trim() === "") {
       edit(row, { price: "", piecePrice: "" });
     } else if (Number.isFinite(num)) {
-      if (units > 1) {
-        // Divide: Piece Price = Carton Price / Carton Pieces (e.g. 26640 / 48 = 555)
-        const calculatedPiece = (num / units).toFixed(2);
-        edit(row, {
-          price: val,
-          piecePrice: calculatedPiece,
-          unitsPerCarton: String(units),
-        });
-      } else {
-        edit(row, { price: val });
-      }
+      const calculatedPiece = (num / units).toFixed(2);
+      edit(row, {
+        price: val,
+        piecePrice: calculatedPiece,
+        unitsPerCarton: String(units),
+      });
     }
   }
 
   function handleUnitsChange(row: PricingRow, draft: Draft, val: string) {
-    const newUnits = Number(val) || 0;
+    const newUnits = Number(val) > 0 ? Number(val) : 0;
     const currentPiece = Number(draft.piecePrice);
     const currentCarton = Number(draft.price);
+    const currentSalePiece = Number(draft.salePiecePrice);
+    const currentSaleCarton = Number(draft.salePrice);
 
-    if (newUnits > 1 && Number.isFinite(currentPiece) && currentPiece > 0) {
-      // Piece price is entered! Recalculate carton price: piece * units!
+    if (newUnits > 0 && Number.isFinite(currentPiece) && currentPiece > 0) {
       const newCarton = (currentPiece * newUnits).toFixed(2);
+      const newSaleCarton = Number.isFinite(currentSalePiece) && currentSalePiece > 0
+        ? (currentSalePiece * newUnits).toFixed(2)
+        : draft.salePrice;
       edit(row, {
         unitsPerCarton: val,
         price: newCarton,
+        salePrice: newSaleCarton,
       });
-    } else if (newUnits > 1 && Number.isFinite(currentCarton) && currentCarton > 0) {
-      // Carton price is entered! Recalculate piece price: carton / units!
+    } else if (newUnits > 0 && Number.isFinite(currentCarton) && currentCarton > 0) {
       const newPiece = (currentCarton / newUnits).toFixed(2);
+      const newSalePiece = Number.isFinite(currentSaleCarton) && currentSaleCarton > 0
+        ? (currentSaleCarton / newUnits).toFixed(2)
+        : draft.salePiecePrice;
       edit(row, {
         unitsPerCarton: val,
         piecePrice: newPiece,
+        salePiecePrice: newSalePiece,
       });
     } else {
       edit(row, { unitsPerCarton: val });
@@ -303,39 +300,31 @@ export function PricingEditor({
 
   function handleSalePiecePriceChange(row: PricingRow, draft: Draft, val: string) {
     const num = Number(val);
-    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    const units = Number(draft.unitsPerCarton) > 0 ? Number(draft.unitsPerCarton) : (detectUnitsFromName(row.name) || 1);
     if (!val || val.trim() === "") {
       edit(row, { salePiecePrice: "", salePrice: "" });
     } else if (Number.isFinite(num)) {
-      if (units > 1) {
-        const calculatedSaleCarton = (num * units).toFixed(2);
-        edit(row, {
-          salePiecePrice: val,
-          salePrice: calculatedSaleCarton,
-          unitsPerCarton: String(units),
-        });
-      } else {
-        edit(row, { salePiecePrice: val });
-      }
+      const calculatedSaleCarton = (num * units).toFixed(2);
+      edit(row, {
+        salePiecePrice: val,
+        salePrice: calculatedSaleCarton,
+        unitsPerCarton: String(units),
+      });
     }
   }
 
   function handleSaleCartonPriceChange(row: PricingRow, draft: Draft, val: string) {
     const num = Number(val);
-    const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
+    const units = Number(draft.unitsPerCarton) > 0 ? Number(draft.unitsPerCarton) : (detectUnitsFromName(row.name) || 1);
     if (!val || val.trim() === "") {
       edit(row, { salePrice: "", salePiecePrice: "" });
     } else if (Number.isFinite(num)) {
-      if (units > 1) {
-        const calculatedPiece = (num / units).toFixed(2);
-        edit(row, {
-          salePrice: val,
-          salePiecePrice: calculatedPiece,
-          unitsPerCarton: String(units),
-        });
-      } else {
-        edit(row, { salePrice: val });
-      }
+      const calculatedPiece = (num / units).toFixed(2);
+      edit(row, {
+        salePrice: val,
+        salePiecePrice: calculatedPiece,
+        unitsPerCarton: String(units),
+      });
     }
   }
 
@@ -367,6 +356,15 @@ export function PricingEditor({
     );
   }
 
+  function bulkSetStock(outOfStock: boolean) {
+    for (const row of rows.filter((row) => selected.includes(row.id))) {
+      edit(row, { stock: outOfStock ? "0" : "20" });
+    }
+    setMessage(
+      `${selected.length} products marked as ${outOfStock ? "Out of Stock" : "In Stock"}. Click Save changes to apply.`,
+    );
+  }
+
   async function save() {
     setError("");
     setMessage("");
@@ -375,19 +373,34 @@ export function PricingEditor({
       return;
     }
 
-    // If piece price was entered but carton price wasn't calculated because units was missing, resolve it
+    // Ensure consistent carton and piece prices across all dirty items
     for (const id of dirtyIds) {
       const draft = drafts[id];
       const row = rows.find((r) => r.id === id);
-      const units = Number(draft.unitsPerCarton) || (row ? detectUnitsFromName(row.name) : 0);
+      const units = Number(draft.unitsPerCarton) > 0
+        ? Number(draft.unitsPerCarton)
+        : (row ? detectUnitsFromName(row.name) : 1) || 1;
+
       if ((!draft.price || Number(draft.price) <= 0) && draft.piecePrice && Number(draft.piecePrice) > 0) {
-        if (units > 1) {
-          draft.price = (Number(draft.piecePrice) * units).toFixed(2);
-          draft.unitsPerCarton = String(units);
-        } else {
-          setError(`"${row?.name || "Product"}" ke liye carton ke pieces (Pcs / Ctn) enter karein taake Carton Rate calculate ho sake.`);
-          return;
-        }
+        draft.price = (Number(draft.piecePrice) * units).toFixed(2);
+        draft.unitsPerCarton = String(units);
+      }
+      if ((!draft.piecePrice || Number(draft.piecePrice) <= 0) && draft.price && Number(draft.price) > 0) {
+        draft.piecePrice = (Number(draft.price) / units).toFixed(2);
+      }
+      if ((!draft.salePrice || Number(draft.salePrice) <= 0) && draft.salePiecePrice && Number(draft.salePiecePrice) > 0) {
+        draft.salePrice = (Number(draft.salePiecePrice) * units).toFixed(2);
+      }
+      if ((!draft.salePiecePrice || Number(draft.salePiecePrice) <= 0) && draft.salePrice && Number(draft.salePrice) > 0) {
+        draft.salePiecePrice = (Number(draft.salePrice) / units).toFixed(2);
+      }
+      // If sale price >= regular price, it's not a discount; clear salePrice
+      if (draft.salePrice && Number(draft.salePrice) >= Number(draft.price)) {
+        draft.salePrice = "";
+        draft.salePiecePrice = "";
+      }
+      if (!draft.unitsPerCarton || Number(draft.unitsPerCarton) <= 0) {
+        draft.unitsPerCarton = String(units);
       }
     }
 
@@ -395,7 +408,6 @@ export function PricingEditor({
       const draft = drafts[id];
       return {
         id,
-        updatedAt: rows.find((row) => row.id === id)!.updatedAt,
         price: Number(draft.price),
         salePrice: draft.salePrice === "" ? null : Number(draft.salePrice),
         priceOnRequest: draft.priceOnRequest,
@@ -438,21 +450,25 @@ export function PricingEditor({
       }
       setRows((current) =>
         current.map((row) => {
-          const updated = products.find((item) => item.id === row.id);
+          const updated = result.products?.find((item: { id: string }) => item.id === row.id);
           return updated
             ? {
                 ...row,
                 ...updated,
-                updatedAt: result.products.find(
-                  (item: { id: string }) => item.id === row.id,
-                ).updatedAt,
+                price: Number(updated.price),
+                salePrice: updated.salePrice == null ? null : Number(updated.salePrice),
+                stock: Number(updated.stock),
+                unitsPerCarton: Number(updated.unitsPerCarton),
+                minimumOrderCartons: Number(updated.minimumOrderCartons),
+                priceOnRequest: Boolean(updated.priceOnRequest),
+                updatedAt: updated.updatedAt,
               }
             : row;
         }),
       );
       setDrafts({});
       setMessage(
-        `${products.length} product${products.length === 1 ? "" : "s"} saved. Storefront rates & quotation settings updated.`,
+        `${products.length} product${products.length === 1 ? "" : "s"} saved successfully. Prices and stock availability updated.`,
       );
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to save changes.");
@@ -836,6 +852,26 @@ export function PricingEditor({
                   Set Published
                 </button>
               </div>
+
+              {/* Set Stock / Availability */}
+              <div className="flex items-center gap-1.5 border-l border-line pl-2">
+                <button
+                  disabled={disabled || pending}
+                  onClick={() => bulkSetStock(true)}
+                  className="rounded-lg border border-rose-300 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-900 transition hover:bg-rose-100 disabled:opacity-50"
+                  title="Mark selected products as Out of Stock"
+                >
+                  Mark Out of Stock
+                </button>
+                <button
+                  disabled={disabled || pending}
+                  onClick={() => bulkSetStock(false)}
+                  className="rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-900 transition hover:bg-emerald-100 disabled:opacity-50"
+                  title="Mark selected products as In Stock (20 ctns)"
+                >
+                  Mark In Stock
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -887,9 +923,9 @@ export function PricingEditor({
               {visible.map((row) => {
                 const draft = drafts[row.id] ?? toDraft(row);
                 const isDirty = Boolean(drafts[row.id]);
-                const units = Number(draft.unitsPerCarton) || detectUnitsFromName(row.name) || 0;
-                const regPiece = draft.piecePrice || (units > 1 ? calcPiece(draft.price, units) : "");
-                const salePiece = draft.salePiecePrice || (units > 1 ? calcPiece(draft.salePrice, units) : "");
+                const units = Number(draft.unitsPerCarton) > 0 ? Number(draft.unitsPerCarton) : (detectUnitsFromName(row.name) || 1);
+                const regPiece = draft.piecePrice || calcPiece(draft.price, units);
+                const salePiece = draft.salePiecePrice || (draft.salePrice ? calcPiece(draft.salePrice, units) : "");
                 const isOutOfStock = Number(draft.stock) === 0;
 
                 return (
@@ -1102,10 +1138,24 @@ export function PricingEditor({
                               : "border-line-strong/80 bg-surface text-content focus:border-action focus:ring-1 focus:ring-action"
                           }`}
                         />
-                        {isOutOfStock && (
-                          <span className="mt-1 block text-[10px] font-bold uppercase tracking-wider text-danger">
+                        {isOutOfStock ? (
+                          <button
+                            type="button"
+                            onClick={() => edit(row, { stock: "20" })}
+                            className="mt-1 block text-left text-[10px] font-bold uppercase tracking-wider text-danger hover:underline cursor-pointer"
+                            title="Carton unavailable. Click to mark In Stock (20 ctns)"
+                          >
                             Out of stock
-                          </span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => edit(row, { stock: "0" })}
+                            className="mt-1 block text-left text-[10px] font-bold uppercase tracking-wider text-emerald-700 hover:text-danger hover:underline cursor-pointer"
+                            title="Click to mark Carton Unavailable / Out of Stock"
+                          >
+                            In stock
+                          </button>
                         )}
                       </div>
                     </td>

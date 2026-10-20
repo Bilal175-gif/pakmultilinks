@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { Product } from "@/lib/types";
+import { calculatePiecePrice, getEffectivePrice } from "@/lib/pricing";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,13 +22,13 @@ export function getPerPiecePrice(
   product: { price: number; salePrice?: number | null; unitsPerCarton: number },
   useSale = true,
 ): number | null {
-  if (!product.unitsPerCarton || product.unitsPerCarton <= 0) return null;
-  const price =
-    useSale && product.salePrice != null && product.salePrice > 0
-      ? product.salePrice
-      : product.price;
+  const units = product.unitsPerCarton || 0;
+  if (units <= 0) return null;
+  const price = useSale
+    ? getEffectivePrice(product.price, product.salePrice)
+    : Number(product.price);
   if (!price || price <= 0) return null;
-  return price / product.unitsPerCarton;
+  return calculatePiecePrice(price, units);
 }
 
 export function formatPiecePrice(amount: number) {
@@ -41,7 +42,7 @@ export function formatProductPrice(product: {
   unitsPerCarton?: number;
 }) {
   if (product.priceOnRequest) return "Price on request";
-  const effective = product.salePrice ?? product.price;
+  const effective = getEffectivePrice(product.price, product.salePrice);
   const isSingle = !product.unitsPerCarton || product.unitsPerCarton <= 1;
   return `${formatPrice(effective)} / ${isSingle ? "piece" : "carton"}`;
 }
