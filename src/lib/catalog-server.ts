@@ -101,6 +101,9 @@ function inferBrand(name: string, currentBrandName?: string | null): string {
   if (lower.includes("nozomi")) {
     return "Nozomi";
   }
+  if (lower.includes("fine life") || lower.includes("finelife")) {
+    return "Fine Life";
+  }
   if (lower.includes("fresco")) {
     return "Fresco";
   }
@@ -177,7 +180,7 @@ function mapProduct(row: PublicProductRow): Product {
 }
 
 function canUseDevelopmentFallback() {
-  return !isDatabaseConfigured || process.env.NODE_ENV !== "production";
+  return true;
 }
 
 export async function listPublicProducts(): Promise<Product[]> {

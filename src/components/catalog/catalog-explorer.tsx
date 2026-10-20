@@ -127,6 +127,10 @@ export function CatalogExplorer({
         (targetBrandClean === "nozomi" &&
           (productBrandClean.includes("nozomi") ||
             productNameLower.includes("nozomi"))) ||
+        (targetBrandClean === "finelife" &&
+          (productBrandClean.includes("finelife") ||
+            productNameLower.includes("fine life") ||
+            productNameLower.includes("finelife"))) ||
         (targetBrandClean === "germicure" &&
           (productNameLower.includes("germi cure") || productNameLower.includes("germicure"))) ||
         (targetBrandClean === "shinewell" &&

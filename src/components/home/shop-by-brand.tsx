@@ -37,6 +37,18 @@ export const BRAND_SHOWCASE: BrandCardData[] = [
     ],
   },
   {
+    id: "fine-life",
+    name: "Fine Life",
+    subtitle: "Everyday Hygiene & Tissue Essentials",
+    image: "/images/brands/fine-life.jpg",
+    mainHref: "/shop?brand=Fine+Life",
+    popularCategories: [
+      { label: "Pop-Up Facial Tissues (100 Sheets)", href: "/shop?brand=Fine+Life&category=facial-tissues" },
+      { label: "Soft Pack Tissues & Pocket Packs", href: "/shop?brand=Fine+Life&category=soft-pack-tissues" },
+      { label: "Kitchen Towels & Toilet Paper Rolls", href: "/shop?brand=Fine+Life&category=tissue-rolls" },
+    ],
+  },
+  {
     id: "tissue-craft",
     name: "Tissue Craft",
     subtitle: "Premium Hygiene & Craft Paper",
@@ -109,8 +121,8 @@ export function ShopByBrand() {
           </Link>
         </div>
 
-        {/* 6-Column Responsive Cards Grid with Extra Large Brand Images */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 sm:gap-4">
+        {/* 7-Column Responsive Cards Grid with Extra Large Brand Images */}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 sm:gap-4">
           {BRAND_SHOWCASE.map((brand, idx) => (
             <Link
               key={brand.id}
