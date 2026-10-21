@@ -398,7 +398,7 @@ summary::-webkit-details-marker {
 /* ── Hero Deals Slider Viewport ── */
 .deals-slider-viewport {
   width: 100%;
-  aspect-ratio: 1920 / 700;
+  aspect-ratio: 1024 / 434;
 }
 
 /* Dedicated Admin Sidebar scrollbar - invisible when idle, subtle 4px pill on hover */
