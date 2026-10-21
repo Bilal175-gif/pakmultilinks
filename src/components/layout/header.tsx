@@ -1,13 +1,13 @@
 "use client";
 
-import { ChevronDown, Facebook, Instagram, Linkedin, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Facebook, Folder, Instagram, Linkedin, Menu, Search, ShoppingBag, Sparkles, Tag, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { useStore } from "@/components/providers/store-provider";
 import { categories, products } from "@/lib/catalog";
-import { company } from "@/lib/company";
+import { searchCatalog } from "@/lib/search";
 import type { Category, Product } from "@/lib/types";
 import { formatPrice, formatProductPrice } from "@/lib/utils";
 import { getPrice } from "@/lib/catalog";
@@ -88,11 +88,23 @@ export function Header() {
     };
   }, [pathname]);
 
+  const searchAnalysis = useMemo(() => {
+    const clean = query.trim();
+    if (!clean) {
+      return {
+        matches: [],
+        totalMatches: 0,
+        matchingBrands: [],
+        matchingCategories: [],
+        correctedQuery: undefined,
+      };
+    }
+    return searchCatalog(searchProducts, clean, navigationCategories);
+  }, [query, searchProducts, navigationCategories]);
+
   const suggestions = useMemo(() => {
-    const clean = query.trim().toLowerCase();
-    if (clean.length < 2) return [];
-    return searchProducts.filter((item) => [item.name, item.sku, item.category, item.brand].some((value) => value.toLowerCase().includes(clean))).slice(0, 5);
-  }, [query, searchProducts]);
+    return searchAnalysis.matches.slice(0, 6).map((m) => m.item);
+  }, [searchAnalysis]);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
@@ -184,14 +196,110 @@ export function Header() {
                 className="h-11 w-full rounded-2xl border border-line bg-surface pl-11 pr-4 text-sm text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus"
               />
             </form>
-            {searchFocused && suggestions.length > 0 && (
-              <nav className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-line bg-surface p-2 shadow-[0_20px_50px_rgba(0,0,0,0.22)]" aria-label="Suggested products">
-                <ul>{suggestions.map((product) => (
-                  <li key={product.id}><Link href={`/product/${product.slug}`} className="flex items-center justify-between gap-4 rounded-xl px-3 py-2.5 text-sm hover:bg-surface-soft" onClick={() => setSearchFocused(false)}>
-                    <span><span className="block font-bold text-accent">{product.name}</span><span className="mt-0.5 block text-xs text-muted">{product.category} · {product.sku}</span></span>
-                    <span className="shrink-0 font-bold text-accent">{formatProductPrice(product)}</span>
-                  </Link></li>
-                ))}</ul>
+            {searchFocused && query.trim().length > 0 && (
+              <nav
+                className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-line bg-surface p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.22)] animate-fade-in"
+                aria-label="Suggested products"
+              >
+                {/* Typo Correction Hint */}
+                {searchAnalysis.correctedQuery && searchAnalysis.correctedQuery.toLowerCase() !== query.trim().toLowerCase() && (
+                  <div className="mb-2 flex items-center gap-2 rounded-xl bg-accent-soft/60 px-3 py-1.5 text-xs text-secondary">
+                    <Sparkles className="size-3.5 text-accent shrink-0" />
+                    <span>
+                      Showing results for <strong className="text-accent">{searchAnalysis.correctedQuery}</strong>
+                    </span>
+                  </div>
+                )}
+
+                {/* Brand Quick Links */}
+                {searchAnalysis.matchingBrands.length > 0 && (
+                  <div className="mb-2 border-b border-line/60 pb-2">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
+                      <Tag className="size-3" />
+                      <span>Matching Brands</span>
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-1.5 px-1">
+                      {searchAnalysis.matchingBrands.map((b) => (
+                        <Link
+                          key={b.name}
+                          href={`/shop?brand=${encodeURIComponent(b.name)}`}
+                          onClick={() => setSearchFocused(false)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-line/70 bg-surface-soft px-2.5 py-1 text-xs font-bold text-accent transition hover:border-focus hover:bg-accent hover:text-white"
+                        >
+                          <span>{b.name}</span>
+                          <span className="text-[10px] opacity-70">({b.count})</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Category Quick Links */}
+                {searchAnalysis.matchingCategories.length > 0 && (
+                  <div className="mb-2 border-b border-line/60 pb-2">
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
+                      <Folder className="size-3" />
+                      <span>Matching Categories</span>
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-1.5 px-1">
+                      {searchAnalysis.matchingCategories.map((c) => (
+                        <Link
+                          key={c.slug}
+                          href={`/shop?category=${encodeURIComponent(c.slug)}`}
+                          onClick={() => setSearchFocused(false)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-line/70 bg-surface-soft px-2.5 py-1 text-xs font-bold text-accent transition hover:border-focus hover:bg-accent hover:text-white"
+                        >
+                          <span>{c.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Product suggestions */}
+                {suggestions.length > 0 ? (
+                  <>
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted">
+                      Products ({searchAnalysis.totalMatches})
+                    </div>
+                    <ul className="space-y-1">
+                      {suggestions.map((product) => (
+                        <li key={product.id}>
+                          <Link
+                            href={`/product/${product.slug}`}
+                            className="flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-sm transition hover:bg-surface-soft"
+                            onClick={() => setSearchFocused(false)}
+                          >
+                            <div className="min-w-0">
+                              <span className="block truncate font-bold text-accent">{product.name}</span>
+                              <span className="mt-0.5 block text-xs text-muted">
+                                {product.brand} · {product.category} · {product.sku}
+                              </span>
+                            </div>
+                            <span className="shrink-0 font-bold text-accent text-xs">
+                              {formatProductPrice(product)}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-2 border-t border-line/60 pt-2">
+                      <button
+                        type="button"
+                        onClick={submitSearch}
+                        className="flex w-full items-center justify-between rounded-xl bg-surface-soft px-3 py-2 text-xs font-bold text-accent transition hover:bg-action hover:text-white"
+                      >
+                        <span>View all {searchAnalysis.totalMatches} results for &ldquo;{query}&rdquo;</span>
+                        <ArrowRight className="size-3.5" />
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-4 text-center text-xs text-muted">
+                    No products found. Press Enter to view related items.
+                  </div>
+                )}
               </nav>
             )}
           </div>
@@ -267,26 +375,97 @@ export function Header() {
           </form>
 
           {/* Mobile Auto-Complete Search Suggestions */}
-          {searchFocused && suggestions.length > 0 && (
-            <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-2xl border border-line bg-surface p-2 shadow-2xl">
-              <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted">Suggested Products</div>
-              <ul>
-                {suggestions.map((product) => (
-                  <li key={product.id}>
-                    <Link
-                      href={`/product/${product.slug}`}
-                      className="flex items-center justify-between gap-3 rounded-xl px-3 py-2 text-xs hover:bg-surface-soft"
-                      onClick={() => setSearchFocused(false)}
+          {searchFocused && query.trim().length > 0 && (
+            <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-2xl border border-line bg-surface p-2.5 shadow-2xl animate-fade-in">
+              {searchAnalysis.correctedQuery && searchAnalysis.correctedQuery.toLowerCase() !== query.trim().toLowerCase() && (
+                <div className="mb-2 flex items-center gap-1.5 rounded-lg bg-accent-soft/60 px-2.5 py-1 text-[11px] text-secondary">
+                  <Sparkles className="size-3 text-accent shrink-0" />
+                  <span>Showing results for <strong className="text-accent">{searchAnalysis.correctedQuery}</strong></span>
+                </div>
+              )}
+
+              {searchAnalysis.matchingBrands.length > 0 && (
+                <div className="mb-2 border-b border-line/60 pb-2">
+                  <div className="flex items-center gap-1 px-1 text-[10px] font-bold uppercase tracking-wider text-muted">
+                    <Tag className="size-2.5" />
+                    <span>Brands</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {searchAnalysis.matchingBrands.map((b) => (
+                      <Link
+                        key={b.name}
+                        href={`/shop?brand=${encodeURIComponent(b.name)}`}
+                        onClick={() => setSearchFocused(false)}
+                        className="inline-flex items-center gap-1 rounded-md border border-line bg-surface-soft px-2 py-0.5 text-[11px] font-bold text-accent"
+                      >
+                        <span>{b.name}</span>
+                        <span className="text-[9px] opacity-70">({b.count})</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {searchAnalysis.matchingCategories.length > 0 && (
+                <div className="mb-2 border-b border-line/60 pb-2">
+                  <div className="flex items-center gap-1 px-1 text-[10px] font-bold uppercase tracking-wider text-muted">
+                    <Folder className="size-2.5" />
+                    <span>Categories</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {searchAnalysis.matchingCategories.map((c) => (
+                      <Link
+                        key={c.slug}
+                        href={`/shop?category=${encodeURIComponent(c.slug)}`}
+                        onClick={() => setSearchFocused(false)}
+                        className="inline-flex items-center gap-1 rounded-md border border-line bg-surface-soft px-2 py-0.5 text-[11px] font-bold text-accent"
+                      >
+                        <span>{c.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {suggestions.length > 0 ? (
+                <>
+                  <div className="px-1 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
+                    Products ({searchAnalysis.totalMatches})
+                  </div>
+                  <ul className="space-y-1">
+                    {suggestions.map((product) => (
+                      <li key={product.id}>
+                        <Link
+                          href={`/product/${product.slug}`}
+                          className="flex items-center justify-between gap-3 rounded-xl px-2.5 py-1.5 text-xs transition hover:bg-surface-soft"
+                          onClick={() => setSearchFocused(false)}
+                        >
+                          <span className="min-w-0">
+                            <span className="block truncate font-bold text-accent">{product.name}</span>
+                            <span className="block text-[10px] text-muted">{product.brand} · {product.sku}</span>
+                          </span>
+                          <span className="shrink-0 font-bold text-accent text-[11px]">{formatProductPrice(product)}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-2 border-t border-line/60 pt-1.5">
+                    <button
+                      type="button"
+                      onClick={submitSearch}
+                      className="flex w-full items-center justify-between rounded-lg bg-surface-soft px-2.5 py-1.5 text-[11px] font-bold text-accent transition hover:bg-action hover:text-white"
                     >
-                      <span className="min-w-0">
-                        <span className="block truncate font-bold text-accent">{product.name}</span>
-                        <span className="block text-[10px] text-muted">{product.category} · {product.sku}</span>
-                      </span>
-                      <span className="shrink-0 font-bold text-accent">{formatProductPrice(product)}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                      <span>View all {searchAnalysis.totalMatches} results</span>
+                      <ArrowRight className="size-3" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="p-3 text-center text-xs text-muted">
+                  No matching products.
+                </div>
+              )}
             </div>
           )}
         </div>
