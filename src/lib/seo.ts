@@ -64,11 +64,16 @@ export function localBusinessStructuredData() {
   const origin = getSiteOrigin();
   return {
     "@context": "https://schema.org",
-    "@type": ["Organization", "LocalBusiness"],
+    "@type": ["Organization", "LocalBusiness", "WholesaleStore"],
     "@id": `${origin}/#business`,
     name: company.name,
-    alternateName: `${company.name} Corporate Supplies`,
-    description: "Wholesale tissue, washroom and hygiene supplies for businesses and institutions in Lahore.",
+    legalName: "Pak Multilinks Hygiene",
+    alternateName: [
+      "Pak Multilinks",
+      "Pak Multilinks Corporate Supplies",
+      "Pak Multilinks Hygiene Lahore",
+    ],
+    description: "Wholesale tissue, washroom and hygiene supplies for businesses, offices, and institutions in Lahore.",
     url: origin,
     logo: absoluteUrl("/images/pak-multilinks-logo.png"),
     image: absoluteUrl("/images/hero-products-green.png"),
@@ -76,22 +81,46 @@ export function localBusinessStructuredData() {
     telephone: company.phoneHref,
     priceRange: "PKR",
     currenciesAccepted: "PKR",
+    paymentAccepted: "Cash on Delivery, Bank Transfer",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Shop No LG-9, Rehman Tower, Main Market, Gulberg II",
       addressLocality: "Lahore",
       addressRegion: "Punjab",
+      postalCode: "54000",
       addressCountry: "PK",
     },
-    areaServed: { "@type": "City", name: "Lahore" },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 31.5204,
+      longitude: 74.3587,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        opens: "09:00",
+        closes: "19:00",
+      },
+    ],
+    areaServed: [
+      { "@type": "City", name: "Lahore" },
+      { "@type": "Country", name: "Pakistan" },
+    ],
     contactPoint: {
       "@type": "ContactPoint",
       telephone: company.phoneHref,
       email: company.email,
-      contactType: "sales",
+      contactType: "wholesale sales & corporate supply",
       areaServed: "PK",
       availableLanguage: ["English", "Urdu"],
     },
+    sameAs: [
+      "https://www.linkedin.com/company/pakmultilinks",
+      "https://www.facebook.com/pakmultilinks",
+      "https://www.instagram.com/pakmultilinks",
+      "https://wa.me/923006917385",
+    ],
     hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(company.address)}`,
   };
 }
@@ -107,6 +136,31 @@ export function websiteStructuredData() {
     alternateName: "Pak Multilinks",
     inLanguage: "en-PK",
     publisher: { "@id": `${origin}/#business` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${origin}/shop?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+export function rootGraphStructuredData() {
+  const business = localBusinessStructuredData();
+  const website = websiteStructuredData();
+
+  // Strip separate contexts when nesting inside @graph
+  const businessBody = { ...business } as Record<string, unknown>;
+  delete businessBody["@context"];
+
+  const websiteBody = { ...website } as Record<string, unknown>;
+  delete websiteBody["@context"];
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [businessBody, websiteBody],
   };
 }
 

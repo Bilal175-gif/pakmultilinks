@@ -17,7 +17,7 @@ export const BRAND_SHOWCASE: BrandCardData[] = [
     name: "Rose Petal",
     subtitle: "Pakistan's #1 Tissue Brand",
     image: "/images/brands/rose-petal.jpg",
-    mainHref: "/shop?brand=Rose+Petal",
+    mainHref: "/brand/rose-petal",
     popularCategories: [
       { label: "Facial Tissues (Peach & Luxury)", href: "/shop?brand=Rose+Petal&category=facial-tissues" },
       { label: "Soft Pack Tissues (Pocket & Party)", href: "/shop?brand=Rose+Petal&category=soft-pack-tissues" },
@@ -29,7 +29,7 @@ export const BRAND_SHOWCASE: BrandCardData[] = [
     name: "Nozomi",
     subtitle: "Commercial Pure Soft Tissues",
     image: "/images/brands/nozomi-logo.png",
-    mainHref: "/shop?brand=Nozomi",
+    mainHref: "/brand/nozomi",
     popularCategories: [
       { label: "Pop-Up Tissues (100 Sheets x 2Ply)", href: "/shop?brand=Nozomi&category=facial-tissues" },
       { label: "Luxury & Executive Facial Boxes", href: "/shop?brand=Nozomi&category=facial-tissues" },
@@ -41,7 +41,7 @@ export const BRAND_SHOWCASE: BrandCardData[] = [
     name: "Fine Life",
     subtitle: "Everyday Hygiene & Tissue Essentials",
     image: "/images/brands/fine-life.jpg",
-    mainHref: "/shop?brand=Fine+Life",
+    mainHref: "/brand/fine-life",
     popularCategories: [
       { label: "Pop-Up Facial Tissues (100 Sheets)", href: "/shop?brand=Fine+Life&category=facial-tissues" },
       { label: "Soft Pack Tissues & Pocket Packs", href: "/shop?brand=Fine+Life&category=soft-pack-tissues" },

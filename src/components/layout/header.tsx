@@ -7,6 +7,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { useStore } from "@/components/providers/store-provider";
 import { categories, products } from "@/lib/catalog";
+import { brandNameToSlug, getBrandBySlug } from "@/lib/brands";
 import { searchCatalog } from "@/lib/search";
 import type { Category, Product } from "@/lib/types";
 import { formatPrice, formatProductPrice } from "@/lib/utils";
@@ -219,17 +220,23 @@ export function Header() {
                       <span>Matching Brands</span>
                     </div>
                     <div className="mt-1 flex flex-wrap gap-1.5 px-1">
-                      {searchAnalysis.matchingBrands.map((b) => (
-                        <Link
-                          key={b.name}
-                          href={`/shop?brand=${encodeURIComponent(b.name)}`}
-                          onClick={() => setSearchFocused(false)}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-line/70 bg-surface-soft px-2.5 py-1 text-xs font-bold text-accent transition hover:border-focus hover:bg-accent hover:text-white"
-                        >
-                          <span>{b.name}</span>
-                          <span className="text-[10px] opacity-70">({b.count})</span>
-                        </Link>
-                      ))}
+                      {searchAnalysis.matchingBrands.map((b) => {
+                        const brandSlug = brandNameToSlug(b.name);
+                        const href = getBrandBySlug(brandSlug)
+                          ? `/brand/${brandSlug}`
+                          : `/shop?brand=${encodeURIComponent(b.name)}`;
+                        return (
+                          <Link
+                            key={b.name}
+                            href={href}
+                            onClick={() => setSearchFocused(false)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-line/70 bg-surface-soft px-2.5 py-1 text-xs font-bold text-accent transition hover:border-focus hover:bg-accent hover:text-white"
+                          >
+                            <span>{b.name}</span>
+                            <span className="text-[10px] opacity-70">({b.count})</span>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -391,17 +398,23 @@ export function Header() {
                     <span>Brands</span>
                   </div>
                   <div className="mt-1 flex flex-wrap gap-1">
-                    {searchAnalysis.matchingBrands.map((b) => (
-                      <Link
-                        key={b.name}
-                        href={`/shop?brand=${encodeURIComponent(b.name)}`}
-                        onClick={() => setSearchFocused(false)}
-                        className="inline-flex items-center gap-1 rounded-md border border-line bg-surface-soft px-2 py-0.5 text-[11px] font-bold text-accent"
-                      >
-                        <span>{b.name}</span>
-                        <span className="text-[9px] opacity-70">({b.count})</span>
-                      </Link>
-                    ))}
+                    {searchAnalysis.matchingBrands.map((b) => {
+                      const brandSlug = brandNameToSlug(b.name);
+                      const href = getBrandBySlug(brandSlug)
+                        ? `/brand/${brandSlug}`
+                        : `/shop?brand=${encodeURIComponent(b.name)}`;
+                      return (
+                        <Link
+                          key={b.name}
+                          href={href}
+                          onClick={() => setSearchFocused(false)}
+                          className="inline-flex items-center gap-1 rounded-md border border-line bg-surface-soft px-2 py-0.5 text-[11px] font-bold text-accent"
+                        >
+                          <span>{b.name}</span>
+                          <span className="text-[9px] opacity-70">({b.count})</span>
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
               )}
