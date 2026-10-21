@@ -7,12 +7,14 @@ import {
   PackageSearch,
   Search,
   SlidersHorizontal,
+  Sparkles,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 
 import { categories as developmentCategories, getPrice } from "@/lib/catalog";
+import { searchCatalog } from "@/lib/search";
 import type { Category, Product } from "@/lib/types";
 import { cn, formatPrice, minimumCartons } from "@/lib/utils";
 
@@ -87,27 +89,24 @@ export function CatalogExplorer({
     return Math.max(500, Math.ceil(highest / 500) * 500);
   }, [products]);
 
+  const searchResult = useMemo(() => {
+    const q = deferredSearch.trim();
+    if (!q) return null;
+    return searchCatalog(products, q, categoryOptions);
+  }, [deferredSearch, products, categoryOptions]);
+
+  const searchScoreMap = useMemo(() => {
+    if (!searchResult) return null;
+    return new Map(searchResult.matches.map((m) => [m.item.id, m.score]));
+  }, [searchResult]);
+
   const filteredProducts = useMemo(() => {
-    const query = deferredSearch.trim().toLocaleLowerCase();
     const selectedCategory = fixedCategorySlug ?? category;
     const floor = minPrice === "" ? 0 : Number(minPrice);
     const ceiling = maxPrice === "" ? Number.POSITIVE_INFINITY : Number(maxPrice);
     const targetBrandClean = brand.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    const queryWords = query.split(/\s+/).filter(Boolean);
-
     const matches = products.filter((product) => {
-      const searchableText = [
-        product.name,
-        product.sku,
-        product.category,
-        product.brand,
-        product.shortDescription,
-        product.description,
-        ...(product.attributes?.map((a) => `${a.name} ${a.value}`) || []),
-      ]
-        .join(" ")
-        .toLocaleLowerCase();
       const productPrice = getPrice(product);
       const productBrandClean = product.brand.toLowerCase().replace(/[^a-z0-9]/g, "");
       const productNameLower = product.name.toLowerCase();
@@ -117,28 +116,7 @@ export function CatalogExplorer({
         product.brand.toLowerCase() === brand.toLowerCase() ||
         productBrandClean === targetBrandClean ||
         productBrandClean.includes(targetBrandClean) ||
-        productNameLower.includes(brand.toLowerCase()) ||
-        (targetBrandClean === "rosepetal" &&
-          (productBrandClean.includes("rosepetal") ||
-            productNameLower.includes("rose petal") ||
-            productNameLower.includes("hi-jeen") ||
-            productNameLower.includes("zzoop") ||
-            productNameLower.includes("maxob"))) ||
-        (targetBrandClean === "nozomi" &&
-          (productBrandClean.includes("nozomi") ||
-            productNameLower.includes("nozomi"))) ||
-        (targetBrandClean === "finelife" &&
-          (productBrandClean.includes("finelife") ||
-            productNameLower.includes("fine life") ||
-            productNameLower.includes("finelife"))) ||
-        (targetBrandClean === "germicure" &&
-          (productNameLower.includes("germi cure") || productNameLower.includes("germicure"))) ||
-        (targetBrandClean === "shinewell" &&
-          (productNameLower.includes("shine well") || productNameLower.includes("shinewell"))) ||
-        (targetBrandClean === "airnergy" &&
-          (productNameLower.includes("air energy") || productNameLower.includes("airnergy"))) ||
-        (targetBrandClean === "supersoft" &&
-          (productNameLower.includes("super soft") || productNameLower.includes("supersoft")));
+        productNameLower.includes(brand.toLowerCase());
 
       const categoryMatches =
         !selectedCategory ||
@@ -152,9 +130,7 @@ export function CatalogExplorer({
         ) ||
         product.category.toLowerCase().replace(/[^a-z0-9]+/g, "-") === selectedCategory;
 
-      const matchesQuery =
-        queryWords.length === 0 ||
-        queryWords.every((word) => searchableText.includes(word));
+      const matchesQuery = !searchScoreMap || searchScoreMap.has(product.id);
 
       return (
         matchesQuery &&
@@ -167,6 +143,10 @@ export function CatalogExplorer({
     });
 
     return matches.sort((a, b) => {
+      if (searchScoreMap && sort === "featured") {
+        const scoreDiff = (searchScoreMap.get(b.id) || 0) - (searchScoreMap.get(a.id) || 0);
+        if (scoreDiff !== 0) return scoreDiff;
+      }
       if (sort === "price-asc") return getPrice(a) - getPrice(b);
       if (sort === "price-desc") return getPrice(b) - getPrice(a);
       if (sort === "newest") return b.id.localeCompare(a.id);
@@ -181,12 +161,13 @@ export function CatalogExplorer({
   }, [
     brand,
     category,
-    deferredSearch,
     fixedCategorySlug,
     inStockOnly,
     maxPrice,
     minPrice,
     products,
+    searchScoreMap,
+    categoryOptions,
     sort,
   ]);
 
@@ -514,6 +495,34 @@ export function CatalogExplorer({
                 )}
               </div>
 
+              {searchResult?.correctedQuery &&
+                searchResult.correctedQuery.toLowerCase() !== deferredSearch.trim().toLowerCase() && (
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-primary/25 bg-primary/5 px-4 py-3 text-sm text-content shadow-xs">
+                    <div className="flex items-center gap-2.5">
+                      <Sparkles className="size-4 text-primary shrink-0" aria-hidden="true" />
+                      <span>
+                        Showing results for <strong className="text-primary font-bold">{searchResult.correctedQuery}</strong>
+                        {deferredSearch.trim() && (
+                          <span className="text-xs text-muted ml-1.5">
+                            (search query &ldquo;{deferredSearch.trim()}&rdquo;)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (searchResult?.correctedQuery) {
+                          setSearch(searchResult.correctedQuery);
+                        }
+                      }}
+                      className="text-xs font-bold text-primary underline underline-offset-2 hover:opacity-80 transition"
+                    >
+                      Update query to &ldquo;{searchResult.correctedQuery}&rdquo;
+                    </button>
+                  </div>
+                )}
+
               <div className="catalog-toolbar mb-6 flex flex-col gap-4 rounded-md border border-line bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-accent" role="status" aria-live="polite">
                   <span className="font-extrabold text-accent">{filteredProducts.length}</span>{" "}
@@ -614,16 +623,46 @@ export function CatalogExplorer({
                     <button
                       type="button"
                       onClick={clearFilters}
-                    className="commerce-button commerce-button-primary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+                      className="commerce-button commerce-button-primary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
                     >
                       Clear filters
                     </button>
                     <Link
                       href="/request-quote"
-                    className="commerce-button commerce-button-secondary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+                      className="commerce-button commerce-button-secondary inline-flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
                     >
                       Request a quote
                     </Link>
+                  </div>
+
+                  <div className="mt-8 border-t border-line/60 pt-6">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted mb-3">
+                      Try searching for
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {[
+                        "Rose Petal",
+                        "Nozomi",
+                        "Facial Tissues",
+                        "Tissue Rolls",
+                        "Germi Cure Phenyl",
+                        "Dispensers",
+                        "Hand Wash",
+                        "Trash Bags",
+                      ].map((chip) => (
+                        <button
+                          key={chip}
+                          type="button"
+                          onClick={() => {
+                            clearFilters();
+                            setSearch(chip);
+                          }}
+                          className="rounded-full border border-line bg-surface-soft px-3.5 py-1.5 text-xs font-medium text-accent hover:border-action hover:bg-surface-hover hover:text-action transition"
+                        >
+                          {chip}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
