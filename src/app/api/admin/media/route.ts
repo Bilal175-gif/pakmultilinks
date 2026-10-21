@@ -1,5 +1,7 @@
 import { put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -12,25 +14,47 @@ import {
 import { deleteBlobs } from "@/lib/blob";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const imageTypes = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-} as const;
 
-function hasValidSignature(bytes: Uint8Array, mime: keyof typeof imageTypes) {
-  if (mime === "image/jpeg") {
-    return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+function detectImageType(bytes: Uint8Array): { mime: "image/jpeg" | "image/png" | "image/webp"; ext: "jpg" | "png" | "webp" } | null {
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return { mime: "image/jpeg", ext: "jpg" };
   }
-  if (mime === "image/png") {
-    return [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a].every(
-      (value, index) => bytes[index] === value,
-    );
+  if (
+    bytes.length >= 8 &&
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47 &&
+    bytes[4] === 0x0d &&
+    bytes[5] === 0x0a &&
+    bytes[6] === 0x1a &&
+    bytes[7] === 0x0a
+  ) {
+    return { mime: "image/png", ext: "png" };
   }
-  return (
+  if (
+    bytes.length >= 12 &&
     String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
     String.fromCharCode(...bytes.slice(8, 12)) === "WEBP"
+  ) {
+    return { mime: "image/webp", ext: "webp" };
+  }
+  return null;
+}
+
+function hasBlobCredentials(): boolean {
+  return Boolean(
+    process.env.BLOB_READ_WRITE_TOKEN ||
+    (process.env.VERCEL_OIDC_TOKEN && (process.env.storeId || process.env.BLOB_STORE_ID))
   );
+}
+
+async function saveLocalMedia(scope: string, filename: string, bytes: Uint8Array): Promise<string> {
+  const uploadsDir = path.join(process.cwd(), "public", "uploads", scope);
+  await fs.mkdir(uploadsDir, { recursive: true });
+  const filePath = path.join(uploadsDir, filename);
+  await fs.writeFile(filePath, Buffer.from(bytes));
+  return `/uploads/${scope}/${filename}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -50,31 +74,48 @@ export async function POST(request: NextRequest) {
     if (file.size <= 0 || file.size > MAX_FILE_SIZE) {
       return jsonError("Images must be between 1 byte and 5 MB.", 400);
     }
-    if (!(file.type in imageTypes)) {
-      return jsonError("Only JPG, PNG, and WebP images are accepted.", 400);
-    }
 
-    const mime = file.type as keyof typeof imageTypes;
     const bytes = new Uint8Array(await file.arrayBuffer());
-    if (!hasValidSignature(bytes, mime)) {
-      return jsonError("The file content does not match a supported image format.", 400);
+    const detected = detectImageType(bytes);
+    if (!detected) {
+      return jsonError("The file content does not match a supported image format (JPG, PNG, or WebP).", 400);
     }
 
-    const scope = form.get("scope") === "deals" ? "deals" : "products";
-    const filename = `${randomUUID()}.${imageTypes[mime]}`;
+    const rawScope = form.get("scope");
+    const scope = typeof rawScope === "string" && ["deals", "products", "categories", "brands"].includes(rawScope)
+      ? rawScope
+      : "products";
+    const filename = `${randomUUID()}.${detected.ext}`;
 
-    const blob = await put(`${scope}/${filename}`, Buffer.from(bytes), {
-      access: "public",
-      contentType: mime,
-    });
+    let url: string;
+
+    if (hasBlobCredentials()) {
+      try {
+        const blob = await put(`${scope}/${filename}`, Buffer.from(bytes), {
+          access: "public",
+          contentType: detected.mime,
+        });
+        url = blob.url;
+      } catch (blobError) {
+        console.warn("Vercel Blob upload failed, falling back to local storage:", blobError);
+        if (!process.env.VERCEL) {
+          url = await saveLocalMedia(scope, filename, bytes);
+        } else {
+          throw blobError;
+        }
+      }
+    } else {
+      url = await saveLocalMedia(scope, filename, bytes);
+    }
 
     return NextResponse.json(
-      { url: blob.url },
+      { url },
       { status: 201, headers: noStoreHeaders },
     );
   } catch (error) {
-    console.error("Product media upload failed", error);
-    return jsonError("The image could not be uploaded.", 500);
+    console.error("Media upload failed:", error);
+    const message = error instanceof Error && error.message ? error.message : "The image could not be uploaded.";
+    return jsonError(message, 500);
   }
 }
 

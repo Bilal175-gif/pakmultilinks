@@ -180,6 +180,7 @@ export function ProductEditor({
       for (const file of selected) {
         const form = new FormData();
         form.set("file", file);
+        form.set("scope", "products");
         const response = await fetch("/api/admin/media", { method: "POST", body: form });
         const result = await response.json();
         if (!response.ok || typeof result.url !== "string") {
