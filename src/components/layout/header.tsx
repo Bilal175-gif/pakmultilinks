@@ -12,7 +12,6 @@ import type { Category, Product } from "@/lib/types";
 import { formatPrice, formatProductPrice } from "@/lib/utils";
 import { getPrice } from "@/lib/catalog";
 
-import { ThemeSwitch } from "@/components/theme/theme-switch";
 
 import { BrandMark } from "./brand-mark";
 import { CategoryNavigation } from "./category-navigation";
@@ -211,7 +210,6 @@ export function Header() {
               <WhatsAppIcon className="size-4" />
             </a>
 
-            <ThemeSwitch compact />
             <Link
               href="/account"
               className="commerce-icon-button focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent transition hover:border-line-strong hover:bg-surface-soft sm:size-11"

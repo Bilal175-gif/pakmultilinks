@@ -17,6 +17,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 
+import { detectUnitsFromName } from "@/lib/utils";
+import {
+  calculateCartonPrice,
+  calculatePiecePrice,
+  getDiscountInfo,
+  getEffectivePrice,
+} from "@/lib/pricing";
 import { buttonClass, inputClass, panelClass, textareaClass } from "./ui";
 
 type Option = { id: string; name: string; parentId?: string | null };
@@ -90,6 +97,16 @@ export function ProductEditor({
   const [message, setMessage] = useState("");
   const isEdit = Boolean(product?.id);
 
+  const initialUnits = product?.unitsPerCarton && product.unitsPerCarton > 0
+    ? product.unitsPerCarton
+    : (product?.name ? detectUnitsFromName(product.name) || 1 : 1);
+  const [piecePrice, setPiecePrice] = useState<string>(
+    product?.price && initialUnits > 0 ? calculatePiecePrice(product.price, initialUnits).toFixed(2) : ""
+  );
+  const [salePiecePrice, setSalePiecePrice] = useState<string>(
+    product?.salePrice && initialUnits > 0 ? calculatePiecePrice(product.salePrice, initialUnits).toFixed(2) : ""
+  );
+
   function set<K extends keyof EditableProduct>(key: K, next: EditableProduct[K]) {
     setValue((current) => ({ ...current, [key]: next }));
   }
@@ -110,12 +127,30 @@ export function ProductEditor({
     setPending(true);
     setMessage("");
     try {
+      const price = Number(value.price) >= 0 ? Math.round(Number(value.price) * 100) / 100 : 0;
+      const rawSale = value.salePrice != null ? Math.round(Number(value.salePrice) * 100) / 100 : null;
+      const salePrice = rawSale != null && rawSale > 0 && rawSale < price ? rawSale : null;
+      const unitsPerCarton = Math.max(1, Math.floor(Number(value.unitsPerCarton) || detectUnitsFromName(value.name) || 1));
+      const stock = Math.max(0, Math.floor(Number(value.stock) || 0));
+      const minimumOrderCartons = Math.max(1, Math.floor(Number(value.minimumOrderCartons) || 1));
+      const lowStockThreshold = Math.max(0, Math.floor(Number(value.lowStockThreshold) || 5));
+
+      const payload = {
+        ...value,
+        price,
+        salePrice,
+        unitsPerCarton,
+        stock,
+        minimumOrderCartons,
+        lowStockThreshold,
+      };
+
       const response = await fetch(
         isEdit ? `/api/admin/products/${product!.id}` : "/api/admin/products",
         {
           method: isEdit ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(value),
+          body: JSON.stringify(payload),
         },
       );
       const result = await response.json();
@@ -145,6 +180,7 @@ export function ProductEditor({
       for (const file of selected) {
         const form = new FormData();
         form.set("file", file);
+        form.set("scope", "products");
         const response = await fetch("/api/admin/media", { method: "POST", body: form });
         const result = await response.json();
         if (!response.ok || typeof result.url !== "string") {
@@ -238,16 +274,222 @@ export function ProductEditor({
       </section>
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
-        <div className="mb-5"><h2 className="font-bold">Carton pricing & inventory</h2><p className="mt-1 text-xs text-muted">Prices are in PKR per carton. Clear sale price to end a discount; turn off “Price on request” to publish a price.</p></div>
+        <div className="mb-5">
+          <h2 className="font-bold">Pricing, packing & inventory</h2>
+          <p className="mt-1 text-xs text-muted">
+            Set rates by carton or per-piece — both automatically synchronize based on pieces per carton. Toggle &ldquo;Price on request&rdquo; for products requiring custom wholesale quotation.
+          </p>
+        </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {field("Carton price (PKR)", "price", "number")}
-          {field("Sale price per carton", "salePrice", "number")}
-          {field("Pieces / packs per carton", "unitsPerCarton", "number")}
+          {/* Carton Price */}
+          <label className="block text-sm font-semibold text-secondary">
+            Carton price (PKR)
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              disabled={disabled}
+              value={value.price > 0 ? value.price : ""}
+              onChange={(e) => {
+                const val = Number(e.target.value) || 0;
+                set("price", val);
+                const currentUnits =
+                  Number(value.unitsPerCarton) > 0
+                    ? Number(value.unitsPerCarton)
+                    : (detectUnitsFromName(value.name) || 1);
+                if (currentUnits > 0) {
+                  setPiecePrice(calculatePiecePrice(val, currentUnits).toFixed(2));
+                }
+              }}
+              placeholder="0.00"
+              className={inputClass}
+            />
+          </label>
+
+          {/* Per Piece Price */}
+          <label className="block text-sm font-semibold text-secondary">
+            <span className="flex items-center justify-between">
+              <span>Per piece price (PKR)</span>
+              <span className="text-[11px] font-bold text-red-600 dark:text-red-400">Calculated</span>
+            </span>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              disabled={disabled}
+              value={
+                piecePrice !== ""
+                  ? piecePrice
+                  : value.price > 0
+                  ? calculatePiecePrice(
+                      value.price,
+                      Number(value.unitsPerCarton) > 0 ? Number(value.unitsPerCarton) : (detectUnitsFromName(value.name) || 1),
+                    ).toFixed(2)
+                  : ""
+              }
+              onChange={(e) => {
+                const raw = e.target.value;
+                setPiecePrice(raw);
+                const pVal = Number(raw);
+                if (!raw) {
+                  set("price", 0);
+                } else if (Number.isFinite(pVal)) {
+                  const targetUnits =
+                    Number(value.unitsPerCarton) > 0
+                      ? Number(value.unitsPerCarton)
+                      : (detectUnitsFromName(value.name) || 1);
+                  set("price", calculateCartonPrice(pVal, targetUnits));
+                  if (value.unitsPerCarton <= 1 && targetUnits > 1) {
+                    set("unitsPerCarton", targetUnits);
+                  }
+                }
+              }}
+              placeholder="0.00"
+              className={`${inputClass} border-red-300 bg-red-50/90 dark:bg-red-950/40 font-bold text-red-700 dark:text-red-300 placeholder:text-red-300`}
+            />
+            {Number(value.unitsPerCarton) <= 1 && (
+              <span className="mt-1 block text-xs font-semibold text-amber-700 dark:text-amber-400">
+                ⚠️ 1 pc/carton set hai. Agar carton me zyada pieces hain to neechay &quot;Pieces / packs per carton&quot; me tadaad likhein (maslan {detectUnitsFromName(value.name) || 24}).
+              </span>
+            )}
+          </label>
+
+          {/* Pieces / packs per carton */}
+          <label className="block text-sm font-semibold text-secondary">
+            Pieces / packs per carton
+            <input
+              type="number"
+              min="1"
+              step="1"
+              disabled={disabled}
+              value={value.unitsPerCarton > 0 ? value.unitsPerCarton : ""}
+              onChange={(e) => {
+                const raw = e.target.value;
+                const newUnits = Number(raw) || 1;
+                set("unitsPerCarton", Number(raw));
+                const currentPiecePrice = Number(piecePrice);
+                if (currentPiecePrice > 0) {
+                  set("price", calculateCartonPrice(currentPiecePrice, newUnits));
+                }
+                const currentSalePiece = Number(salePiecePrice);
+                if (currentSalePiece > 0) {
+                  set("salePrice", calculateCartonPrice(currentSalePiece, newUnits));
+                }
+              }}
+              placeholder="e.g. 24"
+              className={inputClass}
+            />
+          </label>
+
+          {/* Sale price per carton */}
+          <label className="block text-sm font-semibold text-secondary">
+            Sale price per carton
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              disabled={disabled}
+              value={value.salePrice != null && value.salePrice > 0 ? value.salePrice : ""}
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (!raw) {
+                  set("salePrice", null);
+                  setSalePiecePrice("");
+                } else {
+                  const val = Number(raw) || 0;
+                  set("salePrice", val);
+                  const currentUnits =
+                    Number(value.unitsPerCarton) > 0
+                      ? Number(value.unitsPerCarton)
+                      : (detectUnitsFromName(value.name) || 1);
+                  if (currentUnits > 0) {
+                    setSalePiecePrice(calculatePiecePrice(val, currentUnits).toFixed(2));
+                  }
+                }
+              }}
+              placeholder="No sale"
+              className={inputClass}
+            />
+          </label>
+
+          {/* Sale price per piece */}
+          <label className="block text-sm font-semibold text-secondary">
+            <span className="flex items-center justify-between">
+              <span>Sale price per piece (PKR)</span>
+              <span className="text-[11px] font-normal text-muted">Calculated</span>
+            </span>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              disabled={disabled}
+              value={
+                salePiecePrice !== ""
+                  ? salePiecePrice
+                  : value.salePrice != null && value.salePrice > 0
+                  ? calculatePiecePrice(
+                      value.salePrice,
+                      Number(value.unitsPerCarton) > 0 ? Number(value.unitsPerCarton) : (detectUnitsFromName(value.name) || 1),
+                    ).toFixed(2)
+                  : ""
+              }
+              onChange={(e) => {
+                const raw = e.target.value;
+                setSalePiecePrice(raw);
+                const sVal = Number(raw);
+                if (!raw) {
+                  set("salePrice", null);
+                } else if (Number.isFinite(sVal)) {
+                  const targetUnits =
+                    Number(value.unitsPerCarton) > 0
+                      ? Number(value.unitsPerCarton)
+                      : (detectUnitsFromName(value.name) || 1);
+                  set("salePrice", calculateCartonPrice(sVal, targetUnits));
+                }
+              }}
+              placeholder="No sale"
+              className={`${inputClass} border-line bg-surface font-semibold text-secondary`}
+            />
+          </label>
           {field("Minimum order (cartons)", "minimumOrderCartons", "number", 1)}
           {field("Available stock (cartons)", "stock", "number")}
           {field("Low-stock alert (cartons)", "lowStockThreshold", "number")}
         </div>
-        <div className="mt-5 rounded-lg border border-line bg-surface-soft p-4 text-sm"><span className="text-muted">Customer sees </span><strong>{value.priceOnRequest ? "Price on request" : `Rs ${(value.salePrice ?? value.price).toLocaleString("en-PK")} / carton`}</strong>{!value.priceOnRequest && value.unitsPerCarton > 0 && <span className="ml-3 text-xs text-muted">Rs {((value.salePrice ?? value.price) / value.unitsPerCarton).toFixed(2)} per unit</span>}{value.salePrice !== null && value.price > 0 && <span className="ml-3 text-xs text-muted">{Math.round((1 - value.salePrice / value.price) * 100)}% discount</span>}</div>
+        <div className="mt-5 rounded-2xl border border-line bg-surface-soft p-4 text-sm">
+          <span className="text-muted font-medium">Customer sees in storefront: </span>
+          {value.priceOnRequest ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+              <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+              Price on request (Wholesale Quotation)
+            </span>
+          ) : (
+            <span className="inline-flex flex-wrap items-center gap-2">
+              <strong className="text-action">
+                Rs {getEffectivePrice(value.price, value.salePrice).toLocaleString("en-PK")} / carton
+              </strong>
+              {getDiscountInfo(value.price, value.salePrice).hasDiscount && (
+                <span className="text-xs text-muted line-through">
+                  Rs {value.price.toLocaleString("en-PK")}
+                </span>
+              )}
+              {Number(value.unitsPerCarton) > 1 && (
+                <span className="rounded-md bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:bg-red-950/40 dark:text-red-300">
+                  Rs {calculatePiecePrice(getEffectivePrice(value.price, value.salePrice), Number(value.unitsPerCarton)).toFixed(2)} / piece ({value.unitsPerCarton} pcs/carton)
+                </span>
+              )}
+              {getDiscountInfo(value.price, value.salePrice).hasDiscount && (
+                <span className="rounded-full bg-action px-2 py-0.5 text-xs font-bold text-white">
+                  {getDiscountInfo(value.price, value.salePrice).discountPercent}% discount
+                </span>
+              )}
+              {Number(value.stock) <= 0 && (
+                <span className="rounded-full bg-rose-100 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 px-2 py-0.5 text-xs font-bold">
+                  Out of stock
+                </span>
+              )}
+            </span>
+          )}
+        </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {([
             ["priceOnRequest", "Price on request"],

@@ -11,6 +11,8 @@ coverage
 prisma/dev.db*
 public/uploads/products/*
 !public/uploads/products/.gitkeep
+public/uploads/deals/*
+!public/uploads/deals/.gitkeep
 
 /playwright-report/
 /test-results/

@@ -6,3 +6,4 @@
 Partner names/relationships were supplied by the site owner. Aroma was corrected to Aroma Hair Salon. Its location/profile is awaiting clarification; the UI uses a generic scissors icon, not another business's logo.
 
 - `moon-banquet-hall.png`: imagegen-assisted extraction/reconstruction from the Moon banquet halls Facebook screenshot supplied by the site owner. Not an original downloaded brand asset. Displayed in grayscale by the shared partner styles.
+- `ik-shinwari.jpg`: official logo asset supplied directly by the client for IK Shinwari Restaurant.

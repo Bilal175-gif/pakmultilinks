@@ -10,6 +10,7 @@ import { FloatingSupport } from "./floating-support";
 import { Header } from "./header";
 import { MobileSalesBar } from "./mobile-sales-bar";
 import { MobileFooter } from "./mobile-footer";
+import { PageTopLoader } from "./page-top-loader";
 
 export function RouteShell({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname();
@@ -23,6 +24,7 @@ export function RouteShell({ children }: Readonly<{ children: React.ReactNode }>
     <SalesContactProvider>
       <StoreProvider>
         <div className="storefront-shell">
+          <PageTopLoader />
           <Header />
           <main id="main-content" className="min-h-[60vh]">
             {children}

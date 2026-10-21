@@ -6,7 +6,7 @@ export default function ShopLoading() {
         <div className="hidden h-[500px] rounded-2xl bg-surface-soft lg:block" />
         <div>
           <div className="mb-6 h-16 rounded-2xl bg-surface-soft" />
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
               <div key={index} className="h-[460px] rounded-3xl bg-surface-soft" />
             ))}

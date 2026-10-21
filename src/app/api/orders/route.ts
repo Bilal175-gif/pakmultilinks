@@ -71,6 +71,10 @@ export async function POST(request: NextRequest) {
           });
         }
 
+        if (!requiresQuote && subtotal.lt(5000)) {
+          throw new OrderInputError("Minimum order value is PKR 5,000. Orders below PKR 5,000 cannot be processed.");
+        }
+
         const deliveryFee = new Prisma.Decimal(0);
         const taxAmount = subtotal.mul(settings?.taxRate ?? 0).div(100).toDecimalPlaces(2);
         const customer = parsed.data.customer;

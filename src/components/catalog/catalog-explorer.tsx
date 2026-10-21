@@ -66,6 +66,21 @@ export function CatalogExplorer({
     () => [...new Set(products.map((product) => product.brand))].sort(),
     [products],
   );
+
+  const brandList = useMemo(() => {
+    const counts = new Map<string, number>();
+    products.forEach((p) => {
+      const b = p.brand?.trim();
+      if (b && b.toLowerCase() !== "unbranded") {
+        counts.set(b, (counts.get(b) || 0) + 1);
+      }
+    });
+
+    return Array.from(counts.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [products]);
+
   const hasPublishedPrices = products.some((product) => !product.priceOnRequest);
   const priceCeiling = useMemo(() => {
     const highest = Math.max(...products.map((product) => getPrice(product)), 0);
@@ -79,6 +94,8 @@ export function CatalogExplorer({
     const ceiling = maxPrice === "" ? Number.POSITIVE_INFINITY : Number(maxPrice);
     const targetBrandClean = brand.toLowerCase().replace(/[^a-z0-9]/g, "");
 
+    const queryWords = query.split(/\s+/).filter(Boolean);
+
     const matches = products.filter((product) => {
       const searchableText = [
         product.name,
@@ -87,6 +104,7 @@ export function CatalogExplorer({
         product.brand,
         product.shortDescription,
         product.description,
+        ...(product.attributes?.map((a) => `${a.name} ${a.value}`) || []),
       ]
         .join(" ")
         .toLocaleLowerCase();
@@ -96,7 +114,10 @@ export function CatalogExplorer({
 
       const brandMatches =
         !brand ||
+        product.brand.toLowerCase() === brand.toLowerCase() ||
         productBrandClean === targetBrandClean ||
+        productBrandClean.includes(targetBrandClean) ||
+        productNameLower.includes(brand.toLowerCase()) ||
         (targetBrandClean === "rosepetal" &&
           (productBrandClean.includes("rosepetal") ||
             productNameLower.includes("rose petal") ||
@@ -105,11 +126,39 @@ export function CatalogExplorer({
             productNameLower.includes("maxob"))) ||
         (targetBrandClean === "nozomi" &&
           (productBrandClean.includes("nozomi") ||
-            productNameLower.includes("nozomi")));
+            productNameLower.includes("nozomi"))) ||
+        (targetBrandClean === "finelife" &&
+          (productBrandClean.includes("finelife") ||
+            productNameLower.includes("fine life") ||
+            productNameLower.includes("finelife"))) ||
+        (targetBrandClean === "germicure" &&
+          (productNameLower.includes("germi cure") || productNameLower.includes("germicure"))) ||
+        (targetBrandClean === "shinewell" &&
+          (productNameLower.includes("shine well") || productNameLower.includes("shinewell"))) ||
+        (targetBrandClean === "airnergy" &&
+          (productNameLower.includes("air energy") || productNameLower.includes("airnergy"))) ||
+        (targetBrandClean === "supersoft" &&
+          (productNameLower.includes("super soft") || productNameLower.includes("supersoft")));
+
+      const categoryMatches =
+        !selectedCategory ||
+        product.categorySlug === selectedCategory ||
+        product.parentCategorySlug === selectedCategory ||
+        categoryOptions.some(
+          (c) =>
+            c.parentId &&
+            categoryOptions.find((p) => p.id === c.parentId)?.slug === selectedCategory &&
+            (product.categorySlug === c.slug || product.category.toLowerCase() === c.name.toLowerCase()),
+        ) ||
+        product.category.toLowerCase().replace(/[^a-z0-9]+/g, "-") === selectedCategory;
+
+      const matchesQuery =
+        queryWords.length === 0 ||
+        queryWords.every((word) => searchableText.includes(word));
 
       return (
-        (!query || searchableText.includes(query)) &&
-        (!selectedCategory || (product.categorySlug === selectedCategory || product.parentCategorySlug === selectedCategory)) &&
+        matchesQuery &&
+        categoryMatches &&
         brandMatches &&
         (!inStockOnly || product.stock >= minimumCartons(product) || Boolean(product.allowBackorder)) &&
         productPrice >= floor &&
@@ -392,9 +441,9 @@ export function CatalogExplorer({
 
             <div className="min-w-0">
               {/* Brand Quick Selector Tabs */}
-              <div className="mb-5 flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface p-3 shadow-xs">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-muted px-1.5">
-                  Brands:
+              <div className="mb-5 flex items-center gap-2 overflow-x-auto rounded-2xl border border-line bg-surface p-2.5 pb-3 shadow-xs scrollbar-thin">
+                <span className="shrink-0 text-xs font-extrabold uppercase tracking-wider text-muted px-2 border-r border-line/60">
+                  Brands
                 </span>
                 <button
                   type="button"
@@ -403,64 +452,52 @@ export function CatalogExplorer({
                     resetVisibleCount();
                   }}
                   className={cn(
-                    "rounded-xl px-3.5 py-2 text-xs font-bold transition",
+                    "shrink-0 flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition",
                     !brand
                       ? "bg-action text-white shadow-xs"
-                      : "border border-line bg-surface-soft text-accent hover:border-action"
+                      : "border border-line bg-surface-soft text-accent hover:border-action hover:bg-surface-hover"
                   )}
                 >
-                  All Brands
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBrand("Rose Petal");
-                    resetVisibleCount();
-                  }}
-                  className={cn(
-                    "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold transition shadow-xs",
-                    brand.toLowerCase().includes("rose")
-                      ? "bg-[#8c142e] text-white ring-2 ring-[#8c142e]/30"
-                      : "border border-line bg-surface-soft text-accent hover:border-[#8c142e] hover:text-[#8c142e]"
-                  )}
-                >
-                  <span>🌹 Rose Petal</span>
+                  <span>All Brands</span>
                   <span
                     className={cn(
-                      "rounded-full px-2 py-0.5 text-[10px] font-bold",
-                      brand.toLowerCase().includes("rose")
-                        ? "bg-white/20 text-white"
-                        : "bg-line text-secondary"
+                      "rounded-full px-1.5 py-0.2 text-[10px] font-bold",
+                      !brand ? "bg-white/20 text-white" : "bg-line text-secondary"
                     )}
                   >
-                    28+ Items
+                    {products.length}
                   </span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBrand("Nozomi");
-                    resetVisibleCount();
-                  }}
-                  className={cn(
-                    "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-extrabold transition shadow-xs",
-                    brand.toLowerCase().includes("nozomi")
-                      ? "bg-[#1b4d3e] text-white ring-2 ring-[#1b4d3e]/30"
-                      : "border border-line bg-surface-soft text-accent hover:border-[#1b4d3e] hover:text-[#1b4d3e]"
-                  )}
-                >
-                  <span>🌿 Nozomi</span>
-                  <span
-                    className={cn(
-                      "rounded-full px-2 py-0.5 text-[10px] font-bold",
-                      brand.toLowerCase().includes("nozomi")
-                        ? "bg-white/20 text-white"
-                        : "bg-line text-secondary"
-                    )}
-                  >
-                    10+ Items
-                  </span>
-                </button>
+
+                {brandList.map(({ name, count }) => {
+                  const isSelected = brand.toLowerCase() === name.toLowerCase();
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => {
+                        setBrand(isSelected ? "" : name);
+                        resetVisibleCount();
+                      }}
+                      className={cn(
+                        "shrink-0 flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition",
+                        isSelected
+                          ? "bg-action text-white ring-2 ring-action/25 shadow-xs"
+                          : "border border-line bg-surface-soft text-accent hover:border-action hover:text-action hover:bg-surface-hover"
+                      )}
+                    >
+                      <span>{name}</span>
+                      <span
+                        className={cn(
+                          "rounded-full px-1.5 py-0.2 text-[10px] font-semibold",
+                          isSelected ? "bg-white/20 text-white" : "bg-line text-secondary"
+                        )}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
 
                 {brand && (
                   <button
@@ -469,10 +506,10 @@ export function CatalogExplorer({
                       setBrand("");
                       resetVisibleCount();
                     }}
-                    className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-muted hover:text-action px-2 py-1"
+                    className="shrink-0 ml-auto inline-flex items-center gap-1 text-xs font-bold text-muted hover:text-danger px-2.5 py-1.5 rounded-lg hover:bg-danger-soft/30 transition"
                   >
                     <X className="size-3" />
-                    <span>Clear brand</span>
+                    <span>Clear filter</span>
                   </button>
                 )}
               </div>
@@ -544,17 +581,21 @@ export function CatalogExplorer({
                 <div
                   id="product-results"
                   className={cn(
-                    "catalog-products grid gap-5",
-                    view === "grid" ? "grid-cols-2 xl:grid-cols-3" : "grid-cols-1",
+                    "catalog-products grid gap-4 sm:gap-5",
+                    view === "grid" ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1",
                   )}
                 >
                   {visibleProducts.map((product, index) => (
-                    <ProductCard
+                    <div
                       key={product.id}
-                      product={product}
-                      layout={view}
-                      priority={index < 3}
-                    />
+                      className={`animate-page-enter stagger-${Math.min(index + 1, 8)}`}
+                    >
+                      <ProductCard
+                        product={product}
+                        layout={view}
+                        priority={index < 3}
+                      />
+                    </div>
                   ))}
                 </div>
               ) : (

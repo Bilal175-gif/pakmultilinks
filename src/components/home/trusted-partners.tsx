@@ -5,14 +5,15 @@ import styles from "./trusted-partners.module.css";
 
 const partners = [
   { name: "Lahore Garrison University", image: "/images/partners/lgu.png" },
+  { name: "IK Shinwari Restaurant", image: "/images/partners/ik-shinwari.jpg" },
   { name: "Ramay Clinic", image: "/images/partners/ramay-clinic.jpg" },
-  { name: "Aroma Hair Salon", image: null },
   { name: "Moon Banquet Hall", image: "/images/partners/moon-banquet-hall.png" },
+  { name: "Aroma Hair Salon", image: null },
 ];
 
 export function TrustedPartners() {
   return (
-    <section aria-labelledby="trusted-partners-title" className={styles.section}>
+    <section aria-labelledby="trusted-partners-title" className={`${styles.section} animate-page-enter`}>
       <div className="site-shell">
         <div className={styles.heading}>
           <h2 id="trusted-partners-title">Our Trusted Partners</h2>

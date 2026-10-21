@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { AlertCircle, ArrowLeft, Building2, Loader2, LockKeyhole, PackageCheck } from "lucide-react";
 import { persistOrder, useStore } from "@/components/providers/store-provider";
 import type { CustomerDetails, Order } from "@/lib/types";
-import { createReference, formatPrice } from "@/lib/utils";
+import { createReference, formatPrice, MINIMUM_ORDER_AMOUNT } from "@/lib/utils";
 
 const inputClass =
   "mt-2 w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-sm text-content outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus";
@@ -34,6 +34,7 @@ export function CheckoutForm() {
   const [error, setError] = useState("");
   const [bankTransferEnabled, setBankTransferEnabled] = useState(false);
   const hasQuotePricing = cart.some(({ product }) => product.priceOnRequest);
+  const belowMinOrder = !hasQuotePricing && subtotal < MINIMUM_ORDER_AMOUNT;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -49,6 +50,11 @@ export function CheckoutForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting || cart.length === 0) return;
+
+    if (belowMinOrder) {
+      setError(`Orders under ${formatPrice(MINIMUM_ORDER_AMOUNT)} cannot be placed. Current order value is ${formatPrice(subtotal)}. Please add more cartons.`);
+      return;
+    }
 
     const form = event.currentTarget;
     if (!form.reportValidity()) return;
@@ -270,9 +276,17 @@ export function CheckoutForm() {
           <div className="flex justify-between gap-3 border-t border-line pt-4"><dt className="font-bold text-content">Final payable total</dt><dd className="font-bold text-content">To be confirmed</dd></div>
         </dl>
         <p className="mt-4 rounded-xl bg-warning-soft p-3 text-xs leading-5 text-warning">Delivery coverage, charges, stock and the final total are not assumed. We will confirm them before fulfilment.</p>
+        {belowMinOrder && (
+          <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-3.5 text-xs text-amber-950 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
+            <p className="font-bold">⚠️ Minimum Order Value is PKR 5,000</p>
+            <p className="mt-1">
+              Current order subtotal is <strong>{formatPrice(subtotal)}</strong>. Wholesale order place karne ke liye kam az kam <strong>PKR 5,000</strong> ka order hona lazmi hai. Please return to your cart and add more items.
+            </p>
+          </div>
+        )}
         {error ? <div className="mt-4 flex gap-2 rounded-xl border border-danger-line bg-danger-soft p-3 text-sm text-danger" role="alert"><AlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />{error}</div> : null}
         <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-secondary"><input type="checkbox" required className="mt-1 accent-focus" /><span>I confirm that these details are correct and agree to the <Link href="/terms" className="font-semibold text-accent hover:underline">terms and conditions</Link>.</span></label>
-        <button type="submit" disabled={submitting} className="commerce-button commerce-button-primary mt-5 inline-flex w-full items-center justify-center gap-2 disabled:cursor-wait disabled:opacity-60">
+        <button type="submit" disabled={submitting || belowMinOrder} className="commerce-button commerce-button-primary mt-5 inline-flex w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
           {submitting ? <><Loader2 aria-hidden="true" className="size-4 animate-spin" /> Submitting request…</> : <><LockKeyhole aria-hidden="true" className="size-4" /> Submit bulk order request</>}
         </button>
         <p className="mt-3 text-center text-xs leading-5 text-muted">This does not process an online payment.</p>

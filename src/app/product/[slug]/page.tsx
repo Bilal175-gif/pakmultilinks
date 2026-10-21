@@ -281,7 +281,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 View {product.category}
               </Link>
             </div>
-            <div className="mt-7 grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
+            <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-4">
               {relatedProducts.map((relatedProduct) => (
                 <ProductCard key={relatedProduct.id} product={relatedProduct} headingLevel="h3" />
               ))}

@@ -22,7 +22,7 @@ export function MobileHome({ categories, products }: { categories: Category[]; p
 
     {featured.length > 0 && <section className="site-shell pb-7" aria-labelledby="mobile-featured-title">
       <div className="mb-4 flex items-center justify-between gap-3"><h2 id="mobile-featured-title" className="text-xl font-semibold">Everyday essentials</h2><Link href="/shop" className="focus-ring flex min-h-11 items-center gap-1 text-xs font-semibold">View all <ArrowRight className="size-4" /></Link></div>
-      <div className="grid grid-cols-2 gap-3">{featured.map(product => <ProductCard key={product.id} product={product} headingLevel="h3" />)}</div>
+      <div className="grid grid-cols-1 gap-4">{featured.map(product => <ProductCard key={product.id} product={product} headingLevel="h3" />)}</div>
     </section>}
 
     <section id="mobile-services" className="site-shell pb-7" aria-labelledby="mobile-services-title">

@@ -29,6 +29,10 @@ export async function PATCH(request: NextRequest, context: Context) {
     if (data.brandId && !brandOk) return jsonError("The selected brand does not exist. Please refresh and choose a valid brand.", 400);
     const oldImageUrls = existing.images.map((img) => img.url);
     const newImageUrls = data.images.map((img) => img.url);
+    const rawPrice = Math.round(Number(data.price) * 100) / 100;
+    const rawSale = data.salePrice != null ? Math.round(Number(data.salePrice) * 100) / 100 : null;
+    const salePrice = rawSale != null && rawSale > 0 && rawSale < rawPrice ? rawSale : null;
+
     const product = await database.product.update({
       where: { id },
       data: {
@@ -37,13 +41,13 @@ export async function PATCH(request: NextRequest, context: Context) {
         sku: data.sku,
         shortDescription: data.shortDescription || null,
         description: data.description,
-        price: data.price,
-        salePrice: data.salePrice,
+        price: rawPrice,
+        salePrice,
         priceOnRequest: data.priceOnRequest,
-        unitsPerCarton: data.unitsPerCarton,
-        minimumOrderCartons: data.minimumOrderCartons,
-        stock: data.stock,
-        lowStockThreshold: data.lowStockThreshold,
+        unitsPerCarton: Math.max(0, Math.floor(Number(data.unitsPerCarton) || 0)),
+        minimumOrderCartons: Math.max(1, Math.floor(Number(data.minimumOrderCartons) || 1)),
+        stock: Math.max(0, Math.floor(Number(data.stock) || 0)),
+        lowStockThreshold: Math.max(0, Math.floor(Number(data.lowStockThreshold) || 5)),
         allowBackorder: data.allowBackorder,
         featured: data.featured,
         bestSeller: data.bestSeller,
@@ -59,9 +63,13 @@ export async function PATCH(request: NextRequest, context: Context) {
     // Best-effort cleanup of orphaned Vercel Blob images
     const removedUrls = oldImageUrls.filter((url) => !newImageUrls.includes(url));
     await deleteBlobs(removedUrls);
+    revalidatePath("/", "layout");
     revalidatePath("/");
     revalidatePath("/shop");
+    revalidatePath("/shop/[category]", "page");
     revalidatePath("/rate-list");
+    revalidatePath("/admin/products");
+    revalidatePath("/admin/pricing");
     revalidatePath(`/product/${product.slug}`);
     return NextResponse.json({ product: serialize(product) }, { headers: noStoreHeaders });
   } catch (error) {
@@ -76,12 +84,19 @@ export async function DELETE(request: NextRequest, context: Context) {
     const database = requireDatabase();
     const existing = await database.product.findUnique({
       where: { id },
-      select: { id: true, images: { select: { url: true } } },
+      select: { id: true, slug: true, images: { select: { url: true } } },
     });
     if (!existing) return jsonError("Product not found.", 404);
     await database.product.update({ where: { id }, data: { status: ProductStatus.ARCHIVED } });
     // Clean up Vercel Blob images on archive
     await deleteBlobs(existing.images.map((img) => img.url));
+    revalidatePath("/", "layout");
+    revalidatePath("/");
+    revalidatePath("/shop");
+    revalidatePath("/rate-list");
+    revalidatePath("/admin/products");
+    revalidatePath("/admin/pricing");
+    if (existing.slug) revalidatePath(`/product/${existing.slug}`);
     return NextResponse.json({ ok: true }, { headers: noStoreHeaders });
   } catch (error) {
     return apiFailure(error);

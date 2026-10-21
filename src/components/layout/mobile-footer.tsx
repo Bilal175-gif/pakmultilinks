@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { ThemeSwitch } from "@/components/theme/theme-switch";
 import { ChevronDown } from "lucide-react";
 
 export function MobileFooter() {
   return (
     <footer className="mobile-footer md:hidden">
-      <div className="mb-3 flex items-center justify-center gap-3"><span>Appearance</span><ThemeSwitch /></div>
       <nav aria-label="Store information" className="flex flex-wrap justify-center gap-x-5">
         <Link href="/rate-list">Rate list</Link><Link href="/about">About us</Link><Link href="/contact">Help & contact</Link><Link href="/account">My account</Link>
       </nav>

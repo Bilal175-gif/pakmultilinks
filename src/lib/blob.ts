@@ -1,4 +1,6 @@
 import { del } from "@vercel/blob";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 /**
  * Detects whether a URL is a Vercel Blob Storage URL.
@@ -15,16 +17,38 @@ export function isVercelBlobUrl(url: string): boolean {
 }
 
 /**
- * Deletes one or more Vercel Blob objects by URL.
- * Silently ignores non-blob URLs and deletion failures to avoid blocking
+ * Detects whether a URL is a local upload path.
+ */
+export function isLocalUploadUrl(url: string): boolean {
+  return typeof url === "string" && url.startsWith("/uploads/") && !url.includes("..");
+}
+
+/**
+ * Deletes one or more images by URL (supports Vercel Blob and local /uploads).
+ * Silently ignores external URLs and deletion failures to avoid blocking
  * the caller (cleanup is best-effort).
  */
 export async function deleteBlobs(urls: string[]): Promise<void> {
   const blobUrls = urls.filter(isVercelBlobUrl);
-  if (blobUrls.length === 0) return;
-  try {
-    await del(blobUrls);
-  } catch (error) {
-    console.error("Blob cleanup failed:", error);
+  if (blobUrls.length > 0 && (process.env.BLOB_READ_WRITE_TOKEN || process.env.VERCEL_OIDC_TOKEN)) {
+    try {
+      await del(blobUrls);
+    } catch (error) {
+      console.error("Blob cleanup failed:", error);
+    }
+  }
+
+  const localUrls = urls.filter(isLocalUploadUrl);
+  for (const localUrl of localUrls) {
+    try {
+      const sanitized = path.normalize(localUrl).replace(/^(\.\.[\/\\])+/, "");
+      const fullPath = path.join(process.cwd(), "public", sanitized);
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+      if (fullPath.startsWith(uploadsDir)) {
+        await fs.unlink(fullPath).catch(() => {});
+      }
+    } catch (error) {
+      console.error("Local file cleanup failed:", error);
+    }
   }
 }

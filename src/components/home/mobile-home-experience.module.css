@@ -23,7 +23,7 @@
 .categoryImage { position: relative; display: block; width: 76px; height: 76px; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
 .category:nth-child(3n + 2) .categoryImage { background: var(--surface-soft); }
 .category:nth-child(3n + 3) .categoryImage { background: var(--surface-soft); }
-.products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.products { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .empty { display: grid; justify-items: center; gap: 14px; border: 1px dashed var(--line); border-radius: 6px; padding: 24px; font-size: 14px; text-align: center; }
 .business { display: flex; align-items: center; gap: 12px; margin-top: 24px; padding: 18px 14px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-soft); }
 .businessIcon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 14px; background: var(--surface); }

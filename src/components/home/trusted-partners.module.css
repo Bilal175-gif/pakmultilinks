@@ -35,7 +35,7 @@
 
 .group {
   display: flex;
-  width: max(880px, min(80rem, calc(100vw - 2rem)));
+  width: max(1100px, min(90rem, calc(100vw - 2rem)));
   flex-shrink: 0;
   list-style: none;
   padding: 0;
@@ -60,6 +60,14 @@
   border-radius: 50%;
   overflow: hidden;
   background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.partner:hover .logo {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .image {
@@ -67,7 +75,13 @@
   height: 112px;
   border-radius: 50%;
   object-fit: contain;
-  filter: grayscale(1);
+  filter: grayscale(0.85);
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.partner:hover .image {
+  filter: grayscale(0);
+  transform: scale(1.04);
 }
 
 .salonIcon { width: 56px; height: 56px; color: #333; }

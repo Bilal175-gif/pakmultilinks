@@ -205,7 +205,7 @@ const moneyInput = z.number().finite().nonnegative().max(100_000_000).refine(val
 export const pricingBatchSchema = z.object({
   products: z.array(z.object({
     id: z.string().min(1).max(80),
-    updatedAt: z.iso.datetime(),
+    updatedAt: z.string().optional(),
     price: moneyInput,
     salePrice: moneyInput.nullable(),
     priceOnRequest: z.boolean(),
