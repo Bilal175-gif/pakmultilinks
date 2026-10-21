@@ -36,14 +36,14 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
   if (!deals.length) return null;
 
   return (
-    <section className="relative w-full border-b border-line bg-canvas py-3 sm:py-6" aria-label="Featured offers">
-      <div className="site-shell">
-        <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
+    <section className="relative w-full border-b border-line bg-canvas overflow-hidden" aria-label="Featured offers">
+      <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
+      <div className="mx-auto w-full max-w-[1920px]">
         <div
           role="region"
           aria-roledescription="carousel"
           aria-label="Current deals"
-          className="deals-slider-viewport relative isolate aspect-[3/4] md:aspect-[1920/700] w-full overflow-hidden rounded-2xl md:rounded-3xl border border-line bg-surface-soft shadow-xs animate-scale-enter"
+          className="deals-slider-viewport relative isolate aspect-[3/4] md:aspect-[1024/434] w-full overflow-hidden bg-surface-soft animate-scale-enter"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
