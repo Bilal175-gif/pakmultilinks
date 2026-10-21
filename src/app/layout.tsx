@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { themeInitializationScript } from "@/lib/theme";
 import { RouteShell } from "@/components/layout/route-shell";
 import { company } from "@/lib/company";
-import { getSiteOrigin, isPublicSiteConfigured, localBusinessStructuredData, safeJsonLd, websiteStructuredData } from "@/lib/seo";
+import { getSiteOrigin, isPublicSiteConfigured, rootGraphStructuredData, safeJsonLd } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -42,6 +42,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#114b2f" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const structuredData = [localBusinessStructuredData(), websiteStructuredData()];
+  const structuredData = rootGraphStructuredData();
   return <html lang="en-PK" data-scroll-behavior="smooth" suppressHydrationWarning><head><script id="theme-init" dangerouslySetInnerHTML={{ __html: themeInitializationScript }} /></head><body><ThemeProvider><RouteShell>{children}</RouteShell></ThemeProvider><Script id="site-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }} /><GoogleAnalytics /></body></html>;
 }

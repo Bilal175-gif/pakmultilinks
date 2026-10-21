@@ -90,9 +90,13 @@ export function ProductCard({
             src={displayImage}
             alt={product.imageAlt || product.name}
             fill
-            unoptimized={displayImage.startsWith("https://")}
             priority={priority}
-            sizes={layout === "list" ? "(max-width: 767px) 112px, 230px" : "(max-width: 767px) 94vw, (max-width: 1024px) 50vw, 33vw"}
+            loading={priority ? "eager" : "lazy"}
+            sizes={
+              layout === "list"
+                ? "(max-width: 767px) 112px, 230px"
+                : "(max-width: 640px) 94vw, (max-width: 1024px) 50vw, 380px"
+            }
             className="object-contain p-3 sm:p-5 transition duration-500 group-hover:scale-105"
           />
         ) : (

@@ -1,0 +1,273 @@
+import { CheckCircle2, ChevronDown, ChevronRight, HelpCircle, Sparkles } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { CatalogExplorer } from "@/components/catalog/catalog-explorer";
+import { getAllBrandSlugs, getBrandBySlug } from "@/lib/brands";
+import { isDevelopmentProduct, listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
+import { company } from "@/lib/company";
+import { absoluteUrl, breadcrumbStructuredData, cleanDescription, safeJsonLd } from "@/lib/seo";
+
+type BrandPageProps = {
+  params: Promise<{ brand: string }>;
+};
+
+export const revalidate = 3600;
+
+export function generateStaticParams() {
+  return getAllBrandSlugs().map((slug) => ({ brand: slug }));
+}
+
+export async function generateMetadata({ params }: BrandPageProps): Promise<Metadata> {
+  const { brand: slug } = await params;
+  const brand = getBrandBySlug(slug);
+
+  if (!brand) {
+    return { title: "Brand not found", robots: { index: false, follow: true } };
+  }
+
+  const title = brand.metaTitle;
+  const description = cleanDescription(
+    brand.metaDescription,
+    `Buy official ${brand.name} wholesale supplies by carton in Lahore from Pak Multilinks Hygiene.`
+  );
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/brand/${brand.slug}` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `/brand/${brand.slug}`,
+      siteName: company.name,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
+
+export default async function BrandLandingPage({ params }: BrandPageProps) {
+  const { brand: slug } = await params;
+  const brand = getBrandBySlug(slug);
+  if (!brand) notFound();
+
+  const [products, categories] = await Promise.all([
+    listPublicProducts(),
+    listPublicCategories(),
+  ]);
+
+  const brandProducts = products.filter(
+    (p) =>
+      p.brand.toLowerCase() === brand.name.toLowerCase() ||
+      p.brand.toLowerCase().replace(/[^a-z0-9]/g, "") === brand.name.toLowerCase().replace(/[^a-z0-9]/g, "")
+  );
+
+  const indexableProducts = brandProducts.filter((p) => !isDevelopmentProduct(p));
+  const pageUrl = absoluteUrl(`/brand/${brand.slug}`);
+
+  // Structured Data (Brand + CollectionPage + BreadcrumbList + FAQPage)
+  const breadcrumbs = breadcrumbStructuredData([
+    { name: "Home", path: "/" },
+    { name: "Brands", path: "/shop" },
+    { name: brand.name, path: `/brand/${brand.slug}` },
+  ]);
+
+  const brandSchema = {
+    "@context": "https://schema.org",
+    "@type": "Brand",
+    name: brand.name,
+    description: brand.tagline,
+    url: pageUrl,
+  };
+
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `${brand.name} Wholesale Supplies in Lahore`,
+    description: brand.metaDescription,
+    url: pageUrl,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: indexableProducts.length,
+      itemListElement: indexableProducts.map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: product.name,
+        url: absoluteUrl(`/product/${product.slug}`),
+      })),
+    },
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: brand.faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
+  return (
+    <div className="brand-landing-page bg-surface-soft/40 min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: safeJsonLd([breadcrumbs, brandSchema, collectionSchema, faqSchema]),
+        }}
+      />
+
+      {/* Top Breadcrumb */}
+      <div className="border-b border-line bg-surface py-3">
+        <div className="site-shell">
+          <nav aria-label="Breadcrumb">
+            <ol className="flex items-center gap-2 text-xs font-semibold text-muted">
+              <li>
+                <Link href="/" className="hover:text-accent transition">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <ChevronRight className="size-3 text-muted/60" />
+              </li>
+              <li>
+                <Link href="/shop" className="hover:text-accent transition">
+                  Brands
+                </Link>
+              </li>
+              <li>
+                <ChevronRight className="size-3 text-muted/60" />
+              </li>
+              <li className="text-accent font-bold" aria-current="page">
+                {brand.name}
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+      {/* Brand Hero & Intro Section */}
+      <section className="border-b border-line bg-surface py-10 sm:py-14">
+        <div className="site-shell max-w-5xl">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-action/30 bg-action/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-action">
+              <Sparkles className="size-3.5" />
+              Official Brand Collection
+            </span>
+            <span className="text-xs font-bold text-muted">•</span>
+            <span className="text-xs font-bold text-secondary">{brand.tagline}</span>
+          </div>
+
+          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-content tracking-tight leading-tight">
+            {brand.introHeading}
+          </h1>
+
+          <div className="mt-5 space-y-3.5 text-sm sm:text-base leading-relaxed text-secondary">
+            {brand.introParagraphs.map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+          </div>
+
+          {/* Key Highlights Grid */}
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {brand.keyHighlights.map((highlight, idx) => (
+              <div
+                key={idx}
+                className="rounded-2xl border border-line bg-surface-soft p-4 transition hover:border-action/40"
+              >
+                <div className="flex items-center gap-2 text-action font-extrabold text-xs mb-1">
+                  <CheckCircle2 className="size-4 shrink-0" />
+                  <span>{highlight.label}</span>
+                </div>
+                <p className="text-xs text-secondary leading-snug">{highlight.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Catalog Explorer for this Brand */}
+      <section className="py-8 sm:py-12">
+        <div className="site-shell">
+          <CatalogExplorer
+            products={products}
+            categoryOptions={categories}
+            initialBrand={brand.name}
+            title={`${brand.name} Products & Carton Rates`}
+            description={`Explore factory-sealed cartons of ${brand.name} with wholesale pricing, SKU codes, and instant WhatsApp ordering for Lahore.`}
+          />
+        </div>
+      </section>
+
+      {/* Brand FAQ Section */}
+      {brand.faqs.length > 0 && (
+        <section className="border-t border-line bg-surface py-12 sm:py-16" id="faq">
+          <div className="site-shell max-w-4xl">
+            <div className="mb-8 text-center sm:text-left">
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-action mb-1">
+                <HelpCircle className="size-4" />
+                Frequently Asked Questions
+              </span>
+              <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-content">
+                Procurement &amp; Wholesale FAQs for {brand.name}
+              </h2>
+              <p className="mt-1 text-xs sm:text-sm text-secondary">
+                Common questions from office managers, procurement officers, and wholesale buyers in Lahore.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {brand.faqs.map((faq, index) => (
+                <details
+                  key={index}
+                  className="group rounded-2xl border border-line bg-surface-soft p-5 transition hover:border-line-strong open:bg-surface open:shadow-xs"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-content text-sm sm:text-base marker:hidden">
+                    <span>{faq.question}</span>
+                    <span className="ml-2 flex size-6 shrink-0 items-center justify-center rounded-full bg-surface transition group-open:rotate-180 border border-line text-muted">
+                      <ChevronDown className="size-4" />
+                    </span>
+                  </summary>
+                  <div className="mt-3.5 border-t border-line/60 pt-3.5 text-xs sm:text-sm leading-relaxed text-secondary">
+                    {faq.answer}
+                  </div>
+                </details>
+              ))}
+            </div>
+
+            {/* Need More Assistance Banner */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-action/30 bg-action/5 p-6 text-center sm:text-left">
+              <div>
+                <h3 className="text-base font-extrabold text-content">
+                  Need a custom carton quote for {brand.name}?
+                </h3>
+                <p className="mt-0.5 text-xs text-secondary">
+                  Our sales team is available on WhatsApp for direct wholesale inquiries and bulk rates.
+                </p>
+              </div>
+              <a
+                href={`https://wa.me/923006917385?text=${encodeURIComponent(
+                  `Hi Pak Multilinks, I am inquiring about wholesale carton pricing for ${brand.name} in Lahore.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-action px-6 text-xs sm:text-sm font-extrabold text-white transition hover:bg-action-hover shadow-xs shrink-0"
+              >
+                <span>Inquire on WhatsApp</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}

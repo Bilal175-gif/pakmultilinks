@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { brandNameToSlug, getBrandBySlug } from "@/lib/brands";
 import { CatalogExplorer } from "@/components/catalog/catalog-explorer";
 import { isDevelopmentProduct, listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
 import { absoluteUrl, breadcrumbStructuredData, safeJsonLd } from "@/lib/seo";
@@ -19,8 +20,12 @@ export async function generateMetadata({ searchParams }: ShopPageProps): Promise
   
   let title = "Wholesale Hygiene Products by Carton in Lahore";
   let description = "Browse wholesale tissue, washroom and hygiene products supplied by carton for businesses and institutions in Lahore.";
+  let canonical = "/shop";
 
   if (brandParam) {
+    const brandSlug = brandNameToSlug(brandParam);
+    const knownBrand = getBrandBySlug(brandSlug);
+    canonical = knownBrand ? `/brand/${brandSlug}` : "/shop";
     title = `${brandParam} Wholesale Supplies & Rates in Lahore | Pak Multilinks`;
     description = `Browse official ${brandParam} products, wholesale carton rates and packing specifications available in Lahore.`;
   } else if (query) {
@@ -31,9 +36,9 @@ export async function generateMetadata({ searchParams }: ShopPageProps): Promise
   return {
     title,
     description,
-    alternates: { canonical: "/shop" },
+    alternates: { canonical },
     robots: query ? { index: false, follow: true } : undefined,
-    openGraph: { title, description, type: "website", url: "/shop" },
+    openGraph: { title, description, type: "website", url: canonical },
     twitter: { card: "summary_large_image", title, description },
   };
 }

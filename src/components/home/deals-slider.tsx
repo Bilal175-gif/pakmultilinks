@@ -86,7 +86,8 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                   alt={deal.alt}
                   fill
                   priority={index === 0}
-                  unoptimized={Boolean(deal.mobileImageUrl?.startsWith("https://") || deal.imageUrl.startsWith("https://"))}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "low"}
                   sizes="100vw"
                   className="object-cover object-center"
                 />
@@ -99,7 +100,8 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                   alt={deal.alt}
                   fill
                   priority={index === 0}
-                  unoptimized={deal.imageUrl.startsWith("https://")}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "low"}
                   sizes="(min-width: 768px) 100vw, 1920px"
                   className="object-cover object-center"
                 />
