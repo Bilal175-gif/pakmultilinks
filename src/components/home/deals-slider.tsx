@@ -42,7 +42,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
         role="region"
         aria-roledescription="carousel"
         aria-label="Current deals"
-        className="deals-slider-viewport relative isolate aspect-[3/4] sm:aspect-[1024/434] w-full overflow-hidden bg-surface-soft animate-scale-enter"
+        className="deals-slider-viewport relative isolate aspect-[3/4] md:aspect-[1920/700] w-full overflow-hidden bg-surface-soft animate-scale-enter"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
@@ -79,7 +79,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
           >
             <div className="relative size-full">
               {/* Mobile vertical image */}
-              <div className="relative block size-full sm:hidden">
+              <div className="relative block size-full md:hidden">
                 <Image
                   src={deal.mobileImageUrl || deal.imageUrl}
                   alt={deal.alt}
@@ -92,14 +92,14 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
               </div>
 
               {/* Desktop horizontal image */}
-              <div className="relative hidden size-full sm:block">
+              <div className="relative hidden size-full md:block">
                 <Image
                   src={deal.imageUrl}
                   alt={deal.alt}
                   fill
                   priority={index === 0}
                   unoptimized={deal.imageUrl.startsWith("https://")}
-                  sizes="(min-width: 640px) 100vw, 1920px"
+                  sizes="(min-width: 768px) 100vw, 1920px"
                   className="object-cover object-center"
                 />
               </div>

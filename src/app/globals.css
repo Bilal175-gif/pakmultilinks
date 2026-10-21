@@ -327,38 +327,78 @@ summary::-webkit-details-marker {
   .admin-workspace :is(input, select, textarea) { font-size: 16px; }
 }
 
-/* Sleek modern scrollbars across Admin Panel */
-.admin-workspace * {
+/* ── Universal sleek, modern scrollbars across storefront & admin ── */
+* {
   scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-color: color-mix(in srgb, var(--action) 35%, var(--line-strong)) transparent;
 }
 
-.admin-workspace *::-webkit-scrollbar {
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--action) 30%, #b8c4bc);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--action);
+}
+
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Dedicated sleek horizontal scrollbar for filter pills, chips, and quick tabs */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--action) 45%, #9ab5a3) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
-.admin-workspace *::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.admin-workspace *::-webkit-scrollbar-thumb {
-  background: var(--line-strong);
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: color-mix(in srgb, var(--line) 40%, transparent);
   border-radius: 9999px;
+  margin-inline: 6px;
 }
 
-.admin-workspace *::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--action) 45%, #8fa89b);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
-.admin-workspace *::-webkit-scrollbar-button {
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--action);
+}
+
+.scrollbar-thin::-webkit-scrollbar-button {
   display: none !important;
-  width: 0;
-  height: 0;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-.admin-workspace *::-webkit-scrollbar-corner {
-  background: transparent;
+/* ── Hero Deals Slider Viewport ── */
+.deals-slider-viewport {
+  width: 100%;
+  aspect-ratio: 1920 / 700;
 }
 
 /* Dedicated Admin Sidebar scrollbar - invisible when idle, subtle 4px pill on hover */

@@ -441,7 +441,7 @@ export function CatalogExplorer({
 
             <div className="min-w-0">
               {/* Brand Quick Selector Tabs */}
-              <div className="mb-5 flex items-center gap-2 overflow-x-auto rounded-2xl border border-line bg-surface p-2.5 shadow-xs scrollbar-thin">
+              <div className="mb-5 flex items-center gap-2 overflow-x-auto rounded-2xl border border-line bg-surface p-2.5 pb-3 shadow-xs scrollbar-thin">
                 <span className="shrink-0 text-xs font-extrabold uppercase tracking-wider text-muted px-2 border-r border-line/60">
                   Brands
                 </span>
