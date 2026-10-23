@@ -23,7 +23,7 @@ type ProductCardProps = {
   headingLevel?: "h2" | "h3";
 };
 
-import { isProductAvailable } from "@/lib/pricing";
+import { isProductAvailable, getDisplayPrices } from "@/lib/pricing";
 
 export function ProductCard({
   product,
@@ -35,13 +35,11 @@ export function ProductCard({
   const [added, setAdded] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const price = getPrice(product);
   const perPiece = getPerPiecePrice(product);
   const isUnavailable = !isProductAvailable(product);
-  const hasSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
-  const discount = hasSale
-    ? Math.round(((product.price - price) / product.price) * 100)
-    : 0;
+  
+  // Resolve bold red sale price and strikethrough regular price
+  const { salePrice, regularPrice, hasSale, discountPercent } = getDisplayPrices(product);
   const Heading = headingLevel;
   const displayImage = getProductImage(product);
 
@@ -62,7 +60,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "product-card group flex flex-col overflow-hidden rounded-2xl border border-line/75 bg-surface p-3.5 shadow-2xs transition-all duration-300 hover:border-action/50 hover:shadow-lg hover:-translate-y-1 animate-page-enter sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:hover:translate-y-0",
+        "product-card group flex flex-col overflow-hidden rounded-2xl border border-line/80 bg-surface p-3.5 sm:p-4 shadow-2xs transition-all duration-300 hover:border-red-500 hover:shadow-lg hover:-translate-y-1 animate-page-enter",
         layout === "list" &&
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}
@@ -112,9 +110,9 @@ export function ProductCard({
         </div>
 
         <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1">
-          {hasSale && (
-            <span className="rounded-full bg-action px-2 py-0.5 text-[10px] font-bold text-white sm:px-2.5 sm:py-1 sm:text-xs">
-              {discount}% off
+          {hasSale && discountPercent > 0 && (
+            <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white sm:px-2.5 sm:py-1 sm:text-xs shadow-2xs">
+              {discountPercent}% off
             </span>
           )}
           {product.bestSeller && (
@@ -125,8 +123,8 @@ export function ProductCard({
         </div>
       </div>
 
-      <div className={cn("product-card-details flex min-w-0 flex-col pt-3 pb-1 sm:py-4", layout === "list" && "sm:p-6")}>
-        <div className="product-card-meta mb-1.5 flex flex-wrap items-center justify-between gap-1.5 sm:mb-2.5 sm:gap-2">
+      <div className={cn("product-card-details flex min-w-0 flex-col pt-3 pb-1", layout === "list" && "sm:p-6")}>
+        <div className="product-card-meta mb-1.5 flex flex-wrap items-center justify-between gap-1.5 sm:mb-2 sm:gap-2">
           <Link
             href={`/shop/${product.categorySlug}`}
             className="product-card-category text-[11px] font-medium tracking-wide text-accent hover:text-action hover:underline"
@@ -156,9 +154,13 @@ export function ProductCard({
           <p className="font-medium text-muted">MOQ: {minimumCartons(product)} ctn{minimumCartons(product) === 1 ? "" : "s"}</p>
         </div>
 
-        <div className="product-card-price mt-auto flex flex-col gap-1 pt-2.5 sm:pt-3">
+        {/* Separator rule matching user screenshot */}
+        <div className="w-16 mx-auto my-3 border-t border-line/70" />
+
+        {/* Pricing block with highlighted red price and strikethrough price */}
+        <div className="product-card-price mt-auto flex flex-col items-center justify-center gap-1 text-center">
           {product.priceOnRequest ? (
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col items-center gap-0.5">
               <span className="inline-flex w-fit items-center rounded-md border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                 Price on request
               </span>
@@ -166,42 +168,46 @@ export function ProductCard({
             </div>
           ) : (
             <>
-              <div className="flex flex-wrap items-baseline gap-2">
-                <span className="text-base sm:text-lg font-extrabold tracking-tight text-accent">
-                  {formatProductPrice(product)}
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <span className="text-lg sm:text-xl font-bold tracking-tight text-[#dc2626] sm:font-extrabold">
+                  {formatPrice(salePrice)}
                 </span>
                 {hasSale && (
-                  <span className="pb-0.5 text-xs text-muted line-through sm:text-sm">
-                    {formatPrice(product.price)}
+                  <span className="text-xs sm:text-sm font-semibold text-muted line-through">
+                    {formatPrice(regularPrice)}
                   </span>
                 )}
               </div>
               {perPiece != null && product.unitsPerCarton > 1 && (
-                <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-red-300 bg-red-100/90 px-2.5 py-1 text-xs font-bold text-red-950 shadow-2xs dark:border-red-600 dark:bg-red-950 dark:text-red-100">
-                    <span className="text-[11px] font-bold text-red-800 dark:text-red-300">Per piece:</span>
-                    <span className="text-xs font-black text-red-950 dark:text-white">{formatPiecePrice(perPiece)}</span>
-                  </span>
-                  <span className="text-[11px] text-muted font-medium">· {product.unitsPerCarton} pcs/ctn</span>
-                </div>
+                <p className="text-[11px] font-medium text-muted">
+                  Per piece: <strong className="text-accent">{formatPrice(perPiece)}</strong> ({product.unitsPerCarton} pcs/ctn)
+                </p>
               )}
             </>
           )}
         </div>
       </div>
 
+      {/* Bottom row: In stock on left, Add to cart red button on right */}
       <div
         className={cn(
-          "product-card-actions mt-auto border-t border-line/70 pt-2.5 sm:pt-3",
+          "product-card-actions mt-auto border-t border-line/70 pt-3",
           layout === "list" &&
             "sm:col-span-2 lg:col-span-1 lg:flex lg:flex-col lg:justify-center lg:border-l lg:border-t-0 lg:p-6",
         )}
       >
-        <div className="grid grid-cols-[1fr_auto] gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className={cn(
+            "text-xs font-normal",
+            isUnavailable ? "text-danger" : "text-muted"
+          )}>
+            {isUnavailable ? "Out of stock" : "In stock"}
+          </span>
+
           {product.priceOnRequest ? (
             <Link
               href={`/request-quote?product=${encodeURIComponent(product.slug)}`}
-              className="focus-ring inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line bg-surface-soft px-3 text-xs font-bold text-accent transition hover:bg-surface-hover shadow-2xs active:scale-95"
+              className="focus-ring inline-flex h-8 sm:h-9 items-center justify-center gap-1.5 rounded-md border border-line bg-surface-soft px-3 text-xs font-bold text-accent transition hover:bg-surface-hover shadow-2xs active:scale-95"
               aria-label={`Request quotation for ${product.name}`}
             >
               <FileText className="size-3.5" />
@@ -213,10 +219,10 @@ export function ProductCard({
               onClick={handleAddToCart}
               disabled={isUnavailable}
               className={cn(
-                "focus-ring inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-bold transition active:scale-95",
+                "focus-ring inline-flex h-8 sm:h-9 items-center justify-center gap-1.5 rounded-md px-3 sm:px-3.5 text-xs font-semibold shadow-2xs transition active:scale-95",
                 added
                   ? "bg-[#114b2f] text-white shadow-2xs"
-                  : "bg-action text-white hover:bg-action-hover shadow-2xs",
+                  : "bg-[#dc2626] hover:bg-[#b91c1c] text-white shadow-2xs",
                 isUnavailable && "cursor-not-allowed bg-disabled text-muted",
               )}
               aria-label={
@@ -226,17 +232,17 @@ export function ProductCard({
               }
             >
               {added ? <Check className="size-3.5" /> : <ShoppingCart className="size-3.5" />}
-              <span>{isUnavailable ? "Out of Stock" : added ? "Added ✓" : "Add to cart"}</span>
+              <span>{isUnavailable ? "Out of stock" : added ? "Added ✓" : "Add to cart"}</span>
             </button>
           )}
-          <ProductQuickView
-            product={product}
-            onAddToCart={handleAddToCart}
-            unavailable={isUnavailable}
-            isOpen={quickViewOpen}
-            onClose={() => setQuickViewOpen(false)}
-          />
         </div>
+        <ProductQuickView
+          product={product}
+          onAddToCart={handleAddToCart}
+          unavailable={isUnavailable}
+          isOpen={quickViewOpen}
+          onClose={() => setQuickViewOpen(false)}
+        />
         <span className="sr-only" aria-live="polite">
           {added ? `${product.name} added to cart` : ""}
         </span>

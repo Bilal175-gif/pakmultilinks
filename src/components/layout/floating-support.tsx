@@ -109,14 +109,21 @@ export function FloatingSupport() {
   return (
     <>
       {open && (
-        <section ref={panelRef} id="support-assistant" role="dialog" aria-modal="false" aria-labelledby="support-assistant-title" className="fixed bottom-[5.5rem] left-3 z-[70] flex h-[min(26rem,calc(100dvh-7.5rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl sm:bottom-[5.25rem] sm:left-6 sm:h-[min(26rem,calc(100dvh-6rem))]">
+        <section
+          ref={panelRef}
+          id="support-assistant"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="support-assistant-title"
+          className="fixed bottom-[4.5rem] left-6 z-[70] hidden sm:flex h-[min(26rem,calc(100dvh-6rem))] w-[min(23rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl"
+        >
           <div className="flex shrink-0 items-center gap-3 border-b border-line bg-surface px-4 py-3 text-content">
-            <div className="relative grid size-10 shrink-0 place-items-center rounded-full bg-action text-white">
-              <Bot className="size-5" />
-              <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-surface bg-green-500" />
+            <div className="relative grid size-9 shrink-0 place-items-center rounded-xl bg-action text-white">
+              <Bot className="size-4.5" />
+              <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-surface bg-green-500" />
             </div>
             <div className="min-w-0 flex-1"><h2 id="support-assistant-title" className="text-sm font-semibold leading-5">Pak Multilinks AI</h2><p className="text-[11px] leading-4 text-muted">Online - replies instantly</p></div>
-            <button type="button" onClick={close} className="grid size-9 shrink-0 place-items-center rounded-lg transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-focus" aria-label="Close chat"><X className="size-5" /></button>
+            <button type="button" onClick={close} className="grid size-8 shrink-0 place-items-center rounded-lg transition-colors hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-focus" aria-label="Close chat"><X className="size-4.5" /></button>
           </div>
           <div ref={logRef} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text" className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain bg-surface px-4 py-5">
             <div className="flex items-start gap-2">
@@ -159,8 +166,19 @@ export function FloatingSupport() {
           </div>
         </section>
       )}
-      <button ref={launcherRef} type="button" onClick={() => open ? close() : setOpen(true)} aria-expanded={open} aria-controls={open ? "support-assistant" : undefined} aria-label={open ? "Close chat" : "Chat with us"} className="focus-ring fixed bottom-[5.5rem] left-3 z-[65] grid size-14 place-items-center rounded-full bg-action text-white shadow-lg transition hover:bg-action-hover hover:scale-105 sm:bottom-5 sm:left-6">{open ? <X className="size-6" /> : <Bot className="size-6" />}</button>
-      <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="focus-ring fixed bottom-5 right-6 z-[65] hidden size-12 place-items-center rounded-full border border-white/60 bg-action text-white shadow-lg transition hover:bg-action-hover sm:grid" aria-label="Chat with our team on WhatsApp" title="Chat on WhatsApp"><MessageCircle className="size-6" /></a>
+      <button
+        ref={launcherRef}
+        type="button"
+        onClick={() => open ? close() : setOpen(true)}
+        aria-expanded={open}
+        aria-controls={open ? "support-assistant" : undefined}
+        aria-label={open ? "Close chat" : "Chat with us"}
+        className="focus-ring fixed bottom-5 left-6 z-[65] hidden sm:grid size-10 place-items-center rounded-xl bg-action text-white shadow-md transition hover:bg-action-hover hover:scale-105"
+        title="Chat with Pak Multilinks AI"
+      >
+        {open ? <X className="size-5" /> : <Bot className="size-5" />}
+      </button>
+      <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="focus-ring fixed bottom-5 right-6 z-[65] hidden size-10 place-items-center rounded-xl border border-white/40 bg-action text-white shadow-md transition hover:bg-action-hover hover:scale-105 sm:grid" aria-label="Chat with our team on WhatsApp" title="Chat on WhatsApp"><MessageCircle className="size-5" /></a>
     </>
   );
 }

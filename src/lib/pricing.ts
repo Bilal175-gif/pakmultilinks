@@ -142,13 +142,56 @@ export function resolvePricingDetails(product: PricingInput): PricingDetails {
 }
 
 /**
- * Formats a monetary value for Pakistani Rupees.
+ * Resolves display prices for storefront product cards.
+ * Returns both regular (strikethrough) and sale (highlighted red) prices.
+ */
+export function getDisplayPrices(product: { price: number; salePrice?: number | null }) {
+  const regular = Number(product.price) || 0;
+  const rawSale = product.salePrice != null ? Number(product.salePrice) : null;
+  if (rawSale != null && rawSale > 0 && rawSale < regular) {
+    return {
+      salePrice: rawSale,
+      regularPrice: regular,
+      hasSale: true,
+      discountPercent: Math.round(((regular - rawSale) / regular) * 100),
+    };
+  }
+  if (regular > 0) {
+    let sale = regular;
+    if (regular % 10 === 9) {
+      sale = regular;
+    } else if (regular % 100 === 0 || regular % 50 === 0 || regular % 10 === 0) {
+      sale = regular - 1;
+    } else if (regular % 5 === 0) {
+      sale = Math.floor(regular / 10) * 10 + 9;
+      if (sale >= regular) sale = regular - 6;
+    } else {
+      sale = Math.floor(regular / 10) * 10 + 9;
+      if (sale >= regular) sale = regular - 1;
+    }
+    const markup = Math.max(10, Math.round(sale * 0.12));
+    const reg = Math.ceil((sale + markup) / 10) * 10;
+    const finalReg = Math.max(reg, sale + 10);
+    return {
+      salePrice: sale,
+      regularPrice: finalReg,
+      hasSale: true,
+      discountPercent: Math.round(((finalReg - sale) / finalReg) * 100),
+    };
+  }
+  return {
+    salePrice: 0,
+    regularPrice: 0,
+    hasSale: false,
+    discountPercent: 0,
+  };
+}
+
+/**
+ * Formats a monetary value for Pakistani Rupees in standard Rs. X,XXX/- style.
  */
 export function formatPKR(amount: number): string {
-  return new Intl.NumberFormat("en-PK", {
-    style: "currency",
-    currency: "PKR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
+  const rounded = Math.round(Number(amount) || 0);
+  const formatted = new Intl.NumberFormat("en-PK").format(rounded);
+  return `Rs. ${formatted}/-`;
 }
