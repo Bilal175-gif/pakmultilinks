@@ -65,6 +65,7 @@ export function Footer() {
             ["About Our Business", "/about"],
             ["Corporate Orders (B2B)", "/corporate-orders"],
             ["Request a Bulk Quote", "/request-quote"],
+            ["FAQs & Ordering Help", "/faq"],
             ["Customer Account & Orders", "/account"],
             ["Contact Our Lahore Office", "/contact"],
           ]}

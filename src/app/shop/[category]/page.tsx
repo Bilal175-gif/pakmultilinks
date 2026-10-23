@@ -29,15 +29,18 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     (product) => (product.categorySlug === category.slug || product.parentCategorySlug === category.slug) && !isDevelopmentProduct(product),
   );
 
+  const titleBase = /wholesale/i.test(category.name) ? category.name : `${category.name} Wholesale`;
+  const pageTitle = `${titleBase} in Lahore`;
+
   return {
-    title: `${category.name} Wholesale in Lahore`,
+    title: pageTitle,
     description: cleanDescription(category.description, `${category.name} supplied by carton for businesses and institutions in Lahore.`),
     alternates: { canonical: `/shop/${category.slug}` },
     robots: hasVerifiedProduct
       ? { index: true, follow: true }
       : { index: false, follow: true },
     openGraph: {
-      title: `${category.name} Wholesale in Lahore`,
+      title: pageTitle,
       description: cleanDescription(category.description, `${category.name} supplied by carton for businesses and institutions in Lahore.`),
       type: "website",
       url: `/shop/${category.slug}`,

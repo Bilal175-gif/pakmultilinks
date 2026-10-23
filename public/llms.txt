@@ -14,34 +14,44 @@
 
 ## Core Wholesale Product Categories
 1. **Tissue Paper Products** (`https://www.pakmultilinks.com/shop/tissue-paper-products`):
-   - Facial Tissues (Pop-up boxes, executive luxury cubes, soft packs 100/150/200 sheets).
-   - Toilet Rolls & Bathroom Tissues (Commercial jumbo rolls, embossed 2-ply and 3-ply rolls).
-   - Kitchen Towels & Zzoop Maxi Rolls (High-absorbency commercial food-safe rolls).
-   - Table Napkins & Party Packs (Interfold napkins, dinner napkins, dispenser napkins).
+   - Facial Tissues (Pop-up boxes, executive luxury cubes, soft packs 100/150/200 sheets). Category page: https://www.pakmultilinks.com/shop/facial-tissues
+   - Soft Pack Tissues (Pocket tissues, party packs, perfumed soft packs). Category page: https://www.pakmultilinks.com/shop/soft-pack-tissues
+   - Toilet Rolls & Bathroom Tissues (Commercial jumbo rolls, embossed 2-ply and 3-ply rolls). Category page: https://www.pakmultilinks.com/shop/tissue-rolls
+   - Kitchen Towels, Table Napkins & Party Packs (Interfold napkins, dinner napkins, dispenser napkins). Category page: https://www.pakmultilinks.com/shop/paper-napkins
 2. **Washroom & Restroom Supplies** (`https://www.pakmultilinks.com/shop/washroom-supplies`):
    - Soap dispensers (Manual push and touchless automatic sensor units).
    - Jumbo Roll Tissue (JRT) dispensers and C-fold/M-fold hand towel dispensers.
    - Hand dryers (High-speed automatic warm air dryers).
    - Urinal screens, toilet seat sanitizers, and air freshener automatic dispensers.
+   - Liquid hand wash and hygiene refills. Category page: https://www.pakmultilinks.com/shop/hand-wash
 3. **Cleaning Products & Chemicals** (`https://www.pakmultilinks.com/shop/cleaning-products`):
    - Disinfectant white & black phenyl (Concentrated and diluted bulk cans).
    - Liquid hand wash refills (5-litre corporate drums and perfumed pump bottles).
    - Commercial floor cleaners, multi-surface degreasers, and glass cleaners.
    - Toilet bowl acid cleaners, bleach, and surface sanitizers.
+   - Mops, wipers and floor care tools. Category page: https://www.pakmultilinks.com/shop/floor-surface-care
 4. **Disposable & Janitorial Items** (`https://www.pakmultilinks.com/shop/disposable-items`):
    - Heavy-duty garbage bags / trash can liners (Small, Medium, Large, Extra-Large 30x40 to 40x50 inches).
    - Disposable paper cups (6.5oz, 8oz, ripple cups) and wooden stirrers.
    - Microfiber cloths, wet floor mops, steel wipers, and cleaning tools.
 
 ## Major Distributed Brands
-- **Rose Petal**: Pakistan's premier tissue brand (Luxury, Pop-Up, Supreme, Zzoop, Perfumed).
-- **Nozomi**: Commercial and institutional pure virgin pulp tissues.
-- **Fine Life**: Cost-effective high-volume facial tissues and kitchen towels.
-- **Fresco**: Automatic aerosol spray refills, air fresheners, body sprays.
-- **Germi Cure**: High-strength hospital and institutional phenyl, floor disinfectants.
-- **Shine Well**: Commercial liquid hand wash and surface care solutions.
+- **Rose Petal**: Pakistan's premier tissue brand (Luxury, Pop-Up, Supreme, Zzoop, Perfumed). Brand page: https://www.pakmultilinks.com/brand/rose-petal
+- **Nozomi**: Commercial and institutional pure virgin pulp tissues. Brand page: https://www.pakmultilinks.com/brand/nozomi
+- **Fine Life**: Cost-effective high-volume facial tissues and kitchen towels. Brand page: https://www.pakmultilinks.com/brand/fine-life
+- **Fresco**: Automatic aerosol spray refills, air fresheners, body sprays. Brand page: https://www.pakmultilinks.com/brand/fresco
+- **Germi Cure**: High-strength hospital and institutional phenyl, floor disinfectants. Brand page: https://www.pakmultilinks.com/brand/germi-cure
+- **Shine Well**: Commercial liquid hand wash and surface care solutions. Brand page: https://www.pakmultilinks.com/brand/shine-well
 - **Airnergy**: Premium fragrance aerosols for offices and commercial spaces.
 - **Pak Multilinks OEM**: Custom printed napkins, private label tissues, bulk corporate drums.
+
+## Key Pages & Answers
+- **Frequently Asked Questions**: https://www.pakmultilinks.com/faq (60 answered questions on products, carton pricing, minimum orders, delivery, payment and ordering).
+- **Official Rate List**: https://www.pakmultilinks.com/rate-list (confirmed wholesale carton rates).
+- **Corporate & Bulk Orders**: https://www.pakmultilinks.com/corporate-orders (contract supply for offices and institutions).
+- **Request a Bulk Quote**: https://www.pakmultilinks.com/request-quote
+- **About the Business**: https://www.pakmultilinks.com/about
+- **Contact the Lahore Office**: https://www.pakmultilinks.com/contact
 
 ## Commercial Terms & Ordering Policies
 - **Target Customers**: Corporate offices, healthcare facilities, hospitals, restaurants, hotels, educational campuses, industrial plants, salons, and retail wholesalers.

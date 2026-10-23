@@ -10,9 +10,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
   const verifiedProducts = products.filter((product) => !isDevelopmentProduct(product));
   const populatedCategorySlugs = new Set(
-    verifiedProducts.map((product) => product.categorySlug),
+    verifiedProducts.flatMap((product) => [product.categorySlug, product.parentCategorySlug].filter(Boolean)),
   );
-  const routes = ["", "/shop", "/rate-list", "/corporate-orders", "/request-quote", "/about", "/contact", "/privacy", "/terms", "/returns"];
+  const routes = ["", "/shop", "/rate-list", "/corporate-orders", "/request-quote", "/about", "/contact", "/faq", "/privacy", "/terms", "/returns"];
   const brandSlugs = getAllBrandSlugs();
 
   return [
