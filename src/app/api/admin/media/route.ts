@@ -1,6 +1,7 @@
 import { put } from "@vercel/blob";
 import { randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 import { NextResponse, type NextRequest } from "next/server";
@@ -49,10 +50,10 @@ function hasBlobCredentials(): boolean {
   );
 }
 
-async function saveLocalMedia(scope: string, filename: string, bytes: Uint8Array): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "public", "uploads", scope);
-  await fs.mkdir(uploadsDir, { recursive: true });
-  const filePath = path.join(uploadsDir, filename);
+async function saveDevTempMedia(scope: string, filename: string, bytes: Uint8Array): Promise<string> {
+  const tempDir = path.join(os.tmpdir(), "pakmultilinks-uploads", scope);
+  await fs.mkdir(tempDir, { recursive: true });
+  const filePath = path.join(tempDir, filename);
   await fs.writeFile(filePath, Buffer.from(bytes));
   return `/uploads/${scope}/${filename}`;
 }
@@ -97,15 +98,18 @@ export async function POST(request: NextRequest) {
         });
         url = blob.url;
       } catch (blobError) {
-        console.warn("Vercel Blob upload failed, falling back to local storage:", blobError);
-        if (!process.env.VERCEL) {
-          url = await saveLocalMedia(scope, filename, bytes);
-        } else {
-          throw blobError;
-        }
+        console.error("Vercel Blob upload failed:", blobError);
+        const message = blobError instanceof Error && blobError.message
+          ? blobError.message
+          : "The image could not be uploaded.";
+        return jsonError(message, 500);
       }
     } else {
-      url = await saveLocalMedia(scope, filename, bytes);
+      if (process.env.NODE_ENV === "development" && !process.env.VERCEL) {
+        url = await saveDevTempMedia(scope, filename, bytes);
+      } else {
+        return jsonError("Image storage is not configured.", 500);
+      }
     }
 
     return NextResponse.json(
