@@ -178,7 +178,9 @@ export function Header() {
             <Menu className="size-5" />
           </button>
 
-          <BrandMark />
+          <div className="flex flex-1 items-center justify-center pr-10 md:flex-initial md:justify-start md:pr-0">
+            <BrandMark />
+          </div>
 
           <div ref={searchWrap} className="relative z-50 ml-auto hidden min-w-0 max-w-[430px] flex-1 md:block">
             <form onSubmit={submitSearch} role="search">
@@ -311,20 +313,8 @@ export function Header() {
             )}
           </div>
 
-          {/* Header Action Buttons (Aligned to the Right) */}
-          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-            {/* Quick WhatsApp button on mobile */}
-            <a
-              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
-              target="_blank"
-              rel="noreferrer"
-              className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-[#25D366]/10 text-[#128C7E] transition hover:bg-[#25D366] hover:text-white md:hidden"
-              aria-label="Direct WhatsApp"
-              title="WhatsApp"
-            >
-              <WhatsAppIcon className="size-4" />
-            </a>
-
+          {/* Header Action Buttons (Desktop only - on mobile all quick buttons are anchored in the bottom bar) */}
+          <div className="ml-auto hidden items-center gap-1.5 sm:gap-2 md:flex">
             <Link
               href="/account"
               className="commerce-icon-button focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent transition hover:border-line-strong hover:bg-surface-soft sm:size-11"

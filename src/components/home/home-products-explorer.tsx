@@ -69,10 +69,10 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
   }, [products, selectedCategory, searchQuery, rootCategories, categories]);
 
   return (
-    <section className="site-shell py-6 sm:py-12" id="products-catalog">
+    <section className="site-shell pt-2 pb-8 sm:py-12" id="products-catalog">
       {/* Header and Controls */}
-      <div className="mb-6 flex flex-col gap-4 sm:mb-8">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-3 flex flex-col gap-4 sm:mb-8">
+        <div className="hidden md:flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
               <span className="inline-flex size-2 rounded-full bg-red-600 animate-pulse" />
@@ -90,7 +90,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
         </div>
 
         {/* Search & Quick Filter Bar */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="hidden md:flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" />
             <input
