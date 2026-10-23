@@ -166,7 +166,7 @@ export function Header() {
 
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
 
-        <div className="site-shell relative z-30 flex h-16 items-center gap-2 md:h-[86px] md:gap-3 lg:gap-7">
+        <div className="site-shell relative z-30 flex h-16 items-center justify-between gap-2 md:h-[86px] md:gap-3 lg:gap-7">
           {/* Mobile Hamburger Menu Button - Gives mobile users full access to all links, collections and functions */}
           <button
             type="button"
@@ -178,7 +178,7 @@ export function Header() {
             <Menu className="size-5" />
           </button>
 
-          <div className="flex flex-1 items-center justify-center pr-10 md:flex-initial md:justify-start md:pr-0">
+          <div className="ml-auto flex items-center justify-end md:ml-0 md:justify-start">
             <BrandMark />
           </div>
 
@@ -339,37 +339,70 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Search Bar - Instant access for mobile corporate buyers */}
-        <div className="relative border-t border-line/60 bg-surface px-4 py-2 md:hidden">
-          <form onSubmit={submitSearch} role="search" className="relative">
-            <label htmlFor="mobile-site-search" className="sr-only">Search products</label>
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
-            <input
-              id="mobile-site-search"
-              aria-label="Search the catalog"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              onFocus={() => setSearchFocused(true)}
-              placeholder="Search products, SKU or category..."
-              className="h-10 w-full rounded-xl border border-line bg-surface-soft pl-10 pr-20 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                className="absolute right-14 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-accent"
-                aria-label="Clear search"
-              >
-                <X className="size-3.5" />
-              </button>
-            )}
-            <button
-              type="submit"
-              className="focus-ring absolute right-1 top-1 bottom-1 rounded-lg bg-action px-3 text-xs font-bold text-white shadow-xs"
+        {/* Mobile Search & Quick Buttons Bar - Placed 'thora niche' below the logo row for easy access */}
+        <div className="relative border-t border-line/60 bg-surface px-3 py-2 md:hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <form onSubmit={submitSearch} role="search" className="relative min-w-0 flex-1">
+              <label htmlFor="mobile-site-search" className="sr-only">Search products</label>
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
+              <input
+                id="mobile-site-search"
+                aria-label="Search the catalog"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                placeholder="Search products..."
+                className="h-10 w-full rounded-xl border border-line bg-surface-soft pl-9 pr-7 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-accent"
+                  aria-label="Clear search"
+                >
+                  <X className="size-3.5" />
+                </button>
+              )}
+            </form>
+
+            {/* Quick WhatsApp button on mobile */}
+            <a
+              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#25D366]/40 bg-[#25D366]/15 text-[#128C7E] shadow-2xs transition active:scale-95 hover:bg-[#25D366] hover:text-white"
+              aria-label="Direct WhatsApp"
+              title="WhatsApp"
             >
-              Search
+              <WhatsAppIcon className="size-4" />
+            </a>
+
+            {/* Account button */}
+            <Link
+              href="/account"
+              className="commerce-icon-button focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent shadow-2xs transition hover:border-line-strong hover:bg-surface-soft active:scale-95"
+              aria-label="Your account"
+            >
+              <UserRound className="size-4" />
+            </Link>
+
+            {/* Cart button */}
+            <button
+              type="button"
+              onClick={() => cartDialogRef.current?.showModal()}
+              className="commerce-icon-button focus-ring relative grid size-10 shrink-0 place-items-center rounded-xl bg-action text-white shadow-2xs transition hover:bg-action active:scale-95"
+              aria-label={`Open bulk cart with ${itemCount} cartons`}
+              aria-haspopup="dialog"
+            >
+              <ShoppingBag className="size-4" />
+              {itemCount > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-line bg-[#f3b941] px-1 text-[10px] font-black leading-4 text-accent">
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
             </button>
-          </form>
+          </div>
 
           {/* Mobile Auto-Complete Search Suggestions */}
           {searchFocused && query.trim().length > 0 && (

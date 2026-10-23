@@ -21,10 +21,10 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         width={2039}
         height={771}
         priority
-        sizes={compact ? "142px" : light ? "250px" : "210px"}
+        sizes={compact ? "145px" : light ? "250px" : "220px"}
         className={cn(
-          "brand-logo brand-logo-light h-auto w-[145px] object-contain sm:w-[210px]",
-          compact && "w-[142px] sm:w-[160px]",
+          "brand-logo brand-logo-light h-auto w-[190px] object-contain sm:w-[220px]",
+          compact && "w-[145px] sm:w-[160px]",
           light && "w-[220px] sm:w-[250px]",
         )}
       />
@@ -34,10 +34,10 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         width={2039}
         height={771}
         priority
-        sizes={compact ? "142px" : light ? "250px" : "210px"}
+        sizes={compact ? "145px" : light ? "250px" : "220px"}
         className={cn(
-          "brand-logo brand-logo-dark h-auto w-[145px] object-contain sm:w-[210px]",
-          compact && "w-[142px] sm:w-[160px]",
+          "brand-logo brand-logo-dark h-auto w-[190px] object-contain sm:w-[220px]",
+          compact && "w-[145px] sm:w-[160px]",
           light && "w-[220px] sm:w-[250px]",
         )}
       />
