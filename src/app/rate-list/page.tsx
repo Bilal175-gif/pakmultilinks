@@ -1,15 +1,24 @@
 import type { Metadata } from "next";
 import { RateList } from "@/components/catalog/rate-list";
-import { listPublicProducts } from "@/lib/catalog-server";
+import { isDevelopmentProduct, listPublicProducts } from "@/lib/catalog-server";
 
 export const metadata: Metadata = {
-  title: "Official Rate List & Wholesale Catalogue | Pak Multilinks",
-  description: "Official wholesale rate list and product reference for Fresco, Airnergy, Germi Cure, Sicura, Softex and Super Soft hygiene and paper supplies. Download PDF catalogue.",
+  title: "Wholesale Rate List: Tissue & Hygiene Prices in Pakistan",
+  description:
+    "Official wholesale rate list of Pak Multilinks Hygiene: tissue paper, washroom, cleaning and disposable product carton rates for businesses in Lahore and across Pakistan. Minimum order one carton, WhatsApp ordering.",
   alternates: { canonical: "/rate-list" },
+  openGraph: {
+    title: "Wholesale Rate List: Tissue & Hygiene Prices in Pakistan",
+    description:
+      "Current wholesale carton rates for tissue and hygiene supplies, supplied from Lahore to businesses across Pakistan.",
+    url: "/rate-list",
+    type: "website",
+  },
 };
 
 export const revalidate = 3600;
 
 export default async function RateListPage() {
-  return <RateList products={await listPublicProducts()} />;
+  const products = (await listPublicProducts()).filter((product) => !isDevelopmentProduct(product));
+  return <RateList products={products} />;
 }

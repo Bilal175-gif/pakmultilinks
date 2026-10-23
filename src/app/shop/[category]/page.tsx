@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CatalogExplorer } from "@/components/catalog/catalog-explorer";
+import { getCategorySeoCopy } from "@/lib/category-seo";
 import { categories as developmentCategories } from "@/lib/catalog";
 import { getPublicCategory, isDevelopmentProduct, listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
 import { absoluteUrl, breadcrumbStructuredData, cleanDescription, safeJsonLd } from "@/lib/seo";
@@ -75,10 +77,28 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     },
   ];
 
+  const seoCopy = getCategorySeoCopy(category.slug);
+
   return (
     <>
       {indexableProducts.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }} />}
       <CatalogExplorer key={category.slug} products={categoryProducts} categoryOptions={categories} fixedCategorySlug={category.slug} eyebrow="Shop by category" title={category.name} description={category.description} hideHero />
+      {seoCopy && (
+        <section className="border-t border-line bg-surface py-10 sm:py-12">
+          <div className="site-shell max-w-4xl">
+            <h2 className="font-serif text-2xl text-content sm:text-3xl">{seoCopy.heading}</h2>
+            {seoCopy.paragraphs.map((paragraph) => (
+              <p key={paragraph.slice(0, 32)} className="mt-4 text-sm leading-7 text-secondary">{paragraph}</p>
+            ))}
+            <p className="mt-4 text-sm leading-7 text-secondary">
+              Confirmed carton rates for this range are on the{" "}
+              <Link href="/rate-list" className="font-semibold text-accent hover:underline">wholesale rate list</Link>,
+              and ordering, delivery and payment questions are answered in the{" "}
+              <Link href="/faq" className="font-semibold text-accent hover:underline">FAQs</Link>.
+            </p>
+          </div>
+        </section>
+      )}
     </>
   );
 }

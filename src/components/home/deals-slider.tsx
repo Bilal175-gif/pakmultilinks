@@ -37,7 +37,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
 
   return (
     <section className="relative w-full border-b border-line bg-canvas overflow-hidden" aria-label="Featured offers">
-      <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
+      <h1 className="sr-only">Wholesale tissue &amp; hygiene supplies in Lahore, Pakistan | Pak Multilinks Hygiene</h1>
       <div className="mx-auto w-full max-w-[1920px]">
         <div
           role="region"
