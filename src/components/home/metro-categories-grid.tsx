@@ -90,18 +90,18 @@ export function MetroCategoriesGrid({
               className={cn(
                 "group relative flex flex-col justify-between h-[70px] sm:h-[82px] p-1.5 sm:p-2 rounded-lg bg-white dark:bg-surface border text-left transition-all duration-200 active:scale-[0.98] shadow-2xs hover:shadow-xs overflow-hidden",
                 isSelected
-                  ? "border-red-600 ring-2 ring-red-600/25 bg-red-50/20 dark:bg-red-950/20"
+                  ? "border-[#17643a] ring-2 ring-[#17643a]/25 bg-emerald-50/20 dark:bg-emerald-950/20"
                   : "border-slate-200/90 dark:border-line hover:border-slate-300 dark:hover:border-slate-700"
               )}
             >
-              {/* Red Discount / Promo Pill Badge at Top-Left */}
+              {/* Promo Pill Badge at Top-Left */}
               {tile.badge && (
                 <span
                   className={cn(
                     "self-start rounded-xs px-1 py-0.2 text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-tight leading-none shadow-2xs",
                     isSelected
-                      ? "bg-red-600 text-white"
-                      : "bg-red-600 text-white"
+                      ? "bg-[#17643a] text-white"
+                      : "bg-[#17643a] text-white"
                   )}
                 >
                   {tile.badge}
@@ -113,7 +113,7 @@ export function MetroCategoriesGrid({
                 <span
                   className={cn(
                     "text-[8.5px] sm:text-[10px] font-black uppercase leading-[1.1] line-clamp-2 max-w-[62%]",
-                    isSelected ? "text-red-600 dark:text-red-400" : "text-slate-800 dark:text-slate-200"
+                    isSelected ? "text-[#17643a] dark:text-emerald-400" : "text-slate-800 dark:text-slate-200"
                   )}
                 >
                   {tile.name}

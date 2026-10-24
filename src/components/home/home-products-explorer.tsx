@@ -76,8 +76,8 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
         <div className="hidden md:flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="inline-flex size-2 rounded-full bg-red-600 animate-pulse" />
-              <p className="eyebrow text-xs font-bold text-red-600 uppercase tracking-wider">
+              <span className="inline-flex size-2 rounded-full bg-[#17643a] animate-pulse" />
+              <p className="eyebrow text-xs font-bold text-[#17643a] uppercase tracking-wider">
                 Wholesale Catalog & Official Rates
               </p>
             </div>
@@ -86,7 +86,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
             </h2>
           </div>
           <p className="text-xs font-semibold text-muted sm:text-sm">
-            Showing <strong className="text-red-600 font-bold">{filteredProducts.length}</strong> of {products.length} products
+            Showing <strong className="text-[#17643a] font-bold">{filteredProducts.length}</strong> of {products.length} products
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
           <div className="flex items-center justify-between mb-1.5 px-0.5">
             <span className="text-[12px] font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
               <span>Categories</span>
-              <span className="text-[10px] text-red-600 font-bold bg-red-50 dark:bg-red-950/40 px-1.5 py-0.2 rounded-xs">
+              <span className="text-[10px] text-[#17643a] font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded-xs">
                 Metro Deals
               </span>
             </span>
@@ -103,7 +103,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
               <button
                 type="button"
                 onClick={() => setSelectedCategory("all")}
-                className="text-[11px] font-bold text-red-600 hover:underline"
+                className="text-[11px] font-bold text-[#17643a] hover:underline"
               >
                 Clear filter ×
               </button>
@@ -148,8 +148,8 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
             onClick={() => setSelectedCategory("all")}
             className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition shadow-2xs ${
               selectedCategory === "all"
-                ? "bg-red-600 text-white shadow-sm"
-                : "border border-line bg-surface text-secondary hover:border-red-400 hover:text-content"
+                ? "bg-[#17643a] text-white shadow-sm"
+                : "border border-line bg-surface text-secondary hover:border-[#17643a] hover:text-content"
             }`}
           >
             <span>All Products</span>
@@ -172,8 +172,8 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
                 onClick={() => setSelectedCategory(cat.slug)}
                 className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition shadow-2xs ${
                   isSelected
-                    ? "bg-red-600 text-white shadow-sm"
-                    : "border border-line bg-surface text-secondary hover:border-red-400 hover:text-content"
+                    ? "bg-[#17643a] text-white shadow-sm"
+                    : "border border-line bg-surface text-secondary hover:border-[#17643a] hover:text-content"
                 }`}
               >
                 <span>{cat.name.replace(/ Wholesale$/, "")}</span>
@@ -204,7 +204,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
               setSelectedCategory("all");
               setSearchQuery("");
             }}
-            className="mt-4 rounded-xl bg-red-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-red-700 shadow-sm"
+            className="mt-4 rounded-xl bg-[#17643a] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#104d31] shadow-sm"
           >
             Show all products
           </button>
