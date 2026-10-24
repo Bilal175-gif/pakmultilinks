@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, X, Sparkles, SlidersHorizontal } from "lucide-react";
 import type { Category, Product } from "@/lib/types";
 import { ProductCard } from "@/components/catalog/product-card";
+import { MetroCategoriesGrid } from "@/components/home/metro-categories-grid";
 
 interface HomeProductsExplorerProps {
   products: Product[];
@@ -39,14 +40,14 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
     return products.filter((p) => {
       // Category filter
       if (selectedCategory !== "all") {
-        const activeCategory = rootCategories.find((c) => c.slug === selectedCategory);
+        const activeCategory = categories.find((c) => c.slug === selectedCategory);
         if (activeCategory) {
           const matchingSlugs = new Set(
             categories
               .filter((c) => c.parentId === activeCategory.id || c.id === activeCategory.id)
               .map((c) => c.slug)
           );
-          if (!matchingSlugs.has(p.categorySlug) && p.parentCategorySlug !== activeCategory.slug) {
+          if (!matchingSlugs.has(p.categorySlug) && p.parentCategorySlug !== activeCategory.slug && p.categorySlug !== activeCategory.slug) {
             return false;
           }
         }
@@ -66,12 +67,12 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
 
       return true;
     });
-  }, [products, selectedCategory, searchQuery, rootCategories, categories]);
+  }, [products, selectedCategory, searchQuery, categories]);
 
   return (
     <section className="site-shell pt-2 pb-8 sm:py-12" id="products-catalog">
       {/* Header and Controls */}
-      <div className="mb-3 flex flex-col gap-4 sm:mb-8">
+      <div className="mb-3 flex flex-col gap-3 sm:mb-8">
         <div className="hidden md:flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="flex items-center gap-2">
@@ -87,6 +88,33 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
           <p className="text-xs font-semibold text-muted sm:text-sm">
             Showing <strong className="text-red-600 font-bold">{filteredProducts.length}</strong> of {products.length} products
           </p>
+        </div>
+
+        {/* Metro-style 3-Column Categories Grid on Mobile (exactly matching metro.pk) */}
+        <div className="block md:hidden">
+          <div className="flex items-center justify-between mb-1.5 px-0.5">
+            <span className="text-[12px] font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+              <span>Categories</span>
+              <span className="text-[10px] text-red-600 font-bold bg-red-50 dark:bg-red-950/40 px-1.5 py-0.2 rounded-xs">
+                Metro Deals
+              </span>
+            </span>
+            {selectedCategory !== "all" && (
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("all")}
+                className="text-[11px] font-bold text-red-600 hover:underline"
+              >
+                Clear filter ×
+              </button>
+            )}
+          </div>
+          <MetroCategoriesGrid
+            categories={categories}
+            products={products}
+            selectedCategory={selectedCategory}
+            onSelectCategory={(slug) => setSelectedCategory(slug)}
+          />
         </div>
 
         {/* Search & Quick Filter Bar */}
@@ -118,7 +146,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
           <button
             type="button"
             onClick={() => setSelectedCategory("all")}
-            className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition shadow-2xs ${
+            className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition shadow-2xs ${
               selectedCategory === "all"
                 ? "bg-red-600 text-white shadow-sm"
                 : "border border-line bg-surface text-secondary hover:border-red-400 hover:text-content"
@@ -142,7 +170,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.slug)}
-                className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition shadow-2xs ${
+                className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition shadow-2xs ${
                   isSelected
                     ? "bg-red-600 text-white shadow-sm"
                     : "border border-line bg-surface text-secondary hover:border-red-400 hover:text-content"
@@ -162,7 +190,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
         </div>
       </div>
 
-      {/* Products Grid */}
+      {/* Products Grid - Always 2 columns on mobile, matching Metro & modern e-commerce */}
       {filteredProducts.length === 0 ? (
         <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-line bg-surface p-8 text-center">
           <SlidersHorizontal className="size-10 text-muted/60" />
@@ -182,7 +210,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {filteredProducts.map((product, idx) => (
             <div
               key={product.id}

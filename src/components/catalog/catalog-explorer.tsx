@@ -590,8 +590,8 @@ export function CatalogExplorer({
                 <div
                   id="product-results"
                   className={cn(
-                    "catalog-products grid gap-4 sm:gap-5",
-                    view === "grid" ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1",
+                    "catalog-products grid gap-2 sm:gap-5",
+                    view === "grid" ? "grid-cols-2 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1",
                   )}
                 >
                   {visibleProducts.map((product, index) => (

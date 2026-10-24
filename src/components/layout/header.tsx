@@ -167,18 +167,8 @@ export function Header() {
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
 
         <div className="site-shell relative z-30 flex h-16 items-center justify-between gap-2 md:h-[86px] md:gap-3 lg:gap-7">
-          {/* Mobile Hamburger Menu Button - Gives mobile users full access to all links, collections and functions */}
-          <button
-            type="button"
-            onClick={() => mobileDialogRef.current?.showModal()}
-            className="focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent transition hover:bg-surface-soft active:scale-95 md:hidden"
-            aria-label="Open menu"
-            aria-haspopup="dialog"
-          >
-            <Menu className="size-5" />
-          </button>
-
-          <div className="ml-auto flex items-center justify-end md:ml-0 md:justify-start">
+          {/* Brand Logo on LEFT (prominent, clear, matching Metro.pk) */}
+          <div className="flex items-center justify-start">
             <BrandMark />
           </div>
 
@@ -337,11 +327,44 @@ export function Header() {
               )}
             </button>
           </div>
+
+          {/* Mobile Right Actions: Direct WhatsApp & Hamburger (matching user request & Metro.pk) */}
+          <div className="ml-auto flex items-center gap-1.5 sm:gap-2 md:hidden">
+            <a
+              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
+              target="_blank"
+              rel="noreferrer"
+              className="grid size-9 sm:size-10 shrink-0 place-items-center rounded-lg border border-[#25D366]/40 bg-[#25D366]/15 text-[#128C7E] shadow-2xs transition active:scale-95 hover:bg-[#25D366] hover:text-white"
+              aria-label="Direct WhatsApp"
+              title="WhatsApp"
+            >
+              <WhatsAppIcon className="size-4" />
+            </a>
+
+            <button
+              type="button"
+              onClick={() => mobileDialogRef.current?.showModal()}
+              className="focus-ring grid size-9 sm:size-10 shrink-0 place-items-center rounded-lg border border-line bg-surface text-accent transition hover:bg-surface-soft active:scale-95"
+              aria-label="Open menu"
+              aria-haspopup="dialog"
+            >
+              <Menu className="size-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Search & Quick Buttons Bar - Placed 'thora niche' below the logo row for easy access */}
-        <div className="relative border-t border-line/60 bg-surface px-3 py-2 md:hidden">
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Metro-style Wholesale Delivery Strip */}
+        <div className="bg-[#0f4c3a] text-white px-3 py-1.5 text-[11px] font-semibold flex items-center justify-between md:hidden shadow-xs">
+          <div className="flex items-center gap-1.5 truncate">
+            <span className="text-yellow-400">📍</span>
+            <span className="truncate">Wholesale Delivery: Lahore & Nationwide</span>
+          </div>
+          <span className="text-emerald-200 text-[10px] font-bold shrink-0 ml-2">Wholesale Carton Rates 📦</span>
+        </div>
+
+        {/* Mobile Search & Cart Bar (Metro-style clean layout with spacious search + cart on right) */}
+        <div className="relative border-b border-line/60 bg-surface px-3 py-2 md:hidden">
+          <div className="flex items-center gap-2.5">
             <form onSubmit={submitSearch} role="search" className="relative min-w-0 flex-1">
               <label htmlFor="mobile-site-search" className="sr-only">Search products</label>
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
@@ -351,8 +374,8 @@ export function Header() {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onFocus={() => setSearchFocused(true)}
-                placeholder="Search products..."
-                className="h-10 w-full rounded-xl border border-line bg-surface-soft pl-9 pr-7 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus"
+                placeholder="Search products, brands, SKU..."
+                className="h-10 w-full rounded-lg border border-line bg-surface-soft pl-9 pr-7 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus shadow-2xs"
               />
               {query && (
                 <button
@@ -366,41 +389,18 @@ export function Header() {
               )}
             </form>
 
-            {/* Quick WhatsApp button on mobile */}
-            <a
-              href="https://wa.me/923006917385?text=Hi%20Pak%20Multilinks%2C%20I%20am%20inquiring%20about%20wholesale%20supplies"
-              target="_blank"
-              rel="noreferrer"
-              className="grid size-10 shrink-0 place-items-center rounded-xl border border-[#25D366]/40 bg-[#25D366]/15 text-[#128C7E] shadow-2xs transition active:scale-95 hover:bg-[#25D366] hover:text-white"
-              aria-label="Direct WhatsApp"
-              title="WhatsApp"
-            >
-              <WhatsAppIcon className="size-4" />
-            </a>
-
-            {/* Account button */}
-            <Link
-              href="/account"
-              className="commerce-icon-button focus-ring grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-surface text-accent shadow-2xs transition hover:border-line-strong hover:bg-surface-soft active:scale-95"
-              aria-label="Your account"
-            >
-              <UserRound className="size-4" />
-            </Link>
-
-            {/* Cart button */}
+            {/* Metro-style Cart Button with Yellow Badge on Right */}
             <button
               type="button"
               onClick={() => cartDialogRef.current?.showModal()}
-              className="commerce-icon-button focus-ring relative grid size-10 shrink-0 place-items-center rounded-xl bg-action text-white shadow-2xs transition hover:bg-action active:scale-95"
+              className="relative grid size-10 shrink-0 place-items-center rounded-lg border border-line bg-white dark:bg-surface text-accent shadow-2xs transition active:scale-95 hover:bg-surface-soft"
               aria-label={`Open bulk cart with ${itemCount} cartons`}
               aria-haspopup="dialog"
             >
-              <ShoppingBag className="size-4" />
-              {itemCount > 0 && (
-                <span className="absolute -right-1.5 -top-1.5 grid min-w-5 place-items-center rounded-full border-2 border-line bg-[#f3b941] px-1 text-[10px] font-black leading-4 text-accent">
-                  {itemCount > 99 ? "99+" : itemCount}
-                </span>
-              )}
+              <ShoppingBag className="size-5 text-[#0f4c3a]" />
+              <span className="absolute -top-1 -right-1 grid min-w-4 h-4 place-items-center rounded-full bg-[#f3b941] px-1 text-[9px] font-black text-black shadow-xs">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
             </button>
           </div>
 

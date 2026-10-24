@@ -60,7 +60,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "product-card group flex flex-col overflow-hidden rounded-2xl border border-line/80 bg-surface p-3.5 sm:p-4 shadow-2xs transition-all duration-300 hover:border-red-500 hover:shadow-lg hover:-translate-y-1 animate-page-enter",
+        "product-card group flex flex-col justify-between overflow-hidden rounded-lg sm:rounded-xl border border-slate-200/90 dark:border-line bg-white dark:bg-surface p-2 sm:p-3 shadow-2xs transition-all duration-200 hover:border-red-500 hover:shadow-xs animate-page-enter",
         layout === "list" &&
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}
@@ -69,7 +69,7 @@ export function ProductCard({
       <div
         onClick={() => setQuickViewOpen(true)}
         className={cn(
-          "product-card-image group/img relative block aspect-square w-full cursor-pointer overflow-hidden rounded-xl bg-surface-soft/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-focus",
+          "product-card-image group/img relative block aspect-square w-full cursor-pointer overflow-hidden rounded-md bg-white dark:bg-surface-soft/40 focus-visible:outline-none mb-1.5",
           layout === "list" && "sm:aspect-auto sm:min-h-56",
         )}
         role="button"
@@ -80,8 +80,8 @@ export function ProductCard({
             setQuickViewOpen(true);
           }
         }}
-        aria-label={`Click to enhance ${product.name}`}
-        title="Click to enhance image & see details"
+        aria-label={`Click to view ${product.name}`}
+        title="Click to view details"
       >
         {displayImage ? (
           <Image
@@ -93,94 +93,87 @@ export function ProductCard({
             sizes={
               layout === "list"
                 ? "(max-width: 767px) 112px, 230px"
-                : "(max-width: 640px) 94vw, (max-width: 1024px) 50vw, 380px"
+                : "(max-width: 640px) 46vw, (max-width: 1024px) 33vw, 280px"
             }
-            className="object-contain p-3 sm:p-5 transition duration-500 group-hover:scale-105"
+            className="object-contain p-1.5 sm:p-2.5 transition duration-300 group-hover:scale-105"
           />
         ) : (
           <ProductMediaPlaceholder />
         )}
 
-        {/* Hover Enhance Badge */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/15 opacity-0 backdrop-blur-[1px] transition-opacity duration-200 group-hover/img:opacity-100">
-          <span className="flex items-center gap-1.5 rounded-full bg-surface/95 px-3 py-1.5 text-xs font-bold text-accent shadow-md">
-            <ZoomIn className="size-3.5 text-action" />
-            <span>Click to enhance</span>
-          </span>
-        </div>
-
-        <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1">
+        {/* Clean Badges: Discount Top-Left, Best Seller Top-Right */}
+        <div className="absolute left-1.5 top-1.5 flex flex-wrap gap-1 pointer-events-none">
           {hasSale && discountPercent > 0 && (
-            <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white sm:px-2.5 sm:py-1 sm:text-xs shadow-2xs">
+            <span className="rounded-xs bg-[#dc2626] px-1.5 py-0.5 text-[8.5px] sm:text-[9.5px] font-bold text-white shadow-2xs leading-none">
               {discountPercent}% off
             </span>
           )}
-          {product.bestSeller && (
-            <span className="rounded-full bg-warning-soft px-2 py-0.5 text-[10px] font-bold text-warning sm:px-2.5 sm:py-1 sm:text-xs">
-              Best seller
-            </span>
-          )}
         </div>
+        {product.bestSeller && (
+          <span className="absolute right-1.5 top-1.5 rounded-xs bg-amber-100 text-amber-900 border border-amber-300 px-1 py-0.5 text-[7.5px] sm:text-[8.5px] font-bold shadow-2xs leading-none pointer-events-none">
+            HOT
+          </span>
+        )}
       </div>
 
-      <div className={cn("product-card-details flex min-w-0 flex-col pt-3 pb-1", layout === "list" && "sm:p-6")}>
-        <div className="product-card-meta mb-1.5 flex flex-wrap items-center justify-between gap-1.5 sm:mb-2 sm:gap-2">
+      <div className={cn("product-card-details flex min-w-0 flex-1 flex-col", layout === "list" && "sm:p-6")}>
+        {/* Category & Stock */}
+        <div className="product-card-meta mb-1 flex items-center justify-between gap-1 text-[9px] sm:text-[10px]">
           <Link
             href={`/shop/${product.categorySlug}`}
-            className="product-card-category text-[11px] font-medium tracking-wide text-accent hover:text-action hover:underline"
+            className="product-card-category font-bold tracking-wider uppercase text-muted hover:text-action truncate"
           >
             {product.category}
           </Link>
-          <StockStatus
-            stock={product.stock}
-            lowStockThreshold={product.lowStockThreshold}
-            allowBackorder={product.allowBackorder}
-            minimumOrderCartons={minimumCartons(product)}
-          />
+          <span className={cn(
+            "shrink-0 font-medium",
+            isUnavailable ? "text-danger" : "text-emerald-700 dark:text-emerald-400"
+          )}>
+            {isUnavailable ? "Out of stock" : "In stock"}
+          </span>
         </div>
 
-        <Heading className="product-card-title text-sm sm:text-base font-bold leading-snug text-content line-clamp-2">
+        {/* Product Title */}
+        <Heading className="product-card-title text-xs sm:text-sm font-semibold leading-snug text-content line-clamp-2 min-h-[2rem]">
           <Link
             href={`/product/${product.slug}`}
-            className="rounded-sm hover:text-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            className="rounded-sm hover:text-action transition-colors"
           >
             {product.name}
           </Link>
         </Heading>
 
-        <div className="product-card-packing mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs text-secondary">
-          <p className="font-semibold text-accent">{cartonPacking(product)}</p>
-          <span className="text-line">•</span>
-          <p className="font-medium text-muted">MOQ: {minimumCartons(product)} ctn{minimumCartons(product) === 1 ? "" : "s"}</p>
+        {/* Packing & MOQ */}
+        <div className="product-card-packing mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted truncate">
+          <p className="font-medium text-accent truncate">{cartonPacking(product)}</p>
+          <span>•</span>
+          <p className="truncate">MOQ: {minimumCartons(product)} ctn</p>
         </div>
 
-        {/* Separator rule matching user screenshot */}
-        <div className="w-16 mx-auto my-3 border-t border-line/70" />
-
         {/* Pricing block with highlighted red price and strikethrough price */}
-        <div className="product-card-price mt-auto flex flex-col items-center justify-center gap-1 text-center">
+        <div className="product-card-price mt-auto pt-2">
           {product.priceOnRequest ? (
-            <div className="flex flex-col items-center gap-0.5">
-              <span className="inline-flex w-fit items-center rounded-md border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
+            <div className="flex flex-col gap-0.5">
+              <span className="inline-flex w-fit items-center rounded-sm border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                 Price on request
               </span>
-              <span className="text-[10px] text-muted font-medium">Bulk institutional quote</span>
+              <span className="text-[9px] text-muted font-medium">Bulk quote</span>
             </div>
           ) : (
             <>
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <span className="text-lg sm:text-xl font-bold tracking-tight text-[#dc2626] sm:font-extrabold">
+              <div className="flex flex-wrap items-baseline gap-1.5">
+                <span className="text-sm sm:text-base font-bold tracking-tight text-[#dc2626]">
                   {formatPrice(salePrice)}
                 </span>
                 {hasSale && (
-                  <span className="text-xs sm:text-sm font-semibold text-muted line-through">
+                  <span className="text-[10px] sm:text-xs font-normal text-muted line-through">
                     {formatPrice(regularPrice)}
                   </span>
                 )}
               </div>
               {perPiece != null && product.unitsPerCarton > 1 && (
-                <p className="text-[11px] font-medium text-muted">
-                  Per piece: <strong className="text-accent">{formatPrice(perPiece)}</strong> ({product.unitsPerCarton} pcs/ctn)
+                <p className="text-[9px] sm:text-[10px] font-medium text-muted truncate mt-0.5">
+                  Rs. {formatPrice(perPiece)}/pc ({product.unitsPerCarton}/ctn)
                 </p>
               )}
             </>
@@ -188,54 +181,46 @@ export function ProductCard({
         </div>
       </div>
 
-      {/* Bottom row: In stock on left, Add to cart red button on right */}
+      {/* Bottom row: Add to cart button */}
       <div
         className={cn(
-          "product-card-actions mt-auto border-t border-line/70 pt-3",
+          "product-card-actions mt-2 pt-2 border-t border-slate-100 dark:border-line/60",
           layout === "list" &&
             "sm:col-span-2 lg:col-span-1 lg:flex lg:flex-col lg:justify-center lg:border-l lg:border-t-0 lg:p-6",
         )}
       >
-        <div className="flex items-center justify-between gap-2">
-          <span className={cn(
-            "text-xs font-normal",
-            isUnavailable ? "text-danger" : "text-muted"
-          )}>
-            {isUnavailable ? "Out of stock" : "In stock"}
-          </span>
+        {product.priceOnRequest ? (
+          <Link
+            href={`/request-quote?product=${encodeURIComponent(product.slug)}`}
+            className="focus-ring inline-flex h-7 sm:h-8 w-full items-center justify-center gap-1 rounded-md border border-line bg-surface-soft text-[11px] sm:text-xs font-bold text-accent transition hover:bg-surface-hover shadow-2xs active:scale-95"
+            aria-label={`Request quotation for ${product.name}`}
+          >
+            <FileText className="size-3" />
+            <span>Request Quote</span>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={isUnavailable}
+            className={cn(
+              "focus-ring inline-flex h-7 sm:h-8 w-full items-center justify-center gap-1.5 rounded-md text-[11px] sm:text-xs font-semibold shadow-2xs transition active:scale-95",
+              added
+                ? "bg-[#114b2f] text-white shadow-2xs"
+                : "bg-[#dc2626] hover:bg-[#b91c1c] text-white shadow-2xs",
+              isUnavailable && "cursor-not-allowed bg-disabled text-muted",
+            )}
+            aria-label={
+              isUnavailable
+                ? `${product.name} is out of stock`
+                : `Add ${product.name} to cart`
+            }
+          >
+            {added ? <Check className="size-3" /> : <ShoppingCart className="size-3" />}
+            <span>{isUnavailable ? "Out of stock" : added ? "Added ✓" : "Add to cart"}</span>
+          </button>
+        )}
 
-          {product.priceOnRequest ? (
-            <Link
-              href={`/request-quote?product=${encodeURIComponent(product.slug)}`}
-              className="focus-ring inline-flex h-8 sm:h-9 items-center justify-center gap-1.5 rounded-md border border-line bg-surface-soft px-3 text-xs font-bold text-accent transition hover:bg-surface-hover shadow-2xs active:scale-95"
-              aria-label={`Request quotation for ${product.name}`}
-            >
-              <FileText className="size-3.5" />
-              <span>Request Quote</span>
-            </Link>
-          ) : (
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={isUnavailable}
-              className={cn(
-                "focus-ring inline-flex h-8 sm:h-9 items-center justify-center gap-1.5 rounded-md px-3 sm:px-3.5 text-xs font-semibold shadow-2xs transition active:scale-95",
-                added
-                  ? "bg-[#114b2f] text-white shadow-2xs"
-                  : "bg-[#dc2626] hover:bg-[#b91c1c] text-white shadow-2xs",
-                isUnavailable && "cursor-not-allowed bg-disabled text-muted",
-              )}
-              aria-label={
-                isUnavailable
-                  ? `${product.name} is out of stock`
-                  : `Add ${product.name} cartons to cart`
-              }
-            >
-              {added ? <Check className="size-3.5" /> : <ShoppingCart className="size-3.5" />}
-              <span>{isUnavailable ? "Out of stock" : added ? "Added ✓" : "Add to cart"}</span>
-            </button>
-          )}
-        </div>
         <ProductQuickView
           product={product}
           onAddToCart={handleAddToCart}
