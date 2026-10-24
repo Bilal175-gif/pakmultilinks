@@ -20,11 +20,9 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Promotional Hero Deals Banner (Active on mobile & desktop like Metro) */}
-      <DealsSlider deals={deals} />
-
-      {/* Desktop Strips & Category Nav */}
+      {/* Desktop Hero Section & Strips (Hidden on mobile as requested) */}
       <div className="hidden md:block">
+        <DealsSlider deals={deals} />
         <PerksStrip />
         <TrustedPartners />
         <ShopByBrand />

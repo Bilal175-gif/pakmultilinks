@@ -210,7 +210,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
           {filteredProducts.map((product, idx) => (
             <div
               key={product.id}

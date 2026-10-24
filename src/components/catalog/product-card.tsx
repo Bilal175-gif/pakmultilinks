@@ -60,7 +60,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "product-card group flex flex-col justify-between overflow-hidden rounded-lg sm:rounded-xl border border-slate-200/90 dark:border-line bg-white dark:bg-surface p-2 sm:p-3 shadow-2xs transition-all duration-200 hover:border-red-500 hover:shadow-xs animate-page-enter",
+        "product-card group flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/90 dark:border-line bg-white dark:bg-surface p-3 sm:p-3.5 shadow-2xs transition-all duration-200 hover:border-red-500 hover:shadow-xs animate-page-enter",
         layout === "list" &&
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}
@@ -69,7 +69,7 @@ export function ProductCard({
       <div
         onClick={() => setQuickViewOpen(true)}
         className={cn(
-          "product-card-image group/img relative block aspect-square w-full cursor-pointer overflow-hidden rounded-md bg-white dark:bg-surface-soft/40 focus-visible:outline-none mb-1.5",
+          "product-card-image group/img relative block aspect-square max-h-60 sm:max-h-none w-full cursor-pointer overflow-hidden rounded-lg bg-white dark:bg-surface-soft/40 focus-visible:outline-none mb-2",
           layout === "list" && "sm:aspect-auto sm:min-h-56",
         )}
         role="button"
@@ -93,24 +93,24 @@ export function ProductCard({
             sizes={
               layout === "list"
                 ? "(max-width: 767px) 112px, 230px"
-                : "(max-width: 640px) 46vw, (max-width: 1024px) 33vw, 280px"
+                : "(max-width: 640px) 92vw, (max-width: 1024px) 33vw, 280px"
             }
-            className="object-contain p-1.5 sm:p-2.5 transition duration-300 group-hover:scale-105"
+            className="object-contain p-2 sm:p-2.5 transition duration-300 group-hover:scale-105"
           />
         ) : (
           <ProductMediaPlaceholder />
         )}
 
         {/* Clean Badges: Discount Top-Left, Best Seller Top-Right */}
-        <div className="absolute left-1.5 top-1.5 flex flex-wrap gap-1 pointer-events-none">
+        <div className="absolute left-2 top-2 flex flex-wrap gap-1 pointer-events-none">
           {hasSale && discountPercent > 0 && (
-            <span className="rounded-xs bg-[#dc2626] px-1.5 py-0.5 text-[8.5px] sm:text-[9.5px] font-bold text-white shadow-2xs leading-none">
+            <span className="rounded-xs bg-[#dc2626] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-white shadow-2xs leading-none">
               {discountPercent}% off
             </span>
           )}
         </div>
         {product.bestSeller && (
-          <span className="absolute right-1.5 top-1.5 rounded-xs bg-amber-100 text-amber-900 border border-amber-300 px-1 py-0.5 text-[7.5px] sm:text-[8.5px] font-bold shadow-2xs leading-none pointer-events-none">
+          <span className="absolute right-2 top-2 rounded-xs bg-amber-100 text-amber-900 border border-amber-300 px-1.5 py-0.5 text-[8px] sm:text-[9px] font-bold shadow-2xs leading-none pointer-events-none">
             HOT
           </span>
         )}
@@ -118,7 +118,7 @@ export function ProductCard({
 
       <div className={cn("product-card-details flex min-w-0 flex-1 flex-col", layout === "list" && "sm:p-6")}>
         {/* Category & Stock */}
-        <div className="product-card-meta mb-1 flex items-center justify-between gap-1 text-[9px] sm:text-[10px]">
+        <div className="product-card-meta mb-1 flex items-center justify-between gap-1 text-[10px] sm:text-[11px]">
           <Link
             href={`/shop/${product.categorySlug}`}
             className="product-card-category font-bold tracking-wider uppercase text-muted hover:text-action truncate"
@@ -134,7 +134,7 @@ export function ProductCard({
         </div>
 
         {/* Product Title */}
-        <Heading className="product-card-title text-xs sm:text-sm font-semibold leading-snug text-content line-clamp-2 min-h-[2rem]">
+        <Heading className="product-card-title text-sm sm:text-base font-bold leading-snug text-content line-clamp-2">
           <Link
             href={`/product/${product.slug}`}
             className="rounded-sm hover:text-action transition-colors"
@@ -144,36 +144,36 @@ export function ProductCard({
         </Heading>
 
         {/* Packing & MOQ */}
-        <div className="product-card-packing mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-muted truncate">
+        <div className="product-card-packing mt-1.5 flex items-center gap-1.5 text-xs text-muted truncate">
           <p className="font-medium text-accent truncate">{cartonPacking(product)}</p>
           <span>•</span>
           <p className="truncate">MOQ: {minimumCartons(product)} ctn</p>
         </div>
 
         {/* Pricing block with highlighted red price and strikethrough price */}
-        <div className="product-card-price mt-auto pt-2">
+        <div className="product-card-price mt-auto pt-2.5">
           {product.priceOnRequest ? (
             <div className="flex flex-col gap-0.5">
-              <span className="inline-flex w-fit items-center rounded-sm border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
+              <span className="inline-flex w-fit items-center rounded-sm border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-200">
                 Price on request
               </span>
-              <span className="text-[9px] text-muted font-medium">Bulk quote</span>
+              <span className="text-[10px] text-muted font-medium">Bulk institutional quote</span>
             </div>
           ) : (
             <>
               <div className="flex flex-wrap items-baseline gap-1.5">
-                <span className="text-sm sm:text-base font-bold tracking-tight text-[#dc2626]">
+                <span className="text-base sm:text-lg font-bold tracking-tight text-[#dc2626]">
                   {formatPrice(salePrice)}
                 </span>
                 {hasSale && (
-                  <span className="text-[10px] sm:text-xs font-normal text-muted line-through">
+                  <span className="text-xs sm:text-sm font-normal text-muted line-through">
                     {formatPrice(regularPrice)}
                   </span>
                 )}
               </div>
               {perPiece != null && product.unitsPerCarton > 1 && (
-                <p className="text-[9px] sm:text-[10px] font-medium text-muted truncate mt-0.5">
-                  Rs. {formatPrice(perPiece)}/pc ({product.unitsPerCarton}/ctn)
+                <p className="text-[10px] sm:text-[11px] font-medium text-muted truncate mt-0.5">
+                  {formatPrice(perPiece)}/pc ({product.unitsPerCarton} pcs/ctn)
                 </p>
               )}
             </>
@@ -184,7 +184,7 @@ export function ProductCard({
       {/* Bottom row: Add to cart button */}
       <div
         className={cn(
-          "product-card-actions mt-2 pt-2 border-t border-slate-100 dark:border-line/60",
+          "product-card-actions mt-3 pt-2.5 border-t border-slate-100 dark:border-line/60",
           layout === "list" &&
             "sm:col-span-2 lg:col-span-1 lg:flex lg:flex-col lg:justify-center lg:border-l lg:border-t-0 lg:p-6",
         )}
@@ -192,10 +192,10 @@ export function ProductCard({
         {product.priceOnRequest ? (
           <Link
             href={`/request-quote?product=${encodeURIComponent(product.slug)}`}
-            className="focus-ring inline-flex h-7 sm:h-8 w-full items-center justify-center gap-1 rounded-md border border-line bg-surface-soft text-[11px] sm:text-xs font-bold text-accent transition hover:bg-surface-hover shadow-2xs active:scale-95"
+            className="focus-ring inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-line bg-surface-soft text-xs font-bold text-accent transition hover:bg-surface-hover shadow-2xs active:scale-95"
             aria-label={`Request quotation for ${product.name}`}
           >
-            <FileText className="size-3" />
+            <FileText className="size-3.5" />
             <span>Request Quote</span>
           </Link>
         ) : (
@@ -204,7 +204,7 @@ export function ProductCard({
             onClick={handleAddToCart}
             disabled={isUnavailable}
             className={cn(
-              "focus-ring inline-flex h-7 sm:h-8 w-full items-center justify-center gap-1.5 rounded-md text-[11px] sm:text-xs font-semibold shadow-2xs transition active:scale-95",
+              "focus-ring inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md text-xs font-semibold shadow-2xs transition active:scale-95",
               added
                 ? "bg-[#114b2f] text-white shadow-2xs"
                 : "bg-[#dc2626] hover:bg-[#b91c1c] text-white shadow-2xs",
@@ -216,7 +216,7 @@ export function ProductCard({
                 : `Add ${product.name} to cart`
             }
           >
-            {added ? <Check className="size-3" /> : <ShoppingCart className="size-3" />}
+            {added ? <Check className="size-3.5" /> : <ShoppingCart className="size-3.5" />}
             <span>{isUnavailable ? "Out of stock" : added ? "Added ✓" : "Add to cart"}</span>
           </button>
         )}
@@ -227,6 +227,7 @@ export function ProductCard({
           unavailable={isUnavailable}
           isOpen={quickViewOpen}
           onClose={() => setQuickViewOpen(false)}
+          showTrigger={false}
         />
         <span className="sr-only" aria-live="polite">
           {added ? `${product.name} added to cart` : ""}
