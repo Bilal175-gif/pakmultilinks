@@ -45,6 +45,60 @@ const nextConfig: NextConfig = {
     ],
   },
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/product/ok-water-350ml-x12",
+        destination: "/product/ok-water?variant=ok-wtr-350",
+        permanent: true,
+      },
+      {
+        source: "/product/ok-water-1-5l-x6",
+        destination: "/product/ok-water?variant=ok-wtr-1500",
+        permanent: true,
+      },
+      {
+        source: "/product/ok-water-500ml-x12",
+        destination: "/product/ok-water?variant=ok-wtr-500",
+        permanent: true,
+      },
+      {
+        source: "/product/fine-life-tea-85g",
+        destination: "/product/fine-life-tea?variant=flt-85",
+        permanent: true,
+      },
+      {
+        source: "/product/fine-life-tea-170g",
+        destination: "/product/fine-life-tea?variant=flt-170",
+        permanent: true,
+      },
+      {
+        source: "/product/fine-life-tea-430g",
+        destination: "/product/fine-life-tea?variant=flt-430",
+        permanent: true,
+      },
+      {
+        source: "/product/fine-life-tea-900g",
+        destination: "/product/fine-life-tea?variant=flt-900",
+        permanent: true,
+      },
+      {
+        source: "/product/ok-detergent-180g",
+        destination: "/product/ok-detergent?variant=ok-det-180",
+        permanent: true,
+      },
+      {
+        source: "/product/ok-detergent-500g",
+        destination: "/product/ok-detergent?variant=ok-det-500",
+        permanent: true,
+      },
+      {
+        source: "/product/ok-detergent-1kg",
+        destination: "/product/ok-detergent?variant=ok-det-1000",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

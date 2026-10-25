@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { CartItem, Order, Product, QuoteRequest } from "@/lib/types";
+import type { CartItem, Order, Product, ProductVariant, QuoteRequest } from "@/lib/types";
 import { getPrice } from "@/lib/catalog";
 import { minimumCartons } from "@/lib/utils";
 import { trackStorefrontEvent } from "@/lib/analytics";
@@ -26,9 +26,9 @@ type StoreContextValue = {
   cart: CartItem[];
   itemCount: number;
   subtotal: number;
-  addToCart: (product: Product, quantity?: number) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  addToCart: (product: Product, quantity?: number, variant?: ProductVariant) => void;
+  updateQuantity: (productId: string, quantity: number, variantId?: string) => void;
+  removeFromCart: (productId: string, variantId?: string) => void;
   clearCart: () => void;
   orders: Order[];
   quotes: QuoteRequest[];
@@ -55,18 +55,24 @@ function writeList<T>(key: string, value: T[]) {
     window.dispatchEvent(new CustomEvent(STORE_EVENT, { detail: key }));
     return true;
   } catch {
-    // The in-memory store continues working if storage is unavailable or full.
     return false;
   }
 }
 
-function normalizeQuantity(product: Product, requested: number) {
-  const minimum = minimumCartons(product);
+function normalizeQuantity(product: Product, requested: number, variant?: ProductVariant) {
+  const minimum = variant ? Math.max(1, variant.minimumOrderCartons) : minimumCartons(product);
+  const stock = variant ? variant.stock : product.stock;
   if (!Number.isFinite(requested) || requested <= 0) return 0;
   const quantity = Math.max(minimum, Math.floor(requested));
-  if (!product.allowBackorder && product.stock < minimum) return 0;
+  if (!product.allowBackorder && stock < minimum) return 0;
   if (product.allowBackorder) return quantity;
-  return Math.min(quantity, Math.max(0, product.stock));
+  return Math.min(quantity, Math.max(0, stock));
+}
+
+function isSameCartItem(item: CartItem, productId: string, variantId?: string) {
+  if (item.product.id !== productId) return false;
+  if (!variantId && !item.variantId) return true;
+  return item.variantId === variantId;
 }
 
 export function persistOrder(order: Order) {
@@ -101,10 +107,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
       setCart(
         storedCart
-          .map((item) => ({
-            product: item.product,
-            quantity: normalizeQuantity(item.product, item.quantity),
-          }))
+          .map((item) => {
+            const variant = item.product.variants?.find((v) => v.id === item.variantId);
+            return {
+              ...item,
+              quantity: normalizeQuantity(item.product, item.quantity, variant),
+            };
+          })
           .filter((item) => item.quantity > 0),
       );
       setOrders(readList<Order>(STORE_STORAGE_KEYS.orders));
@@ -129,46 +138,80 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (hydrated) writeList(STORE_STORAGE_KEYS.cart, cart);
   }, [cart, hydrated]);
 
-  const addToCart = useCallback((product: Product, requestedQuantity?: number) => {
-    const requested = requestedQuantity ?? minimumCartons(product);
-    if (requested <= 0 || (!product.allowBackorder && product.stock < minimumCartons(product))) return;
-    trackStorefrontEvent("add_to_cart", { currency: "PKR", value: product.priceOnRequest ? undefined : getPrice(product) * requested, item_id: product.sku, item_name: product.name, quantity: requested });
+  const addToCart = useCallback((product: Product, requestedQuantity?: number, variant?: ProductVariant) => {
+    const minCartons = variant ? Math.max(1, variant.minimumOrderCartons) : minimumCartons(product);
+    const requested = requestedQuantity ?? minCartons;
+    const stock = variant ? variant.stock : product.stock;
+    if (requested <= 0 || (!product.allowBackorder && stock < minCartons)) return;
+
+    const itemPrice = variant ? (variant.salePrice ?? variant.price) : getPrice(product);
+    const sku = variant ? variant.sku : product.sku;
+    const name = variant ? `${product.name} — ${variant.label}` : product.name;
+
+    trackStorefrontEvent("add_to_cart", {
+      currency: "PKR",
+      value: product.priceOnRequest ? undefined : itemPrice * requested,
+      item_id: sku,
+      item_name: name,
+      quantity: requested,
+    });
 
     setCart((current) => {
-      const existing = current.find((item) => item.product.id === product.id);
+      const existing = current.find((item) => isSameCartItem(item, product.id, variant?.id));
       const quantity = normalizeQuantity(
         product,
         (existing?.quantity ?? 0) + requested,
+        variant,
       );
 
       if (quantity <= 0) return current;
       if (existing) {
         return current.map((item) =>
-          item.product.id === product.id ? { product, quantity } : item,
+          isSameCartItem(item, product.id, variant?.id) ? { ...item, quantity } : item,
         );
       }
-      return [...current, { product, quantity }];
+
+      const newItem: CartItem = {
+        product,
+        quantity,
+        variantId: variant?.id,
+        variantLabel: variant?.label,
+        variantSku: variant?.sku,
+        variantPrice: variant ? (variant.salePrice ?? variant.price) : undefined,
+        variantUnitsPerCarton: variant?.unitsPerCarton,
+      };
+      return [...current, newItem];
     });
   }, []);
 
-  const updateQuantity = useCallback((productId: string, requestedQuantity: number) => {
+  const updateQuantity = useCallback((productId: string, requestedQuantity: number, variantId?: string) => {
     setCart((current) => {
-      const existing = current.find((item) => item.product.id === productId);
+      const existing = current.find((item) => isSameCartItem(item, productId, variantId));
       if (!existing) return current;
 
-      const quantity = normalizeQuantity(existing.product, requestedQuantity);
-      if (quantity <= 0) return current.filter((item) => item.product.id !== productId);
+      const variant = existing.product.variants?.find((v) => v.id === existing.variantId);
+      const quantity = normalizeQuantity(existing.product, requestedQuantity, variant);
+      if (quantity <= 0) return current.filter((item) => !isSameCartItem(item, productId, variantId));
       return current.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item,
+        isSameCartItem(item, productId, variantId) ? { ...item, quantity } : item,
       );
     });
   }, []);
 
-  const removeFromCart = useCallback((productId: string) => {
+  const removeFromCart = useCallback((productId: string, variantId?: string) => {
     setCart((current) => {
-      const item = current.find((entry) => entry.product.id === productId);
-      if (item) trackStorefrontEvent("remove_from_cart", { currency: "PKR", value: item.product.priceOnRequest ? undefined : getPrice(item.product) * item.quantity, item_id: item.product.sku, item_name: item.product.name, quantity: item.quantity });
-      return current.filter((entry) => entry.product.id !== productId);
+      const item = current.find((entry) => isSameCartItem(entry, productId, variantId));
+      if (item) {
+        const itemPrice = item.variantPrice ?? getPrice(item.product);
+        trackStorefrontEvent("remove_from_cart", {
+          currency: "PKR",
+          value: item.product.priceOnRequest ? undefined : itemPrice * item.quantity,
+          item_id: item.variantSku || item.product.sku,
+          item_name: item.variantLabel ? `${item.product.name} — ${item.variantLabel}` : item.product.name,
+          quantity: item.quantity,
+        });
+      }
+      return current.filter((entry) => !isSameCartItem(entry, productId, variantId));
     });
   }, []);
 
@@ -179,7 +222,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       cart,
       itemCount: cart.reduce((total, item) => total + item.quantity, 0),
       subtotal: cart.reduce(
-        (total, item) => total + getPrice(item.product) * item.quantity,
+        (total, item) => total + (item.variantPrice ?? getPrice(item.product)) * item.quantity,
         0,
       ),
       addToCart,

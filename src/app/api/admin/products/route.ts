@@ -86,8 +86,23 @@ export async function POST(request: NextRequest) {
         brandId: data.brandId || null,
         images: { create: data.images.map((image, sortOrder) => ({ ...image, alt: image.alt || null, sortOrder })) },
         attributes: { create: data.attributes.map((attribute, sortOrder) => ({ ...attribute, sortOrder })) },
+        ...(data.variants && data.variants.length > 0 ? {
+          variants: {
+            create: data.variants.map((v, idx) => ({
+              label: v.label,
+              sku: v.sku,
+              price: v.price,
+              unitsPerCarton: v.unitsPerCarton ?? 1,
+              stock: v.stock ?? 0,
+              minimumOrderCartons: v.minimumOrderCartons ?? 1,
+              imageUrl: v.imageUrl || null,
+              sortOrder: v.sortOrder ?? idx,
+              isActive: v.isActive ?? true,
+            })),
+          },
+        } : {}),
       },
-      include: { category: true, brand: true, images: true, attributes: true },
+      include: { category: true, brand: true, images: true, attributes: true, variants: true },
     });
     revalidatePath("/", "layout");
     revalidatePath("/");

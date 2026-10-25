@@ -8,8 +8,8 @@ import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/components/providers/store-provider";
 import { getPrice } from "@/lib/catalog";
 import type { Product } from "@/lib/types";
-import { cartonPacking, cn, formatPiecePrice, formatPrice, formatProductPrice, getPerPiecePrice, minimumCartons } from "@/lib/utils";
-
+import { cartonPacking, cn, formatPrice, formatProductPrice, minimumCartons } from "@/lib/utils";
+import { calculatePiecePrice, isProductAvailable, getDisplayPrices } from "@/lib/pricing";
 import { getProductImage } from "@/lib/category-meta";
 
 import { StockStatus } from "./stock-status";
@@ -23,8 +23,6 @@ type ProductCardProps = {
   headingLevel?: "h2" | "h3";
 };
 
-import { isProductAvailable, getDisplayPrices } from "@/lib/pricing";
-
 export function ProductCard({
   product,
   layout = "grid",
@@ -35,13 +33,46 @@ export function ProductCard({
   const [added, setAdded] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const perPiece = getPerPiecePrice(product);
-  const isUnavailable = !isProductAvailable(product);
-  
-  // Resolve bold red sale price and strikethrough regular price
-  const { salePrice, regularPrice, hasSale, discountPercent } = getDisplayPrices(product);
+
+  // Variant support
+  const hasVariants = Boolean(product.variants && product.variants.length > 0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const activeVariant = hasVariants ? product.variants![selectedVariantIndex] : null;
+
+  // Touch swipe support
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    if (!hasVariants) return;
+    setTouchStartX(e.touches[0].clientX);
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (!hasVariants || touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 40) {
+      setSelectedVariantIndex((prev) => (prev + 1) % product.variants!.length);
+    } else if (diff < -40) {
+      setSelectedVariantIndex((prev) => (prev - 1 + product.variants!.length) % product.variants!.length);
+    }
+    setTouchStartX(null);
+  }
+
+  // Dynamic pricing & availability based on active variant
+  const currentPrice = activeVariant ? activeVariant.price : product.price;
+  const currentSalePrice = activeVariant ? activeVariant.salePrice : product.salePrice;
+  const currentUnits = activeVariant ? activeVariant.unitsPerCarton : product.unitsPerCarton;
+  const currentMoq = activeVariant ? activeVariant.minimumOrderCartons : minimumCartons(product);
+  const currentStock = activeVariant ? activeVariant.stock : product.stock;
+
+  const hasSale = currentSalePrice != null && currentSalePrice > 0 && currentSalePrice < currentPrice;
+  const effectivePrice = hasSale ? currentSalePrice! : currentPrice;
+  const perPiece = currentUnits > 1 ? calculatePiecePrice(effectivePrice, currentUnits) : null;
+  const isUnavailable = !product.allowBackorder && currentStock < currentMoq;
+
   const Heading = headingLevel;
-  const displayImage = getProductImage(product);
+  const displayImage = activeVariant?.imageUrl || getProductImage(product);
 
   useEffect(() => {
     return () => {
@@ -51,7 +82,7 @@ export function ProductCard({
 
   function handleAddToCart() {
     if (isUnavailable) return;
-    addToCart(product, minimumCartons(product));
+    addToCart(product, currentMoq, activeVariant || undefined);
     setAdded(true);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => setAdded(false), 1800);
@@ -64,6 +95,8 @@ export function ProductCard({
         layout === "list" &&
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Clickable Image Box that opens Enhanced Modal */}
       <div
@@ -100,9 +133,9 @@ export function ProductCard({
 
         {/* Clean Badges: Discount Top-Left, Best Seller Top-Right */}
         <div className="absolute left-2 top-2 flex flex-wrap gap-1 pointer-events-none">
-          {hasSale && discountPercent > 0 && (
+          {hasSale && (
             <span className="rounded-xs bg-[#dc2626] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-white shadow-2xs leading-none">
-              {discountPercent}% off
+              SALE
             </span>
           )}
         </div>
@@ -133,18 +166,44 @@ export function ProductCard({
         {/* Product Title */}
         <Heading className="product-card-title text-sm sm:text-base font-bold leading-snug text-content line-clamp-2">
           <Link
-            href={`/product/${product.slug}`}
+            href={`/product/${product.slug}${activeVariant ? `?variant=${encodeURIComponent(activeVariant.label)}` : ""}`}
             className="rounded-sm hover:text-action transition-colors"
           >
             {product.name}
           </Link>
         </Heading>
 
+        {/* Variant selection pills (One card per product family) */}
+        {hasVariants && (
+          <div className="my-2 flex flex-wrap gap-1.5">
+            {product.variants!.map((variant, idx) => (
+              <button
+                key={variant.id}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedVariantIndex(idx);
+                }}
+                className={cn(
+                  "rounded-md px-2 py-0.5 text-[11px] font-bold transition-all shadow-2xs active:scale-95",
+                  selectedVariantIndex === idx
+                    ? "border border-[#0f4c3a] bg-[#0f4c3a] text-white shadow-xs"
+                    : "border border-line bg-surface-soft text-accent hover:border-line-strong hover:bg-surface"
+                )}
+              >
+                {variant.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Packing & MOQ */}
         <div className="product-card-packing mt-1.5 flex items-center gap-1.5 text-xs text-muted truncate">
-          <p className="font-medium text-accent truncate">{cartonPacking(product)}</p>
+          <p className="font-medium text-accent truncate">
+            {currentUnits > 0 ? `${currentUnits} pcs / carton` : "Standard packing"}
+          </p>
           <span>•</span>
-          <p className="truncate">MOQ: {minimumCartons(product)} ctn</p>
+          <p className="truncate">MOQ: {currentMoq} ctn</p>
         </div>
 
         {/* Pricing block with highlighted red price and strikethrough price */}
@@ -160,17 +219,17 @@ export function ProductCard({
             <>
               <div className="flex flex-wrap items-baseline gap-1.5">
                 <span className="text-base sm:text-lg font-bold tracking-tight text-[#dc2626]">
-                  {formatPrice(salePrice)}
+                  {formatPrice(effectivePrice)}
                 </span>
                 {hasSale && (
                   <span className="text-xs sm:text-sm font-normal text-muted line-through">
-                    {formatPrice(regularPrice)}
+                    {formatPrice(currentPrice)}
                   </span>
                 )}
               </div>
-              {perPiece != null && product.unitsPerCarton > 1 && (
+              {perPiece != null && currentUnits > 1 && (
                 <p className="text-[10px] sm:text-[11px] font-medium text-muted truncate mt-0.5">
-                  {formatPrice(perPiece)}/pc ({product.unitsPerCarton} pcs/ctn)
+                  {formatPrice(perPiece)}/pc ({currentUnits} pcs/ctn)
                 </p>
               )}
             </>
@@ -210,7 +269,7 @@ export function ProductCard({
             aria-label={
               isUnavailable
                 ? `${product.name} is out of stock`
-                : `Add ${product.name} to cart`
+                : `Add ${product.name}${activeVariant ? ` (${activeVariant.label})` : ""} to cart`
             }
           >
             {added ? <Check className="size-3.5" /> : <ShoppingCart className="size-3.5" />}
@@ -227,7 +286,7 @@ export function ProductCard({
           showTrigger={false}
         />
         <span className="sr-only" aria-live="polite">
-          {added ? `${product.name} added to cart` : ""}
+          {added ? `${product.name}${activeVariant ? ` (${activeVariant.label})` : ""} added to cart` : ""}
         </span>
       </div>
     </article>

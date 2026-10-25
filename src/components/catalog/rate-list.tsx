@@ -5,6 +5,7 @@ import { company } from "@/lib/company";
 import { VISUAL_CATEGORIES } from "@/lib/category-meta";
 import type { Product } from "@/lib/types";
 import { cartonPacking, formatProductPrice, minimumCartons } from "@/lib/utils";
+import { MetroCataloguesStrip } from "./metro-catalogues-strip";
 
 interface RateListProps {
   products?: Product[];
@@ -79,6 +80,11 @@ export function RateList({ products = [] }: RateListProps) {
               Request a bulk quote
             </Link>
           </div>
+        </div>
+
+        {/* Metro-style Catalogues Section (Reference Layout) */}
+        <div className="mt-12 sm:mt-16 border-t border-line pt-10 sm:pt-14">
+          <MetroCataloguesStrip products={products} />
         </div>
 
         {groups.map((group) => (

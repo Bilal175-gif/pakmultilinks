@@ -30,11 +30,45 @@ type ProductPurchaseProps = {
 export function ProductPurchase({ product }: ProductPurchaseProps) {
   const router = useRouter();
   const { addToCart } = useStore();
-  const minimum = minimumCartons(product);
+
+  const variants = product.variants && product.variants.length > 0 ? product.variants : [];
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(() => {
+    return variants[0]?.id || null;
+  });
+
+  // Sync with ?variant= query parameter on mount if present
+  useEffect(() => {
+    if (typeof window === "undefined" || variants.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const paramVariant = params.get("variant");
+    if (!paramVariant) return;
+    const match = variants.find(
+      (v) =>
+        v.id === paramVariant ||
+        v.sku.toLowerCase() === paramVariant.toLowerCase() ||
+        v.label.toLowerCase().replace(/[^a-z0-9]+/g, "-") === paramVariant.toLowerCase()
+    );
+    if (match) {
+      setSelectedVariantId(match.id);
+    }
+  }, [variants]);
+
+  const activeVariant = variants.find((v) => v.id === selectedVariantId) || (variants.length > 0 ? variants[0] : null);
+
+  const minimum = activeVariant?.minimumOrderCartons ?? minimumCartons(product);
   const [quantity, setQuantity] = useState(minimum);
   const [added, setAdded] = useState(false);
   const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const perPiece = getPerPiecePrice(product);
+
+  const unitsPerCarton = activeVariant?.unitsPerCarton ?? product.unitsPerCarton;
+  const cartonPrice = activeVariant ? activeVariant.price : getEffectivePrice(product.price, product.salePrice);
+  const perPiece = activeVariant && activeVariant.unitsPerCarton && activeVariant.unitsPerCarton > 0
+    ? Math.round(activeVariant.price / activeVariant.unitsPerCarton)
+    : getPerPiecePrice(product);
+
+  const stock = activeVariant ? activeVariant.stock : product.stock;
+  const isOutOfStock = stock <= 0 && !product.allowBackorder;
+  const isUnavailable = !isProductAvailable(product) || isOutOfStock;
 
   const resetAdded = useCallback(() => {
     if (addedTimer.current) clearTimeout(addedTimer.current);
@@ -44,12 +78,22 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
   useEffect(() => {
     return () => { if (addedTimer.current) clearTimeout(addedTimer.current); };
   }, []);
+
   const hasSale = product.salePrice != null && product.salePrice > 0 && product.salePrice < product.price;
-  const isUnavailable = !isProductAvailable(product);
   const maxQuantity = 10_000;
-  const effectivePrice = getEffectivePrice(product.price, product.salePrice);
-  const itemTotal = effectivePrice * quantity;
+  const itemTotal = cartonPrice * quantity;
   const belowMinOrder = !product.priceOnRequest && itemTotal < MINIMUM_ORDER_AMOUNT;
+
+  function selectVariant(v: (typeof variants)[number]) {
+    setSelectedVariantId(v.id);
+    const vMin = v.minimumOrderCartons ?? 1;
+    if (quantity < vMin) setQuantity(vMin);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("variant", v.sku.toLowerCase());
+      window.history.replaceState({}, "", url.toString());
+    }
+  }
 
   function setSafeQuantity(nextQuantity: number) {
     setQuantity(Math.min(maxQuantity, Math.max(minimum, nextQuantity)));
@@ -57,19 +101,25 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
 
   function handleAdd() {
     if (isUnavailable) return;
-    addToCart(product, quantity);
+    addToCart(product, quantity, activeVariant || undefined);
     setAdded(true);
     resetAdded();
   }
 
   function handleBuyNow() {
     if (isUnavailable) return;
-    addToCart(product, quantity);
+    addToCart(product, quantity, activeVariant || undefined);
     if (!product.priceOnRequest && itemTotal < MINIMUM_ORDER_AMOUNT) {
       router.push("/cart");
       return;
     }
-    trackStorefrontEvent("begin_checkout", { currency: "PKR", value: product.priceOnRequest ? undefined : (product.salePrice ?? product.price) * quantity, item_id: product.sku, item_name: product.name, quantity });
+    trackStorefrontEvent("begin_checkout", {
+      currency: "PKR",
+      value: product.priceOnRequest ? undefined : cartonPrice * quantity,
+      item_id: activeVariant ? activeVariant.sku : product.sku,
+      item_name: activeVariant ? `${product.name} (${activeVariant.label})` : product.name,
+      quantity,
+    });
     router.push("/checkout");
   }
 
@@ -89,15 +139,16 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
           ) : (
             <>
               <p className="text-3xl font-extrabold tracking-[-0.03em] text-[#dc2626]">
-                {formatProductPrice(product)}
+                {formatPrice(cartonPrice)}
+                <span className="ml-1.5 text-sm font-semibold text-muted">/ carton</span>
               </p>
-              {perPiece != null && product.unitsPerCarton > 1 && (
+              {perPiece != null && unitsPerCarton > 1 && (
                 <div className="mt-2 inline-flex items-center gap-2 rounded-lg border border-red-300 bg-red-100/90 px-3 py-1 text-sm font-bold text-red-950 shadow-2xs dark:border-red-600 dark:bg-red-950 dark:text-red-100">
                   <span className="font-semibold text-red-800 dark:text-red-300">Unit / Per piece:</span>
                   <span className="text-base font-black text-red-950 dark:text-white">{formatPiecePrice(perPiece)}</span>
                 </div>
               )}
-              {hasSale && (
+              {hasSale && !activeVariant && (
                 <p className="mt-1 text-sm text-muted">
                   <span className="line-through font-semibold">{formatPrice(product.price)}</span>{" "}
                   <span className="ml-1 font-bold text-[#dc2626]">Wholesale rate</span>
@@ -107,7 +158,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
           )}
         </div>
         <StockStatus
-          stock={product.stock}
+          stock={stock}
           lowStockThreshold={product.lowStockThreshold}
           allowBackorder={product.allowBackorder}
           minimumOrderCartons={minimum}
@@ -115,14 +166,67 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
         />
       </div>
 
+      {/* Variant Selector Pills if product has variants */}
+      {variants.length > 0 && (
+        <div className="mt-5 border-t border-line/60 pt-4">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted">
+              Select Size / Packing ({variants.length} available)
+            </span>
+            {activeVariant && (
+              <span className="text-xs font-semibold text-secondary">
+                SKU: <strong className="font-mono text-accent">{activeVariant.sku}</strong>
+              </span>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {variants.map((v) => {
+              const isSelected = v.id === activeVariant?.id;
+              const vPerPiece = v.unitsPerCarton && v.unitsPerCarton > 0 ? Math.round(v.price / v.unitsPerCarton) : null;
+              return (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => selectVariant(v)}
+                  className={`group relative flex flex-col items-start rounded-xl px-3.5 py-2 text-left transition ${
+                    isSelected
+                      ? "border-2 border-[#dc2626] bg-red-50/80 dark:bg-red-950/40 text-accent shadow-xs scale-[1.02]"
+                      : "border border-line bg-surface-soft hover:border-focus/60 text-secondary hover:text-accent"
+                  }`}
+                >
+                  <span className={`text-xs font-extrabold ${isSelected ? "text-[#dc2626]" : ""}`}>
+                    {v.label}
+                  </span>
+                  <div className="mt-0.5 flex items-baseline gap-1.5">
+                    <span className="text-xs font-black text-accent">
+                      {formatPrice(v.price)}
+                    </span>
+                    {vPerPiece != null && (
+                      <span className="text-[10px] text-muted">
+                        ({formatPrice(vPerPiece)}/pc)
+                      </span>
+                    )}
+                  </div>
+                  {v.stock <= 0 && !product.allowBackorder && (
+                    <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider text-danger">
+                      Out of stock
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="my-6 h-px bg-surface-soft" />
 
       <div className="grid gap-2 rounded-2xl bg-surface-soft p-4 text-sm text-accent sm:grid-cols-2">
-        <p><strong>Supply unit:</strong> {product.unitsPerCarton > 1 ? "Carton" : "Piece / Unit"}</p>
-        <p><strong>Packing:</strong> {cartonPacking(product)}</p>
-        {perPiece != null && product.unitsPerCarton > 1 && <p><strong>Per piece rate:</strong> {formatPiecePrice(perPiece)}</p>}
+        <p><strong>Supply unit:</strong> {unitsPerCarton > 1 ? "Carton" : "Piece / Unit"}</p>
+        <p><strong>Packing:</strong> {unitsPerCarton > 1 ? `${unitsPerCarton} units per carton` : "Single unit"}</p>
+        {perPiece != null && unitsPerCarton > 1 && <p><strong>Per piece rate:</strong> {formatPiecePrice(perPiece)}</p>}
         <p><strong>Minimum order:</strong> {minimum} carton{minimum === 1 ? "" : "s"}</p>
-        <p><strong>Selected:</strong> {product.unitsPerCarton > 0 ? `${quantity * product.unitsPerCarton} pieces in ` : ""}{quantity} carton{quantity === 1 ? "" : "s"}</p>
+        <p><strong>Selected:</strong> {unitsPerCarton > 0 ? `${quantity * unitsPerCarton} pieces in ` : ""}{quantity} carton{quantity === 1 ? "" : "s"}</p>
         {!product.priceOnRequest && <p><strong>Order condition:</strong> Min. PKR 5,000</p>}
       </div>
 
@@ -150,6 +254,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             <SalesContactLink
               product={product}
               quantity={quantity}
+              variantLabel={activeVariant?.label}
               className="commerce-button commerce-button-secondary inline-flex min-h-12 items-center justify-center gap-2 text-sm font-extrabold"
             >
               Inquire on WhatsApp
@@ -221,6 +326,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
         <SalesContactLink
           product={product}
           quantity={quantity}
+          variantLabel={activeVariant?.label}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-action px-4 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-action-hover active:scale-[0.98]"
         >
           WhatsApp to Order / Get Bulk Price

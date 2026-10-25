@@ -29,6 +29,18 @@ import { buttonClass, inputClass, panelClass, textareaClass } from "./ui";
 type Option = { id: string; name: string; parentId?: string | null };
 type EditableImage = { url: string; alt: string };
 
+export type EditableVariant = {
+  id?: string;
+  label: string;
+  sku: string;
+  price: number;
+  unitsPerCarton: number;
+  stock: number;
+  minimumOrderCartons: number;
+  imageUrl?: string | null;
+  isActive?: boolean;
+};
+
 export type EditableProduct = {
   id?: string;
   name: string;
@@ -52,6 +64,7 @@ export type EditableProduct = {
   bulkPricing: boolean;
   images: EditableImage[];
   attributes: Array<{ name: string; value: string }>;
+  variants?: EditableVariant[];
 };
 
 const empty: EditableProduct = {
@@ -76,6 +89,7 @@ const empty: EditableProduct = {
   bulkPricing: true,
   images: [],
   attributes: [],
+  variants: [],
 };
 
 export function ProductEditor({
@@ -136,6 +150,20 @@ export function ProductEditor({
       const minimumOrderCartons = Math.max(1, Math.floor(Number(value.minimumOrderCartons) || 1));
       const lowStockThreshold = Math.max(0, Math.floor(Number(value.lowStockThreshold) || 5));
 
+      const variants = (value.variants || [])
+        .filter((v) => v.label.trim() && v.sku.trim())
+        .map((v, idx) => ({
+          label: v.label.trim(),
+          sku: v.sku.trim(),
+          price: Math.max(0, Number(v.price) || 0),
+          unitsPerCarton: Math.max(1, Math.floor(Number(v.unitsPerCarton) || 1)),
+          stock: Math.max(0, Math.floor(Number(v.stock) || 0)),
+          minimumOrderCartons: Math.max(1, Math.floor(Number(v.minimumOrderCartons) || 1)),
+          imageUrl: v.imageUrl || null,
+          sortOrder: idx,
+          isActive: v.isActive ?? true,
+        }));
+
       const payload = {
         ...value,
         price,
@@ -144,6 +172,7 @@ export function ProductEditor({
         stock,
         minimumOrderCartons,
         lowStockThreshold,
+        variants,
       };
 
       const response = await fetch(
@@ -557,6 +586,152 @@ export function ProductEditor({
           ))}
           {!value.images.length && <div className="rounded-2xl border border-dashed border-line p-6 text-center"><ImageIcon className="mx-auto size-7 text-muted" /><p className="mt-2 text-sm font-semibold text-secondary">No product images</p><p className="mt-1 text-xs text-muted">The storefront will display a clean “Image coming soon” placeholder.</p></div>}
         </div>
+      </section>
+
+      <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="font-bold">Product Variants (Sizes / Packs)</h2>
+            <p className="text-xs text-muted">
+              Consolidate multiple sizes/packings under this single product card (e.g., 350ml x12, 1.5L x6).
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={disabled || (value.variants?.length ?? 0) >= 20}
+            onClick={() =>
+              set("variants", [
+                ...(value.variants || []),
+                {
+                  label: "",
+                  sku: `${value.sku || "VAR"}-${(value.variants?.length ?? 0) + 1}`,
+                  price: value.price || 0,
+                  unitsPerCarton: value.unitsPerCarton || 1,
+                  stock: value.stock || 10,
+                  minimumOrderCartons: value.minimumOrderCartons || 1,
+                  isActive: true,
+                },
+              ])
+            }
+            className="inline-flex items-center gap-1 rounded-xl bg-action px-3 py-1.5 text-xs font-bold text-white shadow-2xs hover:bg-action-hover"
+          >
+            <Plus className="size-4" /> Add Size / Pack Variant
+          </button>
+        </div>
+
+        {(!value.variants || value.variants.length === 0) ? (
+          <div className="rounded-2xl border border-dashed border-line p-5 text-center">
+            <p className="text-sm font-semibold text-secondary">No size variants added</p>
+            <p className="mt-1 text-xs text-muted">
+              This product will display as a single item using the primary carton price and packing specs above.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {value.variants.map((v, index) => (
+              <div
+                key={index}
+                className="grid gap-3 rounded-2xl border border-line bg-surface-soft p-4 sm:grid-cols-6 items-end"
+              >
+                <div className="sm:col-span-2">
+                  <label className="text-[11px] font-bold text-secondary uppercase">
+                    Variant Label (e.g. 350ml x12)
+                  </label>
+                  <input
+                    value={v.label}
+                    placeholder="350ml x12"
+                    required
+                    onChange={(e) => {
+                      const next = [...(value.variants || [])];
+                      next[index] = { ...next[index], label: e.target.value };
+                      set("variants", next);
+                    }}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-secondary uppercase">
+                    SKU
+                  </label>
+                  <input
+                    value={v.sku}
+                    placeholder="OK-WTR-350"
+                    required
+                    onChange={(e) => {
+                      const next = [...(value.variants || [])];
+                      next[index] = { ...next[index], sku: e.target.value };
+                      set("variants", next);
+                    }}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-secondary uppercase">
+                    Carton Price (PKR)
+                  </label>
+                  <input
+                    type="number"
+                    value={v.price}
+                    min={0}
+                    required
+                    onChange={(e) => {
+                      const next = [...(value.variants || [])];
+                      next[index] = { ...next[index], price: Number(e.target.value) || 0 };
+                      set("variants", next);
+                    }}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-bold text-secondary uppercase">
+                    Pcs/Carton
+                  </label>
+                  <input
+                    type="number"
+                    value={v.unitsPerCarton}
+                    min={1}
+                    required
+                    onChange={(e) => {
+                      const next = [...(value.variants || [])];
+                      next[index] = { ...next[index], unitsPerCarton: Number(e.target.value) || 1 };
+                      set("variants", next);
+                    }}
+                    className={inputClass}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <label className="text-[11px] font-bold text-secondary uppercase">
+                      Stock (Ctns)
+                    </label>
+                    <input
+                      type="number"
+                      value={v.stock}
+                      min={0}
+                      onChange={(e) => {
+                        const next = [...(value.variants || [])];
+                        next[index] = { ...next[index], stock: Number(e.target.value) || 0 };
+                        set("variants", next);
+                      }}
+                      className={inputClass}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = (value.variants || []).filter((_, i) => i !== index);
+                      set("variants", next);
+                    }}
+                    className="grid size-10 place-items-center rounded-xl text-danger hover:bg-danger-soft shrink-0"
+                    title="Remove variant"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>

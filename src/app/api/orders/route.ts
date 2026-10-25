@@ -19,19 +19,39 @@ export async function POST(request: NextRequest) {
     const parsed = orderCreateSchema.safeParse(await readJson(request, 40_000));
     if (!parsed.success) return NextResponse.json(validationError(parsed.error), { status: 400, headers: noStoreHeaders });
     const database = requireDatabase();
-    const quantities = new Map<string, number>();
-    for (const item of parsed.data.items) quantities.set(item.productId, (quantities.get(item.productId) || 0) + item.quantity);
-    if ([...quantities.values()].some((quantity) => quantity > 10_000)) return jsonError("A product quantity cannot exceed 10,000 cartons per order.", 400);
-    const normalizedItems = [...quantities].map(([productId, quantity]) => ({ productId, quantity }));
+    const lineMap = new Map<string, { productId: string; variantId?: string; quantity: number }>();
+    for (const item of parsed.data.items) {
+      const key = `${item.productId}:${item.variantId || ""}`;
+      const existing = lineMap.get(key);
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        lineMap.set(key, { productId: item.productId, variantId: item.variantId, quantity: item.quantity });
+      }
+    }
+    if ([...lineMap.values()].some((item) => item.quantity > 10_000)) {
+      return jsonError("A product quantity cannot exceed 10,000 cartons per order.", 400);
+    }
+    const normalizedItems = [...lineMap.values()];
     const session = await getRequestSession(request);
 
     const created = await database.$transaction(
       async (tx) => {
+        const uniqueProductIds = [...new Set(normalizedItems.map((item) => item.productId))];
         const products = await tx.product.findMany({
-          where: { id: { in: normalizedItems.map((item) => item.productId) }, status: ProductStatus.ACTIVE, category: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] } },
-          include: { images: { orderBy: { sortOrder: "asc" }, take: 1 } },
+          where: {
+            id: { in: uniqueProductIds },
+            status: ProductStatus.ACTIVE,
+            category: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] },
+          },
+          include: {
+            images: { orderBy: { sortOrder: "asc" }, take: 1 },
+            variants: { where: { isActive: true } },
+          },
         });
-        if (products.length !== normalizedItems.length) throw new OrderInputError("One or more products are no longer available.");
+        if (products.length !== uniqueProductIds.length) {
+          throw new OrderInputError("One or more products are no longer available.");
+        }
 
         const settings = await tx.siteSettings.findUnique({ where: { id: "main" }, select: { taxRate: true, bankTransferEnabled: true } });
         const requiresQuote = products.some((product) => product.priceOnRequest);
@@ -41,34 +61,81 @@ export async function POST(request: NextRequest) {
         }
         let subtotal = new Prisma.Decimal(0);
         const lines = [];
+
         for (const item of normalizedItems) {
           const product = products.find((candidate) => candidate.id === item.productId)!;
-          if (item.quantity < product.minimumOrderCartons) {
-            throw new OrderInputError(`${product.name} requires at least ${product.minimumOrderCartons} carton${product.minimumOrderCartons === 1 ? "" : "s"}.`);
+
+          if (item.variantId) {
+            const variant = product.variants.find((v) => v.id === item.variantId);
+            if (!variant) {
+              throw new OrderInputError(`The selected variant for ${product.name} is no longer available.`);
+            }
+            if (item.quantity < variant.minimumOrderCartons) {
+              throw new OrderInputError(`${product.name} (${variant.label}) requires at least ${variant.minimumOrderCartons} carton${variant.minimumOrderCartons === 1 ? "" : "s"}.`);
+            }
+            if (!product.allowBackorder && variant.stock < item.quantity) {
+              throw new OrderInputError(`${product.name} (${variant.label}) has only ${variant.stock} carton${variant.stock === 1 ? "" : "s"} available.`);
+            }
+
+            const changed = await tx.productVariant.updateMany({
+              where: {
+                id: variant.id,
+                ...(product.allowBackorder ? {} : { stock: { gte: item.quantity } }),
+              },
+              data: { stock: { decrement: item.quantity } },
+            });
+            if (changed.count !== 1) {
+              throw new OrderInputError(`${product.name} (${variant.label}) stock changed. Please review your quantity.`);
+            }
+
+            await tx.product.update({
+              where: { id: product.id },
+              data: { soldQuantity: { increment: item.quantity } },
+            });
+
+            const unitPrice = variant.salePrice ?? variant.price;
+            const lineTotal = unitPrice.mul(item.quantity);
+            subtotal = subtotal.add(lineTotal);
+            lines.push({
+              productId: product.id,
+              variantId: variant.id,
+              variantLabel: variant.label,
+              variantSku: variant.sku,
+              productName: `${product.name} — ${variant.label}`,
+              sku: variant.sku,
+              imageUrl: variant.imageUrl || product.images[0]?.url,
+              unitPrice,
+              quantity: item.quantity,
+              lineTotal,
+            });
+          } else {
+            if (item.quantity < product.minimumOrderCartons) {
+              throw new OrderInputError(`${product.name} requires at least ${product.minimumOrderCartons} carton${product.minimumOrderCartons === 1 ? "" : "s"}.`);
+            }
+            if (!product.allowBackorder && product.stock < item.quantity) {
+              throw new OrderInputError(`${product.name} has only ${product.stock} carton${product.stock === 1 ? "" : "s"} available.`);
+            }
+            const changed = await tx.product.updateMany({
+              where: {
+                id: product.id,
+                ...(product.allowBackorder ? {} : { stock: { gte: item.quantity } }),
+              },
+              data: { stock: { decrement: item.quantity }, soldQuantity: { increment: item.quantity } },
+            });
+            if (changed.count !== 1) throw new OrderInputError(`${product.name} stock changed. Please review your quantity.`);
+            const unitPrice = product.salePrice ?? product.price;
+            const lineTotal = unitPrice.mul(item.quantity);
+            subtotal = subtotal.add(lineTotal);
+            lines.push({
+              productId: product.id,
+              productName: product.name,
+              sku: product.sku,
+              imageUrl: product.images[0]?.url,
+              unitPrice,
+              quantity: item.quantity,
+              lineTotal,
+            });
           }
-          if (!product.allowBackorder && product.stock < item.quantity) {
-            throw new OrderInputError(`${product.name} has only ${product.stock} carton${product.stock === 1 ? "" : "s"} available.`);
-          }
-          const changed = await tx.product.updateMany({
-            where: {
-              id: product.id,
-              ...(product.allowBackorder ? {} : { stock: { gte: item.quantity } }),
-            },
-            data: { stock: { decrement: item.quantity }, soldQuantity: { increment: item.quantity } },
-          });
-          if (changed.count !== 1) throw new OrderInputError(`${product.name} stock changed. Please review your quantity.`);
-          const unitPrice = product.salePrice ?? product.price;
-          const lineTotal = unitPrice.mul(item.quantity);
-          subtotal = subtotal.add(lineTotal);
-          lines.push({
-            productId: product.id,
-            productName: product.name,
-            sku: product.sku,
-            imageUrl: product.images[0]?.url,
-            unitPrice,
-            quantity: item.quantity,
-            lineTotal,
-          });
         }
 
         if (!requiresQuote && subtotal.lt(5000)) {
