@@ -21,6 +21,7 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         width={500}
         height={189}
         priority
+        unoptimized
         sizes={compact ? "145px" : light ? "250px" : "220px"}
         className={cn(
           "brand-logo brand-logo-light h-auto w-[190px] object-contain sm:w-[220px]",
@@ -34,6 +35,7 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         width={500}
         height={189}
         priority
+        unoptimized
         sizes={compact ? "145px" : light ? "250px" : "220px"}
         className={cn(
           "brand-logo brand-logo-dark h-auto w-[190px] object-contain sm:w-[220px]",

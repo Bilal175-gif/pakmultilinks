@@ -152,6 +152,7 @@ export function ShopByBrand() {
                   width={240}
                   height={240}
                   loading="lazy"
+                  unoptimized
                   className="size-full object-contain p-1 transition-transform duration-300 group-hover:scale-110"
                 />
               </div>

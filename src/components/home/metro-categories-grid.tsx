@@ -126,7 +126,7 @@ export function MetroCategoriesGrid({
                     width={48}
                     height={48}
                     loading="lazy"
-                    unoptimized={tile.image.startsWith("https://")}
+                    unoptimized
                     className="size-full object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>

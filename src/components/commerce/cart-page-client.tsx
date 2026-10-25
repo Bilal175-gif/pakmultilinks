@@ -59,7 +59,7 @@ export function CartPageClient() {
               <li key={product.id} className="cart-item p-5 sm:p-7">
                 <div className="flex gap-4 sm:gap-6">
                   <Link href={`/product/${product.slug}`} className="relative size-24 shrink-0 overflow-hidden rounded-2xl bg-accent-soft sm:size-32">
-                    {product.image ? <Image src={product.image} alt={product.imageAlt || product.name} fill sizes="128px" className="object-contain p-3" /> : <ProductMediaPlaceholder compact />}
+                    {product.image ? <Image src={product.image} alt={product.imageAlt || product.name} fill unoptimized sizes="128px" className="object-contain p-3" /> : <ProductMediaPlaceholder compact />}
                   </Link>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase tracking-wide text-accent">{product.category}</p>

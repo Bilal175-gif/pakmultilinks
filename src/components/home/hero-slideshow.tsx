@@ -86,6 +86,7 @@ export function HeroSlideshow() {
               src={slide.src}
               alt={slide.alt}
               fill
+              unoptimized
               preload={index === 0}
               loading={index === 0 ? undefined : "eager"}
               sizes="(min-width: 1344px) 588px, (min-width: 1000px) 46vw, (min-width: 700px) 80vw, calc(100vw - 32px)"

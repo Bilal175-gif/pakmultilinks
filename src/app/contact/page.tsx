@@ -34,6 +34,7 @@ export default function ContactPage() {
                     alt={`${contact.name} - Pak Multilinks Hygiene Visiting Card`}
                     width={600}
                     height={350}
+                    unoptimized
                     className="h-auto w-full object-contain"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority

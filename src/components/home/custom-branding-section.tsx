@@ -32,6 +32,7 @@ export function CustomBrandingSection() {
               width={940}
               height={485}
               loading="lazy"
+              unoptimized
               className="h-auto w-full max-w-[860px] object-contain drop-shadow-[0_20px_40px_rgba(17,75,47,0.18)] transition-all duration-500 hover:drop-shadow-[0_25px_50px_rgba(17,75,47,0.25)]"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 860px"
             />
