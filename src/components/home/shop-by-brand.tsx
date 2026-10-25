@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export interface BrandCardData {
   id: string;
@@ -28,7 +28,7 @@ export const BRAND_SHOWCASE: BrandCardData[] = [
     id: "nozomi",
     name: "Nozomi",
     subtitle: "Commercial Pure Soft Tissues",
-    image: "/images/brands/nozomi-logo.png",
+    image: "/images/brands/nozomi-logo-transparent.png",
     mainHref: "/brand/nozomi",
     popularCategories: [
       { label: "Pop-Up Tissues (100 Sheets x 2Ply)", href: "/shop?brand=Nozomi&category=facial-tissues" },
@@ -121,47 +121,26 @@ export function ShopByBrand() {
           </Link>
         </div>
 
-        {/* 7-Column Responsive Cards Grid with Extra Large Brand Images */}
+        {/* 7-Column Responsive Cards Grid with Full-Box Brand Images */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 sm:gap-4">
           {BRAND_SHOWCASE.map((brand, idx) => (
             <Link
               key={brand.id}
               href={brand.mainHref}
-              className={`shine-card group flex flex-col justify-between rounded-2xl border border-line bg-surface p-3.5 sm:p-4 shadow-xs transition-all duration-300 hover:border-action hover:shadow-xl hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
+              title={brand.name}
+              aria-label={`Shop ${brand.name} products`}
+              className={`shine-card group relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-line bg-white p-3 shadow-xs transition-all duration-300 hover:border-action hover:shadow-xl hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
             >
-              {/* Card Header: Brand Title, Arrow Badge & Subtitle */}
-              <div>
-                <div className="flex items-start justify-between gap-1">
-                  <h3 className="text-sm sm:text-base font-extrabold text-content transition-colors group-hover:text-action line-clamp-1">
-                    {brand.name}
-                  </h3>
-                  <span className="grid size-5 sm:size-6 shrink-0 place-items-center rounded-full bg-surface-soft text-muted transition-all duration-300 group-hover:bg-action group-hover:text-white group-hover:scale-110">
-                    <ArrowRight className="size-2.5 sm:size-3 transition-transform duration-300 group-hover:translate-x-0.5" />
-                  </span>
-                </div>
-                <p className="mt-0.5 line-clamp-1 text-[11px] font-medium text-muted">
-                  {brand.subtitle}
-                </p>
-              </div>
-
-              {/* Extra Large, High-Impact Brand Image Showcase */}
-              <div className="relative my-2 sm:my-3 flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-surface-soft/70 p-2 transition-colors group-hover:bg-surface-soft">
-                <Image
-                  src={brand.image}
-                  alt={brand.name}
-                  width={240}
-                  height={240}
-                  loading="lazy"
-                  unoptimized
-                  className="size-full object-contain p-1 transition-transform duration-300 group-hover:scale-110"
-                />
-              </div>
-
-              {/* Clean Footer Label */}
-              <div className="flex items-center justify-between pt-1 text-[11px] font-bold text-secondary group-hover:text-action">
-                <span>View collection</span>
-                <ChevronRight className="size-3 text-muted shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:text-action" />
-              </div>
+              <Image
+                src={brand.image}
+                alt={brand.name}
+                width={240}
+                height={240}
+                loading="lazy"
+                unoptimized
+                className="size-full object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+              <span className="sr-only">{brand.name}</span>
             </Link>
           ))}
         </div>
