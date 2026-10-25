@@ -26,7 +26,7 @@ export function TrustedPartners() {
                   <li key={partner.name} className={styles.partner}>
                     <div className={styles.logo}>
                       {partner.image ? (
-                        <Image src={partner.image} alt="" width={112} height={112} sizes="(max-width: 640px) 80px, 112px" className={styles.image} />
+                        <Image src={partner.image} alt="" width={112} height={112} unoptimized sizes="(max-width: 640px) 80px, 112px" className={styles.image} />
                       ) : (
                         <Scissors aria-hidden="true" className={styles.salonIcon} strokeWidth={1.25} />
                       )}

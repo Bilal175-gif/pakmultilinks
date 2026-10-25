@@ -18,7 +18,7 @@ export function VisualCategories({ categories, products, compact = false }: {
             width={compact ? 88 : 200}
             height={compact ? 88 : 200}
             loading="lazy"
-            unoptimized={image.startsWith("https://")}
+            unoptimized
             className="size-full object-contain p-2"
           />
         </span>

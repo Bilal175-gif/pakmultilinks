@@ -87,6 +87,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                   priority={index === 0}
                   loading={index === 0 ? "eager" : "lazy"}
                   fetchPriority={index === 0 ? "high" : "low"}
+                  unoptimized
                   sizes="100vw"
                   className="object-cover object-center"
                 />
@@ -101,6 +102,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                   priority={index === 0}
                   loading={index === 0 ? "eager" : "lazy"}
                   fetchPriority={index === 0 ? "high" : "low"}
+                  unoptimized
                   sizes="(min-width: 768px) 100vw, 1920px"
                   className="object-cover object-center"
                 />

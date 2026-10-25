@@ -91,6 +91,7 @@ export function ProductCard({
             height={400}
             priority={priority}
             loading={priority ? "eager" : "lazy"}
+            unoptimized
             className="size-full object-contain p-2 sm:p-2.5 transition duration-300 group-hover:scale-105"
           />
         ) : (

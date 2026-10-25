@@ -49,7 +49,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
                 src={image}
                 alt=""
                 fill
-                unoptimized={image.startsWith("https://")}
+                unoptimized
                 sizes="72px"
                 className="object-contain p-2"
               />
@@ -64,7 +64,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           src={selectedImage}
           alt={productName}
           fill
-          unoptimized={selectedImage.startsWith("https://")}
+          unoptimized
           priority
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-contain p-8 sm:p-12"

@@ -111,7 +111,7 @@ export function ProductQuickView({
                   src={product.image}
                   alt={product.imageAlt || product.name}
                   fill
-                  unoptimized={product.image.startsWith("https://")}
+                  unoptimized
                   sizes="(max-width: 640px) 94vw, 400px"
                   className="object-contain p-2"
                 />

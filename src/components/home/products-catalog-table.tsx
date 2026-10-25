@@ -186,6 +186,7 @@ export function ProductsCatalogTable({}: ProductsCatalogTableProps) {
                                 width={40}
                                 height={40}
                                 loading="lazy"
+                                unoptimized
                                 className="size-full object-contain"
                               />
                             ) : (
@@ -278,6 +279,7 @@ export function ProductsCatalogTable({}: ProductsCatalogTableProps) {
                           width={64}
                           height={64}
                           loading="lazy"
+                          unoptimized
                           className="size-full object-contain"
                         />
                       ) : (
