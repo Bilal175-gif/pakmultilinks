@@ -20,31 +20,13 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Visible Hero H1 Section */}
-      <section className="border-b border-line bg-surface/90 py-3 sm:py-4">
-        <div className="site-shell flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-          <div>
-            <h1 className="font-serif text-lg sm:text-2xl font-extrabold tracking-tight text-content">
-              Pak Multilinks Tissue and Hygiene Supplies
-            </h1>
-            <p className="text-[11px] sm:text-xs text-secondary mt-0.5">
-              Wholesale tissue, washroom &amp; cleaning supplies by the carton in Lahore
-            </p>
-          </div>
-          <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-action">
-            <span className="inline-flex size-2 rounded-full bg-action animate-pulse" />
-            <span>Factory-Sealed Wholesale Cartons</span>
-          </div>
-        </div>
-      </section>
-
       {/* Desktop Hero Section & Strips (Hidden on mobile as requested) */}
       <div className="hidden md:block">
         <DealsSlider deals={deals} />
         <PerksStrip />
         <section className="border-b border-line bg-surface py-10 sm:py-12">
           <div className="site-shell max-w-4xl">
-            <h2 className="font-serif text-2xl text-content sm:text-3xl">Wholesale tissue &amp; hygiene supplies, supplied by the carton</h2>
+            <h1 className="font-serif text-2xl text-content sm:text-3xl">Wholesale tissue &amp; hygiene supplies, supplied by the carton</h1>
             <p className="mt-4 text-sm leading-7 text-secondary sm:text-base sm:leading-8">
               Pak Multilinks Hygiene is a Lahore wholesale supplier of tissue paper products, washroom supplies, cleaning
               chemicals and disposable items for offices, hotels, restaurants, hospitals, schools and factories. We stock
