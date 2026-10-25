@@ -35,6 +35,26 @@ const nav = [
   { href: "/contact", label: "Contact" },
 ];
 
+const SEARCH_PLACEHOLDERS = [
+  'Search "Rose Petal facial tissues"...',
+  'Search "Toilet paper rolls bulk cartons"...',
+  'Search "Dettol disinfectant spray"...',
+  'Search "Pop-up tissues 100 sheets"...',
+  'Search "Harpic Power Plus 1L"...',
+  'Search "8oz Disposable paper cups"...',
+  'Search "Heavy duty black garbage bags"...',
+  'Search "Zzoop kitchen towel rolls"...',
+];
+
+const TRENDING_SEARCHES = [
+  { label: "Rose Petal Cartons", query: "Rose Petal" },
+  { label: "Toilet Rolls 10-Pack", query: "Toilet Roll" },
+  { label: "Dettol Disinfectant", query: "Dettol" },
+  { label: "Pop-Up Tissues", query: "Pop-up" },
+  { label: "Harpic 1L", query: "Harpic" },
+  { label: "Paper Cups", query: "Paper Cups" },
+];
+
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -47,9 +67,39 @@ export function Header() {
   const [searchProducts, setSearchProducts] = useState<Product[]>(products);
   const [navigationCategories, setNavigationCategories] = useState<Category[]>(categories);
   const searchWrap = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileDialogRef = useRef<HTMLDialogElement>(null);
   const cartDialogRef = useRef<HTMLDialogElement>(null);
   const categoryMenuRef = useRef<HTMLDetailsElement>(null);
+
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [placeholderFading, setPlaceholderFading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderFading(true);
+      setTimeout(() => {
+        setPlaceholderIndex((prev) => (prev + 1) % SEARCH_PLACEHOLDERS.length);
+        setPlaceholderFading(false);
+      }, 250);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (
+        (event.key === "k" && (event.metaKey || event.ctrlKey)) ||
+        (event.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "TEXTAREA")
+      ) {
+        event.preventDefault();
+        searchInputRef.current?.focus();
+        setSearchFocused(true);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     let previousY = window.scrollY;
@@ -172,23 +222,166 @@ export function Header() {
             <BrandMark />
           </div>
 
-          <div ref={searchWrap} className="relative z-50 ml-auto hidden min-w-0 max-w-[430px] flex-1 md:block">
+          <div ref={searchWrap} className="relative z-50 mx-auto hidden min-w-0 max-w-[560px] lg:max-w-[620px] flex-1 md:block">
             <form onSubmit={submitSearch} role="search">
               <label htmlFor="site-search" className="sr-only">Search products</label>
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-secondary" />
-              <input
-                id="site-search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") setSearchFocused(false);
-                }}
-                placeholder="Search products, SKU or category"
-                autoComplete="off"
-                className="h-11 w-full rounded-2xl border border-line bg-surface pl-11 pr-4 text-sm text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-4 focus:ring-focus"
-              />
+              <div className="group relative flex h-12 w-full items-center rounded-2xl border-2 border-action/25 bg-surface/95 shadow-2xs backdrop-blur-sm transition-all duration-300 hover:border-action/65 hover:shadow-md focus-within:border-action focus-within:ring-4 focus-within:ring-action/15 focus-within:shadow-lg">
+                {/* Search Icon with glowing live pulse */}
+                <div className="relative flex items-center justify-center pl-3.5 pr-2 shrink-0">
+                  <Search className="size-4.5 text-action transition-transform duration-300 group-hover:scale-110" />
+                  <span className="absolute -top-0.5 right-1 size-1.5 rounded-full bg-emerald-500 animate-ping opacity-75" />
+                </div>
+
+                {/* Input & Animated Floating Placeholder */}
+                <div className="relative min-w-0 flex-1 h-full flex items-center">
+                  <input
+                    ref={searchInputRef}
+                    id="site-search"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    onFocus={() => setSearchFocused(true)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") setSearchFocused(false);
+                    }}
+                    autoComplete="off"
+                    className="size-full bg-transparent pr-2 text-sm font-semibold text-accent outline-none placeholder:text-transparent"
+                  />
+                  {!query && (
+                    <span
+                      onClick={() => searchInputRef.current?.focus()}
+                      className={`pointer-events-none absolute left-0 text-sm font-medium text-muted transition-all duration-300 truncate pr-3 ${
+                        placeholderFading ? "opacity-0 -translate-y-1" : "opacity-100 translate-y-0"
+                      }`}
+                    >
+                      {SEARCH_PLACEHOLDERS[placeholderIndex]}
+                    </span>
+                  )}
+                </div>
+
+                {/* Clear Button */}
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuery("");
+                      searchInputRef.current?.focus();
+                    }}
+                    className="p-1.5 text-muted hover:text-accent transition rounded-lg hover:bg-surface-soft mr-1"
+                    aria-label="Clear search"
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+
+                {/* Keyboard Shortcut Badge */}
+                {!query && (
+                  <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded-md border border-line bg-surface-soft/90 px-1.5 py-0.5 text-[10px] font-bold text-muted shadow-2xs mr-2 select-none">
+                    <span>⌘</span>K
+                  </kbd>
+                )}
+
+                {/* Creative Emerald Submit Button */}
+                <button
+                  type="submit"
+                  className="mr-1.5 flex items-center gap-1.5 rounded-xl bg-action px-3.5 py-2 text-xs font-bold text-white shadow-xs transition-all duration-200 hover:bg-action-dark hover:scale-[1.02] active:scale-95"
+                >
+                  <span>Search</span>
+                  <ArrowRight className="size-3.5" />
+                </button>
+              </div>
             </form>
+
+            {/* Trending Quick Search Chips directly under the bar */}
+            <div className="mt-1 flex items-center gap-1.5 overflow-hidden text-[11px]">
+              <span className="flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-action shrink-0">
+                <Sparkles className="size-2.5" />
+                <span>Trending:</span>
+              </span>
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                {TRENDING_SEARCHES.map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => {
+                      setQuery(item.query);
+                      router.push(`/shop?q=${encodeURIComponent(item.query)}`);
+                      setSearchFocused(false);
+                    }}
+                    className="rounded-full border border-line/80 bg-surface-soft/80 px-2 py-0.5 text-[10px] font-semibold text-secondary transition hover:border-action hover:bg-action hover:text-white shrink-0"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Zero-Query Discovery Panel: Opens on focus when query is empty! */}
+            {searchFocused && query.trim().length === 0 && (
+              <nav
+                className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-line bg-surface p-3.5 shadow-[0_20px_50px_rgba(0,0,0,0.22)] animate-fade-in"
+                aria-label="Popular wholesale searches"
+              >
+                <div className="flex items-center justify-between pb-2.5 border-b border-line/60">
+                  <div className="flex items-center gap-1.5 text-xs font-extrabold text-content">
+                    <Sparkles className="size-3.5 text-action" />
+                    <span>Popular Wholesale Searches in Lahore</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-action bg-action/10 px-2 py-0.5 rounded-full">
+                    Carton Rates 📦
+                  </span>
+                </div>
+
+                <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+                  {TRENDING_SEARCHES.map((item) => (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => {
+                        setQuery(item.query);
+                        router.push(`/shop?q=${encodeURIComponent(item.query)}`);
+                        setSearchFocused(false);
+                      }}
+                      className="flex items-center justify-between rounded-xl border border-line/70 bg-surface-soft/60 px-3 py-2 text-left text-xs font-semibold text-content transition hover:border-action hover:bg-surface-soft hover:text-action"
+                    >
+                      <span className="truncate">{item.label}</span>
+                      <ArrowRight className="size-3 text-muted shrink-0 ml-1" />
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-3 border-t border-line/60 pt-2.5">
+                  <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-muted mb-2">
+                    <Folder className="size-3" />
+                    <span>Browse By Main Category</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { name: "Tissue Paper", href: "/shop/tissue-paper-products" },
+                      { name: "Washroom Supplies", href: "/shop/washroom-supplies" },
+                      { name: "Cleaning Products", href: "/shop/cleaning-products" },
+                      { name: "Disposable Items", href: "/shop/disposable-items" },
+                    ].map((cat) => (
+                      <Link
+                        key={cat.name}
+                        href={cat.href}
+                        onClick={() => setSearchFocused(false)}
+                        className="rounded-lg border border-line/70 bg-surface-soft px-2.5 py-1 text-xs font-bold text-accent transition hover:border-action hover:bg-action hover:text-white"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-3 rounded-xl bg-action/5 border border-action/15 px-3 py-2 text-[11px] font-semibold text-action flex items-center justify-between">
+                  <span>⚡ Same-Day Delivery in Lahore • Direct Factory Rates</span>
+                  <Link href="/rate-list" onClick={() => setSearchFocused(false)} className="underline hover:text-action-dark font-bold">
+                    View Rate List →
+                  </Link>
+                </div>
+              </nav>
+            )}
+
             {searchFocused && query.trim().length > 0 && (
               <nav
                 className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-line bg-surface p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.22)] animate-fade-in"
@@ -362,31 +555,47 @@ export function Header() {
           <span className="text-emerald-200 text-[10px] font-bold shrink-0 ml-2">Wholesale Carton Rates 📦</span>
         </div>
 
-        {/* Mobile Search & Cart Bar (Metro-style clean layout with spacious search + cart on right) */}
+        {/* Mobile Search & Cart Bar (Creative layout with animated placeholder + trending chips) */}
         <div className="relative border-b border-line/60 bg-surface px-3 py-2 md:hidden">
           <div className="flex items-center gap-2.5">
             <form onSubmit={submitSearch} role="search" className="relative min-w-0 flex-1">
               <label htmlFor="mobile-site-search" className="sr-only">Search products</label>
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden="true" />
-              <input
-                id="mobile-site-search"
-                aria-label="Search the catalog"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                onFocus={() => setSearchFocused(true)}
-                placeholder="Search products, brands, SKU..."
-                className="h-10 w-full rounded-lg border border-line bg-surface-soft pl-9 pr-7 text-xs font-medium text-accent outline-none transition placeholder:text-muted focus:border-focus focus:ring-2 focus:ring-focus shadow-2xs"
-              />
-              {query && (
-                <button
-                  type="button"
-                  onClick={() => setQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-accent"
-                  aria-label="Clear search"
-                >
-                  <X className="size-3.5" />
-                </button>
-              )}
+              <div className="relative flex h-10 w-full items-center rounded-xl border border-action/40 bg-surface-soft/80 shadow-2xs transition-all focus-within:border-action focus-within:ring-2 focus-within:ring-action/20">
+                <Search className="size-4 text-action shrink-0 ml-3 mr-2" aria-hidden="true" />
+                <div className="relative min-w-0 flex-1 h-full flex items-center">
+                  <input
+                    id="mobile-site-search"
+                    aria-label="Search the catalog"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    onFocus={() => setSearchFocused(true)}
+                    autoComplete="off"
+                    className="size-full bg-transparent pr-2 text-xs font-semibold text-accent outline-none placeholder:text-transparent"
+                  />
+                  {!query && (
+                    <span className={`pointer-events-none absolute left-0 text-xs font-medium text-muted transition-all duration-300 truncate pr-2 ${placeholderFading ? "opacity-0 -translate-y-0.5" : "opacity-100 translate-y-0"}`}>
+                      {SEARCH_PLACEHOLDERS[placeholderIndex]}
+                    </span>
+                  )}
+                </div>
+                {query ? (
+                  <button
+                    type="button"
+                    onClick={() => setQuery("")}
+                    className="p-1.5 text-muted hover:text-accent mr-1"
+                    aria-label="Clear search"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="mr-1 rounded-lg bg-action px-2.5 py-1 text-[11px] font-bold text-white shadow-2xs"
+                  >
+                    Go
+                  </button>
+                )}
+              </div>
             </form>
 
             {/* Metro-style Cart Button with Yellow Badge on Right */}
@@ -402,6 +611,27 @@ export function Header() {
                 {itemCount > 99 ? "99+" : itemCount}
               </span>
             </button>
+          </div>
+
+          {/* Mobile Quick Trending Chips */}
+          <div className="mt-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[10px]">
+            <span className="font-extrabold text-action shrink-0 flex items-center gap-0.5">
+              <Sparkles className="size-2.5" />
+              <span>Hot:</span>
+            </span>
+            {TRENDING_SEARCHES.slice(0, 4).map((item) => (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => {
+                  setQuery(item.query);
+                  router.push(`/shop?q=${encodeURIComponent(item.query)}`);
+                }}
+                className="rounded-full border border-line bg-surface-soft px-2 py-0.5 font-semibold text-secondary shrink-0 active:bg-action active:text-white"
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
 
           {/* Mobile Auto-Complete Search Suggestions */}
