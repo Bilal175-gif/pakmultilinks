@@ -195,11 +195,11 @@ export function ProductQuickView({
                   </span>
                 ) : (
                   <>
-                    <span className="text-2xl sm:text-3xl font-extrabold text-content tracking-tight">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[#dc2626] tracking-tight">
                       {formatProductPrice(product)}
                     </span>
                     {hasSale && (
-                      <span className="text-base text-muted line-through">
+                      <span className="text-base text-muted line-through font-semibold">
                         {formatPrice(product.price)}
                       </span>
                     )}

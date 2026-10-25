@@ -12,7 +12,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const populatedCategorySlugs = new Set(
     verifiedProducts.flatMap((product) => [product.categorySlug, product.parentCategorySlug].filter(Boolean)),
   );
-  const routes = ["", "/shop", "/rate-list", "/corporate-orders", "/request-quote", "/about", "/contact", "/faq", "/industries", "/privacy", "/terms", "/returns"];
+  const routes = [
+    "",
+    "/shop",
+    "/faq",
+    "/blog",
+    "/industries",
+    "/rate-list",
+    "/corporate-orders",
+    "/request-quote",
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+    "/returns",
+  ];
   const brandSlugs = getAllBrandSlugs();
 
   return [

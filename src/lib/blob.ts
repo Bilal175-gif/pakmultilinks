@@ -1,5 +1,6 @@
 import { del } from "@vercel/blob";
 import { promises as fs } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 /**
@@ -24,7 +25,7 @@ export function isLocalUploadUrl(url: string): boolean {
 }
 
 /**
- * Deletes one or more images by URL (supports Vercel Blob and local /uploads).
+ * Deletes one or more images by URL (supports Vercel Blob and dev temp uploads).
  * Silently ignores external URLs and deletion failures to avoid blocking
  * the caller (cleanup is best-effort).
  */
@@ -38,17 +39,19 @@ export async function deleteBlobs(urls: string[]): Promise<void> {
     }
   }
 
-  const localUrls = urls.filter(isLocalUploadUrl);
-  for (const localUrl of localUrls) {
-    try {
-      const sanitized = path.normalize(localUrl).replace(/^(\.\.[\/\\])+/, "");
-      const fullPath = path.join(process.cwd(), "public", sanitized);
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-      if (fullPath.startsWith(uploadsDir)) {
-        await fs.unlink(fullPath).catch(() => {});
+  if (process.env.NODE_ENV === "development" && !process.env.VERCEL) {
+    const localUrls = urls.filter(isLocalUploadUrl);
+    const tempBase = path.join(os.tmpdir(), "pakmultilinks-uploads");
+    for (const localUrl of localUrls) {
+      try {
+        const sanitized = path.normalize(localUrl).replace(/^(\.\.[\/\\])+/, "").replace(/^\/?uploads\//, "");
+        const fullPath = path.join(tempBase, sanitized);
+        if (fullPath.startsWith(tempBase)) {
+          await fs.unlink(fullPath).catch(() => {});
+        }
+      } catch (error) {
+        console.error("Local file cleanup failed:", error);
       }
-    } catch (error) {
-      console.error("Local file cleanup failed:", error);
     }
   }
 }

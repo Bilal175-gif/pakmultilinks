@@ -88,7 +88,7 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
             </div>
           ) : (
             <>
-              <p className="text-3xl font-extrabold tracking-[-0.03em] text-accent">
+              <p className="text-3xl font-extrabold tracking-[-0.03em] text-[#dc2626]">
                 {formatProductPrice(product)}
               </p>
               {perPiece != null && product.unitsPerCarton > 1 && (
@@ -99,8 +99,8 @@ export function ProductPurchase({ product }: ProductPurchaseProps) {
               )}
               {hasSale && (
                 <p className="mt-1 text-sm text-muted">
-                  <span className="line-through">{formatPrice(product.price)}</span>{" "}
-                  <span className="ml-1 font-bold text-accent">Sale price</span>
+                  <span className="line-through font-semibold">{formatPrice(product.price)}</span>{" "}
+                  <span className="ml-1 font-bold text-[#dc2626]">Wholesale rate</span>
                 </p>
               )}
             </>

@@ -142,13 +142,36 @@ export function resolvePricingDetails(product: PricingInput): PricingDetails {
 }
 
 /**
- * Formats a monetary value for Pakistani Rupees.
+ * Resolves display prices for storefront product cards.
+ * Returns both regular (strikethrough) and sale (highlighted red) prices.
+ */
+export function getDisplayPrices(product: { price: number; salePrice?: number | null }) {
+  const regular = Number(product.price) || 0;
+  const rawSale = product.salePrice != null ? Number(product.salePrice) : null;
+  if (rawSale != null && Number.isFinite(rawSale) && rawSale > 0 && rawSale < regular) {
+    const sale = Math.round(rawSale * 100) / 100;
+    const reg = Math.round(regular * 100) / 100;
+    return {
+      salePrice: sale,
+      regularPrice: reg,
+      hasSale: true,
+      discountPercent: Math.round(((reg - sale) / reg) * 100),
+    };
+  }
+  const effective = Math.round(regular * 100) / 100;
+  return {
+    salePrice: effective,
+    regularPrice: effective,
+    hasSale: false,
+    discountPercent: 0,
+  };
+}
+
+/**
+ * Formats a monetary value for Pakistani Rupees in standard Rs. X,XXX/- style.
  */
 export function formatPKR(amount: number): string {
-  return new Intl.NumberFormat("en-PK", {
-    style: "currency",
-    currency: "PKR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
+  const rounded = Math.round(Number(amount) || 0);
+  const formatted = new Intl.NumberFormat("en-PK").format(rounded);
+  return `Rs. ${formatted}/-`;
 }

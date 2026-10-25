@@ -62,6 +62,8 @@ export function Footer() {
           title="Information & Orders"
           links={[
             ["Official Rate List 2026", "/rate-list"],
+            ["Frequently Asked Questions", "/faq"],
+            ["Procurement Guides & Blog", "/blog"],
             ["About Our Business", "/about"],
             ["Corporate Orders (B2B)", "/corporate-orders"],
             ["Request a Bulk Quote", "/request-quote"],

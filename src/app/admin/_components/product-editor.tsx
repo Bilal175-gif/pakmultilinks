@@ -95,6 +95,7 @@ export function ProductEditor({
   const [pending, setPending] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
+  const [sessionExpired, setSessionExpired] = useState(false);
   const isEdit = Boolean(product?.id);
 
   const initialUnits = product?.unitsPerCarton && product.unitsPerCarton > 0
@@ -155,12 +156,18 @@ export function ProductEditor({
       );
       const result = await response.json();
       if (!response.ok) {
+        if (response.status === 401) {
+          setSessionExpired(true);
+          throw new Error("Your session expired — sign in again in a new tab, then click 'Save product' to keep your changes.");
+        }
+        setSessionExpired(false);
         throw new Error(
           result.issues?.map((issue: { message: string }) => issue.message).join(" ") ||
             result.error ||
             "Unable to save product.",
         );
       }
+      setSessionExpired(false);
       router.push("/admin/products");
       router.refresh();
     } catch (error) {
@@ -184,10 +191,15 @@ export function ProductEditor({
         const response = await fetch("/api/admin/media", { method: "POST", body: form });
         const result = await response.json();
         if (!response.ok || typeof result.url !== "string") {
+          if (response.status === 401) {
+            setSessionExpired(true);
+            throw new Error("Your session expired — sign in again in a new tab, then retry.");
+          }
           throw new Error(result.error || `Unable to upload ${file.name}.`);
         }
         uploaded.push({ url: result.url, alt: value.name || file.name.replace(/\.[^.]+$/, "") });
       }
+      setSessionExpired(false);
       setValue((current) => ({
         ...current,
         images: [...current.images, ...uploaded].slice(0, 12),
@@ -259,7 +271,24 @@ export function ProductEditor({
         </button>
       </div>
 
-      {message && <p role="alert" className="rounded-xl bg-danger-soft p-4 text-sm text-danger lg:col-span-2">{message}</p>}
+      {sessionExpired ? (
+        <div role="alert" className="flex flex-col gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 lg:col-span-2 sm:flex-row sm:items-center sm:justify-between shadow-xs">
+          <div>
+            <p className="font-bold">Your session expired — sign in again</p>
+            <p className="text-xs text-amber-800 mt-0.5">Your edits and uploaded media are preserved. Open the sign-in page in a new tab, sign in, and then click &ldquo;Save product&rdquo; here.</p>
+          </div>
+          <a
+            href="/admin/login"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center justify-center rounded-lg bg-amber-800 px-3.5 py-1.5 text-xs font-bold text-white transition hover:bg-amber-900 shadow-xs"
+          >
+            Sign in in new tab →
+          </a>
+        </div>
+      ) : message ? (
+        <p role="alert" className="rounded-xl bg-danger-soft p-4 text-sm text-danger lg:col-span-2">{message}</p>
+      ) : null}
 
       <section className={`${panelClass} p-5 sm:p-6 lg:col-start-1`}>
         <h2 className="mb-5 font-bold">Product information</h2>

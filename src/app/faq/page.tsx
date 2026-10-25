@@ -1,122 +1,296 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ChevronRight, HelpCircle, MessageSquare } from "lucide-react";
 
+import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { company } from "@/lib/company";
-import { breadcrumbStructuredData, safeJsonLd } from "@/lib/seo";
-import supportQuestions from "@/lib/support-questions.json";
+import { absoluteUrl, breadcrumbStructuredData, safeJsonLd } from "@/lib/seo";
 
-type SupportQuestion = {
-  id: string;
-  category: string;
-  question: string;
-  answer: string;
-};
-
-const questions = supportQuestions as SupportQuestion[];
-
-const categoryOrder = ["Products", "Product details", "Pricing and wholesale", "Orders and payment", "Delivery and support"];
-
-const grouped = categoryOrder
-  .map((category) => ({ category, items: questions.filter((item) => item.category === category) }))
-  .filter((group) => group.items.length > 0);
-
-const faqDescription =
-  "Answers about wholesale tissue and hygiene supplies, carton pricing, minimum orders, delivery in Lahore and across Pakistan, payment methods and how to order from Pak Multilinks Hygiene.";
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
-  description: faqDescription,
+  title: "Wholesale & Procurement FAQs | Pak Multilinks Lahore",
+  description:
+    "Find answers to common questions about wholesale tissue and hygiene orders, carton quantities, minimum order values, Lahore delivery, and nationwide dispatch.",
   alternates: { canonical: "/faq" },
   openGraph: {
-    title: `Frequently Asked Questions | ${company.name}`,
-    description: faqDescription,
-    url: "/faq",
+    title: "Wholesale & Procurement FAQs | Pak Multilinks Lahore",
+    description:
+      "Find answers to common questions about wholesale tissue and hygiene orders, carton quantities, minimum order values, Lahore delivery, and nationwide dispatch.",
     type: "website",
+    url: "/faq",
+    siteName: company.name,
   },
 };
 
-export const revalidate = 3600;
+const FAQ_DATA = [
+  {
+    question: "What is the minimum order?",
+    answer:
+      "One wholesale carton, or a PKR 5,000 order, whichever applies to the product. Carton quantities and MOQ are shown on every product page.",
+    renderedAnswer: (
+      <p>
+        One wholesale carton, or a PKR 5,000 order, whichever applies to the
+        product. Carton quantities and MOQ are shown on every{" "}
+        <Link href="/shop" className="text-action font-semibold hover:underline">
+          product page
+        </Link>
+        .
+      </p>
+    ),
+  },
+  {
+    question: "Do you sell by carton or by single piece?",
+    answer:
+      "By carton for wholesale. Where a product page shows pieces per carton, the carton price and the per-piece price are both shown.",
+    renderedAnswer: (
+      <p>
+        By carton for wholesale. Where a product page shows pieces per carton,
+        the carton price and the per-piece price are both shown.
+      </p>
+    ),
+  },
+  {
+    question: "How fast is delivery in Lahore?",
+    answer:
+      "Same-day or next-day scheduled delivery across Gulberg, DHA, Bahria Town, Model Town, Johar Town and other commercial zones in Lahore.",
+    renderedAnswer: (
+      <p>
+        Same-day or next-day scheduled delivery across Gulberg, DHA, Bahria
+        Town, Model Town, Johar Town and other commercial zones in Lahore.
+      </p>
+    ),
+  },
+  {
+    question: "Do you deliver outside Lahore?",
+    answer:
+      "Yes, daily cargo and freight dispatch to Karachi, Islamabad, Rawalpindi, Faisalabad, Multan, Sialkot, Peshawar and other cities across Pakistan.",
+    renderedAnswer: (
+      <p>
+        Yes, daily cargo and freight dispatch to Karachi, Islamabad,
+        Rawalpindi, Faisalabad, Multan, Sialkot, Peshawar and other cities
+        across Pakistan.
+      </p>
+    ),
+  },
+  {
+    question: "What payment methods do you accept?",
+    answer:
+      "Cash on Delivery (COD) and direct bank transfer (IBFT). Corporate account terms are available for contract clients.",
+    renderedAnswer: (
+      <p>
+        Cash on Delivery (COD) and direct bank transfer (IBFT). Corporate
+        account terms are available for contract clients per our{" "}
+        <Link href="/terms" className="text-action font-semibold hover:underline">
+          terms of service
+        </Link>
+        .
+      </p>
+    ),
+  },
+  {
+    question: "How do I order on WhatsApp?",
+    answer:
+      "Message +92 300 6917 385 with the product name and carton quantity for an instant carton quotation, packing confirmation and delivery coordination.",
+    renderedAnswer: (
+      <p>
+        Message{" "}
+        <a
+          href="https://wa.me/923006917385"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-action font-bold hover:underline"
+        >
+          +92 300 6917 385
+        </a>{" "}
+        with the product name and carton quantity for an instant carton
+        quotation, packing confirmation and delivery coordination.
+      </p>
+    ),
+  },
+  {
+    question: "Are your products genuine?",
+    answer:
+      "Yes, original sealed factory cartons from brands including Rose Petal, Fine Life, Nozomi and Fresco.",
+    renderedAnswer: (
+      <p>
+        Yes, original sealed factory cartons from brands including Rose Petal,
+        Fine Life, Nozomi and Fresco. For return or exchange details, see our{" "}
+        <Link href="/returns" className="text-action font-semibold hover:underline">
+          return policy
+        </Link>
+        .
+      </p>
+    ),
+  },
+  {
+    question: "Do you offer bulk discounts above 10 cartons?",
+    answer:
+      "Ask on WhatsApp for a bulk quotation for orders above 10 cartons. Do not publish a discount percentage unless I confirm one.",
+    renderedAnswer: (
+      <p>
+        Ask on{" "}
+        <a
+          href="https://wa.me/923006917385?text=Hello%2C%20I%20would%20like%20a%20bulk%20quotation%20for%20an%20order%20above%2010%20cartons."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-action font-bold hover:underline"
+        >
+          WhatsApp (+92 300 6917 385)
+        </a>{" "}
+        for a bulk quotation for orders above 10 cartons.
+      </p>
+    ),
+  },
+  {
+    question: "Where is your shop?",
+    answer:
+      "Shop No LG-9, Rehman Tower, Main Market, Gulberg II, Lahore, Punjab 54000, Pakistan.",
+    renderedAnswer: (
+      <p>
+        Shop No LG-9, Rehman Tower, Main Market, Gulberg II, Lahore, Punjab
+        54000, Pakistan. You can view our map and directions on the{" "}
+        <Link href="/contact" className="text-action font-semibold hover:underline">
+          contact page
+        </Link>
+        .
+      </p>
+    ),
+  },
+  {
+    question: "How do I contact you?",
+    answer:
+      "WhatsApp +92 300 6917 385, email zohair.shah8@gmail.com, or the /contact page.",
+    renderedAnswer: (
+      <p>
+        WhatsApp{" "}
+        <a
+          href="https://wa.me/923006917385"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-action font-bold hover:underline"
+        >
+          +92 300 6917 385
+        </a>
+        , email{" "}
+        <a
+          href="mailto:zohair.shah8@gmail.com"
+          className="text-action font-semibold hover:underline"
+        >
+          zohair.shah8@gmail.com
+        </a>
+        , or visit our{" "}
+        <Link href="/contact" className="text-action font-semibold hover:underline">
+          contact page
+        </Link>
+        .
+      </p>
+    ),
+  },
+];
 
 export default function FaqPage() {
+  const breadcrumbs = breadcrumbStructuredData([
+    { name: "Home", path: "/" },
+    { name: "Frequently Asked Questions", path: "/faq" },
+  ]);
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: questions.map((item) => ({
+    mainEntity: FAQ_DATA.map((item) => ({
       "@type": "Question",
       name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
     })),
   };
 
-  const breadcrumbs = breadcrumbStructuredData([
-    { name: "Home", path: "/" },
-    { name: "FAQs", path: "/faq" },
-  ]);
-
   return (
-    <>
+    <div className="faq-page bg-surface-soft/40 min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd([faqSchema, breadcrumbs]) }}
+        dangerouslySetInnerHTML={{
+          __html: safeJsonLd([breadcrumbs, faqSchema]),
+        }}
       />
 
-      <section className="bg-surface py-12 sm:py-16">
-        <div className="site-shell max-w-4xl">
-          <p className="eyebrow">Help &amp; answers</p>
-          <h1 className="mt-3 text-3xl font-black tracking-[-.035em] text-content sm:text-4xl">
-            Frequently asked questions
-          </h1>
-          <div className="mt-6 space-y-5 text-base leading-8 text-secondary">
-            <p>
-              {company.name} is a wholesale supplier of tissue, washroom and hygiene products based at {company.address}.
-              Everything is supplied by the carton for offices, restaurants, hotels, hospitals, schools and other
-              businesses. Orders can be placed online, on WhatsApp at {company.phone}, or by requesting a bulk quote.
-            </p>
-            <p>
-              Below are the questions customers ask us most, grouped by topic. If your question is not covered, message
-              us on WhatsApp and the sales team will reply with current stock, packing and carton rates.
-            </p>
-          </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/shop" className="commerce-button commerce-button-primary inline-flex items-center">
-              Browse products
-            </Link>
-            <Link href="/request-quote" className="commerce-button commerce-button-secondary inline-flex items-center">
-              Request a bulk quote
-            </Link>
-          </div>
+      {/* Top Breadcrumb */}
+      <div className="border-b border-line bg-surface py-3">
+        <div className="site-shell">
+          <nav aria-label="Breadcrumb">
+            <ol className="flex items-center gap-2 text-xs font-semibold text-muted">
+              <li>
+                <Link href="/" className="hover:text-accent transition">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <ChevronRight className="size-3 text-muted/60" />
+              </li>
+              <li className="text-accent font-bold" aria-current="page">
+                FAQs
+              </li>
+            </ol>
+          </nav>
         </div>
-      </section>
+      </div>
 
-      {grouped.map((group) => (
-        <section key={group.category} className="border-t border-line bg-surface-soft/40 py-10 sm:py-12">
-          <div className="site-shell max-w-4xl">
-            <h2 className="font-serif text-2xl text-content sm:text-3xl">{group.category}</h2>
-            <div className="mt-6 space-y-4">
-              {group.items.map((item) => (
-                <article key={item.id} className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
-                  <h3 className="text-base font-bold text-content">{item.question}</h3>
-                  <p className="mt-2 text-sm leading-7 text-secondary">{item.answer}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      ))}
-
-      <section className="border-t border-line bg-surface py-10 sm:py-12">
-        <div className="site-shell max-w-4xl">
-          <h2 className="font-serif text-2xl text-content sm:text-3xl">Still need help?</h2>
-          <p className="mt-3 text-sm leading-7 text-secondary">
-            Send your product list or bill of quantities on WhatsApp at {company.phone} for an instant carton quotation,
-            or email {company.email}. You can also see confirmed carton rates on the{" "}
-            <Link href="/rate-list" className="font-semibold text-accent hover:underline">
-              official rate list
-            </Link>
-            .
+      {/* Hero Header */}
+      <section className="border-b border-line bg-surface py-10 sm:py-14">
+        <div className="site-shell max-w-4xl text-center sm:text-left">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-action/30 bg-action/10 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-action mb-3">
+            <HelpCircle className="size-3.5" />
+            Support &amp; Ordering Information
+          </span>
+          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-content tracking-tight leading-tight">
+            Frequently Asked Questions
+          </h1>
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-secondary max-w-2xl">
+            Everything you need to know about wholesale carton ordering, minimum quantities,
+            delivery timelines across Lahore, nationwide shipping, and payment terms.
           </p>
         </div>
       </section>
-    </>
+
+      {/* FAQ Accordion Section */}
+      <FaqAccordion
+        faqs={FAQ_DATA.map((item) => ({
+          question: item.question,
+          answer: item.renderedAnswer,
+        }))}
+        className="border-none"
+      />
+
+      {/* Contact Sales Support Banner */}
+      <section className="pb-16 sm:pb-20">
+        <div className="site-shell max-w-4xl">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-5 rounded-3xl border border-action/30 bg-action/5 p-6 sm:p-8 text-center sm:text-left">
+            <div>
+              <div className="flex items-center justify-center sm:justify-start gap-2 text-action font-extrabold text-xs mb-1">
+                <MessageSquare className="size-4" />
+                <span>Still have questions?</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-extrabold text-content">
+                Need customized carton pricing or a formal quotation?
+              </h2>
+              <p className="mt-1 text-xs sm:text-sm text-secondary">
+                Our sales desk is active on WhatsApp for direct carton quotes, delivery coordination, and corporate accounts.
+              </p>
+            </div>
+            <a
+              href="https://wa.me/923006917385?text=Hello%20Pak%20Multilinks%2C%20I%20have%20an%20inquiry%20regarding%20wholesale%20supplies."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-action px-6 text-xs sm:text-sm font-extrabold text-white transition hover:bg-action-hover shadow-xs shrink-0"
+            >
+              <span>Chat on WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

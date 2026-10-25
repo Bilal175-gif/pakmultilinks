@@ -183,9 +183,10 @@ export function ProductsCatalogTable({}: ProductsCatalogTableProps) {
                               <Image
                                 src={item.image}
                                 alt={item.name}
-                                fill
-                                sizes="40px"
-                                className="object-contain"
+                                width={40}
+                                height={40}
+                                loading="lazy"
+                                className="size-full object-contain"
                               />
                             ) : (
                               <div className="grid size-full place-items-center bg-surface-soft text-[9px] font-bold text-muted">
@@ -274,9 +275,10 @@ export function ProductsCatalogTable({}: ProductsCatalogTableProps) {
                         <Image
                           src={item.image}
                           alt={item.name}
-                          fill
-                          sizes="64px"
-                          className="object-contain"
+                          width={64}
+                          height={64}
+                          loading="lazy"
+                          className="size-full object-contain"
                         />
                       ) : (
                         <div className="grid size-full place-items-center bg-surface-soft text-[10px] text-muted">

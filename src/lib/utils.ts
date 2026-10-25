@@ -8,12 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-PK", {
-    style: "currency",
-    currency: "PKR",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(amount);
+  const rounded = Math.round(Number(amount) || 0);
+  const formatted = new Intl.NumberFormat("en-PK").format(rounded);
+  return `Rs. ${formatted}/-`;
 }
 
 export const MINIMUM_ORDER_AMOUNT = 5000;

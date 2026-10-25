@@ -37,13 +37,12 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
 
   return (
     <section className="relative w-full border-b border-line bg-canvas overflow-hidden" aria-label="Featured offers">
-      <h1 className="sr-only">Wholesale tissue &amp; hygiene supplies in Lahore, Pakistan | Pak Multilinks Hygiene</h1>
-      <div className="mx-auto w-full max-w-[1920px]">
+      <div className="mx-auto w-full max-w-[1920px] px-2.5 pt-2 sm:px-0 sm:pt-0">
         <div
           role="region"
           aria-roledescription="carousel"
           aria-label="Current deals"
-          className="deals-slider-viewport relative isolate aspect-[3/4] md:aspect-[1024/434] w-full overflow-hidden bg-surface-soft animate-scale-enter"
+          className="deals-slider-viewport relative isolate aspect-[2.1/1] sm:aspect-[2.3/1] md:aspect-[1024/434] w-full overflow-hidden rounded-xl md:rounded-none bg-surface-soft shadow-xs animate-scale-enter"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}

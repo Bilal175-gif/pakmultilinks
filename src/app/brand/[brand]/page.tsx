@@ -1,9 +1,10 @@
-import { CheckCircle2, ChevronDown, ChevronRight, HelpCircle, Sparkles } from "lucide-react";
+import { CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CatalogExplorer } from "@/components/catalog/catalog-explorer";
+import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { getAllBrandSlugs, getBrandBySlug } from "@/lib/brands";
 import { isDevelopmentProduct, listPublicCategories, listPublicProducts } from "@/lib/catalog-server";
 import { company } from "@/lib/company";
@@ -204,6 +205,7 @@ export default async function BrandLandingPage({ params }: BrandPageProps) {
             initialBrand={brand.name}
             title={`${brand.name} Products & Carton Rates`}
             description={`Explore factory-sealed cartons of ${brand.name} with wholesale pricing, SKU codes, and instant WhatsApp ordering for Lahore.`}
+            hideH1
           />
         </div>
       </section>
@@ -212,37 +214,13 @@ export default async function BrandLandingPage({ params }: BrandPageProps) {
       {brand.faqs.length > 0 && (
         <section className="border-t border-line bg-surface py-12 sm:py-16" id="faq">
           <div className="site-shell max-w-4xl">
-            <div className="mb-8 text-center sm:text-left">
-              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-action mb-1">
-                <HelpCircle className="size-4" />
-                Frequently Asked Questions
-              </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-content">
-                Procurement &amp; Wholesale FAQs for {brand.name}
-              </h2>
-              <p className="mt-1 text-xs sm:text-sm text-secondary">
-                Common questions from office managers, procurement officers, and wholesale buyers in Lahore.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {brand.faqs.map((faq, index) => (
-                <details
-                  key={index}
-                  className="group rounded-2xl border border-line bg-surface-soft p-5 transition hover:border-line-strong open:bg-surface open:shadow-xs"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold text-content text-sm sm:text-base marker:hidden">
-                    <span>{faq.question}</span>
-                    <span className="ml-2 flex size-6 shrink-0 items-center justify-center rounded-full bg-surface transition group-open:rotate-180 border border-line text-muted">
-                      <ChevronDown className="size-4" />
-                    </span>
-                  </summary>
-                  <div className="mt-3.5 border-t border-line/60 pt-3.5 text-xs sm:text-sm leading-relaxed text-secondary">
-                    {faq.answer}
-                  </div>
-                </details>
-              ))}
-            </div>
+            <FaqAccordion
+              faqs={brand.faqs}
+              title={`Procurement & Wholesale FAQs for ${brand.name}`}
+              description="Common questions from office managers, procurement officers, and wholesale buyers in Lahore."
+              eyebrow="Frequently Asked Questions"
+              className="border-none py-0 sm:py-0"
+            />
 
             {/* Need More Assistance Banner */}
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-action/30 bg-action/5 p-6 text-center sm:text-left">
