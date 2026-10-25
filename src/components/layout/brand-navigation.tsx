@@ -31,8 +31,10 @@ export function BrandNavigation({
               <Image
                 src={brand.image}
                 alt={brand.name}
-                fill
-                className="object-contain p-1 transition-transform group-hover:scale-105"
+                width={120}
+                height={120}
+                loading="lazy"
+                className="size-full object-contain p-1 transition-transform group-hover:scale-105"
               />
             </div>
 
@@ -68,9 +70,10 @@ export function BrandNavigation({
             <Image
               src={brand.image}
               alt={brand.name}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-              className="object-contain p-1 transition-transform duration-300 group-hover:scale-110"
+              width={240}
+              height={240}
+              loading="lazy"
+              className="size-full object-contain p-1 transition-transform duration-300 group-hover:scale-110"
             />
           </div>
 

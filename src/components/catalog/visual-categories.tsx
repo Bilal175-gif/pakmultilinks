@@ -12,8 +12,15 @@ export function VisualCategories({ categories, products, compact = false }: {
       const image = categoryArtwork(category, products);
       return <Link key={category.id} href={`/shop/${category.slug}`} className="visual-category focus-ring">
         <span className="visual-category-image">
-          <Image src={image} alt="" fill sizes={compact ? "88px" : "(max-width: 767px) 46vw, 200px"}
-            unoptimized={image.startsWith("https://")} className="object-contain p-2" />
+          <Image
+            src={image}
+            alt=""
+            width={compact ? 88 : 200}
+            height={compact ? 88 : 200}
+            loading="lazy"
+            unoptimized={image.startsWith("https://")}
+            className="size-full object-contain p-2"
+          />
         </span>
         <span className="visual-category-label">{category.name}<ArrowUpRight aria-hidden="true" className="size-4 shrink-0" /></span>
       </Link>;

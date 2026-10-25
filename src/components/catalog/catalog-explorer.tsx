@@ -37,6 +37,7 @@ type CatalogExplorerProps = {
   initialBrand?: string;
   categoryOptions?: Category[];
   hideHero?: boolean;
+  hideH1?: boolean;
 };
 
 const PAGE_SIZE = 24;
@@ -52,6 +53,7 @@ export function CatalogExplorer({
   initialBrand = "",
   categoryOptions = developmentCategories,
   hideHero = false,
+  hideH1,
 }: CatalogExplorerProps) {
   const [search, setSearch] = useState(initialQuery);
   const [category, setCategory] = useState(fixedCategorySlug ?? "");
@@ -338,9 +340,11 @@ export function CatalogExplorer({
     );
   }
 
+  const shouldHideH1 = hideH1 ?? (hideHero || Boolean(fixedCategorySlug) || Boolean(initialBrand));
+
   return (
     <>
-      <h1 className="sr-only">{title}</h1>
+      {!shouldHideH1 && <h1 className="sr-only">{title}</h1>}
 
       <section className="catalog-body bg-surface py-8 sm:py-12">
         <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">

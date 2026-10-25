@@ -18,8 +18,8 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
       <Image
         src="/images/pak-multilinks-logo.png"
         alt="Pak Multilinks Hygiene — Corporate Supplies"
-        width={2039}
-        height={771}
+        width={500}
+        height={189}
         priority
         sizes={compact ? "145px" : light ? "250px" : "220px"}
         className={cn(
@@ -31,8 +31,8 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
       <Image
         src="/images/pak-multilinks-logo-dark.png"
         alt="Pak Multilinks Hygiene — Corporate Supplies"
-        width={2039}
-        height={771}
+        width={500}
+        height={189}
         priority
         sizes={compact ? "145px" : light ? "250px" : "220px"}
         className={cn(

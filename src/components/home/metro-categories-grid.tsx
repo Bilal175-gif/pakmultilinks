@@ -123,10 +123,11 @@ export function MetroCategoriesGrid({
                   <Image
                     src={tile.image}
                     alt={tile.name}
-                    fill
-                    sizes="44px"
+                    width={48}
+                    height={48}
+                    loading="lazy"
                     unoptimized={tile.image.startsWith("https://")}
-                    className="object-contain transition-transform duration-300 group-hover:scale-105"
+                    className="size-full object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
               </div>

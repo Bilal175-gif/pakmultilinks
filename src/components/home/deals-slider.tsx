@@ -37,7 +37,6 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
 
   return (
     <section className="relative w-full border-b border-line bg-canvas overflow-hidden" aria-label="Featured offers">
-      <h1 className="sr-only">Pak Multilinks tissue and hygiene supplies</h1>
       <div className="mx-auto w-full max-w-[1920px] px-2.5 pt-2 sm:px-0 sm:pt-0">
         <div
           role="region"

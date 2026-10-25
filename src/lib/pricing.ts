@@ -148,40 +148,20 @@ export function resolvePricingDetails(product: PricingInput): PricingDetails {
 export function getDisplayPrices(product: { price: number; salePrice?: number | null }) {
   const regular = Number(product.price) || 0;
   const rawSale = product.salePrice != null ? Number(product.salePrice) : null;
-  if (rawSale != null && rawSale > 0 && rawSale < regular) {
-    return {
-      salePrice: rawSale,
-      regularPrice: regular,
-      hasSale: true,
-      discountPercent: Math.round(((regular - rawSale) / regular) * 100),
-    };
-  }
-  if (regular > 0) {
-    let sale = regular;
-    if (regular % 10 === 9) {
-      sale = regular;
-    } else if (regular % 100 === 0 || regular % 50 === 0 || regular % 10 === 0) {
-      sale = regular - 1;
-    } else if (regular % 5 === 0) {
-      sale = Math.floor(regular / 10) * 10 + 9;
-      if (sale >= regular) sale = regular - 6;
-    } else {
-      sale = Math.floor(regular / 10) * 10 + 9;
-      if (sale >= regular) sale = regular - 1;
-    }
-    const markup = Math.max(10, Math.round(sale * 0.12));
-    const reg = Math.ceil((sale + markup) / 10) * 10;
-    const finalReg = Math.max(reg, sale + 10);
+  if (rawSale != null && Number.isFinite(rawSale) && rawSale > 0 && rawSale < regular) {
+    const sale = Math.round(rawSale * 100) / 100;
+    const reg = Math.round(regular * 100) / 100;
     return {
       salePrice: sale,
-      regularPrice: finalReg,
+      regularPrice: reg,
       hasSale: true,
-      discountPercent: Math.round(((finalReg - sale) / finalReg) * 100),
+      discountPercent: Math.round(((reg - sale) / reg) * 100),
     };
   }
+  const effective = Math.round(regular * 100) / 100;
   return {
-    salePrice: 0,
-    regularPrice: 0,
+    salePrice: effective,
+    regularPrice: effective,
     hasSale: false,
     discountPercent: 0,
   };

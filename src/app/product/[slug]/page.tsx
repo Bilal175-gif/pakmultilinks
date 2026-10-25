@@ -6,10 +6,12 @@ import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/catalog/product-card";
 import { ProductGallery } from "@/components/catalog/product-gallery";
 import { ProductPurchase } from "@/components/catalog/product-purchase";
+import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { getPrice, products as developmentProducts } from "@/lib/catalog";
 import { getPublicProduct, isDevelopmentProduct, listPublicProducts } from "@/lib/catalog-server";
 import { breadcrumbStructuredData, cleanDescription, getSiteOrigin, safeJsonLd } from "@/lib/seo";
-import { formatProductPrice, minimumCartons } from "@/lib/utils";
+import type { Product } from "@/lib/types";
+import { formatPrice, formatProductPrice, getPerPiecePrice, minimumCartons } from "@/lib/utils";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -56,6 +58,42 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
           "product:price:currency": "PKR",
         },
   };
+}
+
+function buildProductFaqs(product: Product) {
+  const perPiece = getPerPiecePrice(product);
+  const moq = minimumCartons(product);
+  const unitsText = product.unitsPerCarton > 0 ? `${product.unitsPerCarton} units` : "standard carton packing";
+  const perPieceText = perPiece != null && product.unitsPerCarton > 1 ? ` (approx. ${formatPrice(perPiece)} per piece)` : "";
+
+  return [
+    {
+      question: `What is the wholesale carton price and packing for ${product.name}?`,
+      answer: product.priceOnRequest
+        ? `${product.name} is supplied in factory-sealed wholesale master cartons. Bulk institutional rates and carton pricing are confirmed via official quotation based on volume.`
+        : `The wholesale carton price for ${product.name} is ${formatProductPrice(product)}. Each factory-sealed carton contains ${unitsText}${perPieceText}.`,
+    },
+    {
+      question: `How many pieces or units are in one carton of ${product.name}?`,
+      answer: `${product.name} (SKU: ${product.sku}) contains ${product.unitsPerCarton > 0 ? `${product.unitsPerCarton} pieces` : "standard manufacturer carton packaging"} per master carton. All cartons are dispatched in sealed original condition.`,
+    },
+    {
+      question: `Can I order ${product.name} for delivery in Lahore?`,
+      answer: `Yes, we provide scheduled same-day or next-day delivery for ${product.name} across Gulberg, DHA, Bahria Town, Model Town, Johar Town, and all commercial zones in Lahore.`,
+    },
+    {
+      question: `What is the minimum order quantity (MOQ) for ${product.name}?`,
+      answer: `The minimum order quantity for ${product.name} is ${moq} wholesale carton${moq > 1 ? "s" : ""} (or a cumulative order value of PKR 5,000 across our catalog).`,
+    },
+    {
+      question: "How fast is delivery for bulk orders across Lahore and nationwide?",
+      answer: "Deliveries within Lahore are completed same-day or next-day. For shipments to Karachi, Islamabad, Rawalpindi, Faisalabad, Multan, Sialkot, Peshawar, and other cities, dispatch is handled daily via cargo and freight services.",
+    },
+    {
+      question: `How can I place an order for ${product.name} via WhatsApp?`,
+      answer: `Send a message to +92 300 6917 385 with your required carton quantity of ${product.name} (SKU: ${product.sku}) to receive an instant carton quotation, stock availability, and delivery coordination.`,
+    },
+  ];
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -113,6 +151,21 @@ export default async function ProductPage({ params }: ProductPageProps) {
     { name: product.category, path: `/shop/${product.categorySlug}` },
     { name: product.name, path: `/product/${product.slug}` },
   ]);
+
+  const productFaqs = buildProductFaqs(product);
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: productFaqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+
   const developmentProduct = isDevelopmentProduct(product);
 
   return (
@@ -121,7 +174,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: safeJsonLd([structuredData, breadcrumbData]),
+            __html: safeJsonLd([structuredData, breadcrumbData, faqSchema]),
           }}
         />
       )}
@@ -265,6 +318,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </dl>
           </div>
         </section>
+
+        {/* Product Frequently Asked Questions */}
+        <FaqAccordion
+          faqs={productFaqs}
+          title={`Frequently Asked Questions About ${product.name}`}
+          description="Common questions about carton packaging, minimum order quantities, and delivery in Lahore."
+          eyebrow="Product FAQs"
+          className="mt-14 rounded-3xl border border-line p-6 sm:p-10"
+        />
 
         {relatedProducts.length > 0 && (
           <section className="mt-16" aria-labelledby="related-products-heading">

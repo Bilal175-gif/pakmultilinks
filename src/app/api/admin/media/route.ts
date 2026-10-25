@@ -58,6 +58,19 @@ async function saveDevTempMedia(scope: string, filename: string, bytes: Uint8Arr
   return `/uploads/${scope}/${filename}`;
 }
 
+function slugifyFileName(rawName: string, ext: string): string {
+  const base = rawName
+    .replace(/\.[^/.]+$/, "")
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  const cleanBase = base || "product-image";
+  return `${cleanBase}.${ext}`;
+}
+
 export async function POST(request: NextRequest) {
   if (!(await requireAdminRequest(request))) {
     return jsonError("Administrator access required.", 401);
@@ -86,7 +99,7 @@ export async function POST(request: NextRequest) {
     const scope = typeof rawScope === "string" && ["deals", "products", "categories", "brands"].includes(rawScope)
       ? rawScope
       : "products";
-    const filename = `${randomUUID()}.${detected.ext}`;
+    const filename = slugifyFileName(file.name, detected.ext);
 
     let url: string;
 
@@ -95,6 +108,7 @@ export async function POST(request: NextRequest) {
         const blob = await put(`${scope}/${filename}`, Buffer.from(bytes), {
           access: "public",
           contentType: detected.mime,
+          addRandomSuffix: true,
         });
         url = blob.url;
       } catch (blobError) {

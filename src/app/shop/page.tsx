@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 import { brandNameToSlug, getBrandBySlug } from "@/lib/brands";
 import { CatalogExplorer } from "@/components/catalog/catalog-explorer";
@@ -75,9 +77,49 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     },
   ];
 
+  const pageTitle = brandParam
+    ? `${brandParam} Products & Wholesale Rates`
+    : query
+    ? `Products matching “${query}”`
+    : "Wholesale Hygiene Supplies & Products";
+
+  const pageDescription = brandParam
+    ? `Explore official wholesale carton rates, specifications and bulk stock for ${brandParam} in Lahore.`
+    : query
+    ? `Search results for “${query}” across our wholesale hygiene, washroom, and cleaning products catalog.`
+    : "Browse wholesale hygiene, washroom, tissue, and cleaning supplies supplied by the carton. Guaranteed factory packaging, transparent rates, and fast delivery in Lahore.";
+
   return (
-    <>
+    <div className="shop-page bg-surface-soft/40 min-h-screen">
       {!query && indexableProducts.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(structuredData) }} />}
+
+      {/* Visible Shop Hero Header */}
+      <section className="border-b border-line bg-surface py-8 sm:py-12">
+        <div className="site-shell max-w-5xl">
+          <nav className="mb-3 flex items-center gap-2 text-xs font-semibold text-muted" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-accent transition">
+              Home
+            </Link>
+            <ChevronRight className="size-3 text-muted/60" />
+            <span className="text-accent font-bold" aria-current="page">
+              Shop
+            </span>
+            {brandParam && (
+              <>
+                <ChevronRight className="size-3 text-muted/60" />
+                <span className="text-accent font-bold">{brandParam}</span>
+              </>
+            )}
+          </nav>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-extrabold text-content tracking-tight leading-tight">
+            {pageTitle}
+          </h1>
+          <p className="mt-3 text-sm sm:text-base leading-relaxed text-secondary max-w-3xl">
+            {pageDescription}
+          </p>
+        </div>
+      </section>
+
       <CatalogExplorer
         key={`${query}-${categoryParam}-${brandParam}`}
         products={products}
@@ -85,9 +127,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         initialQuery={query}
         fixedCategorySlug={categoryParam}
         initialBrand={brandParam}
-        title={brandParam ? `${brandParam} Products & Rates` : query ? `Products matching “${query}”` : "Shop all products"}
-        description={brandParam ? `Explore official wholesale carton rates, specifications and bulk stock for ${brandParam}.` : query ? "Refine the results by category, brand, price or availability." : "Browse wholesale hygiene products supplied in cartons. Packing and pricing are confirmed before fulfilment."}
+        title={pageTitle}
+        description={pageDescription}
+        hideH1
       />
-    </>
+    </div>
   );
 }

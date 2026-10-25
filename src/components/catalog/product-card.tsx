@@ -87,15 +87,11 @@ export function ProductCard({
           <Image
             src={displayImage}
             alt={product.imageAlt || product.name}
-            fill
+            width={400}
+            height={400}
             priority={priority}
             loading={priority ? "eager" : "lazy"}
-            sizes={
-              layout === "list"
-                ? "(max-width: 767px) 112px, 230px"
-                : "(max-width: 640px) 92vw, (max-width: 1024px) 33vw, 280px"
-            }
-            className="object-contain p-2 sm:p-2.5 transition duration-300 group-hover:scale-105"
+            className="size-full object-contain p-2 sm:p-2.5 transition duration-300 group-hover:scale-105"
           />
         ) : (
           <ProductMediaPlaceholder />
