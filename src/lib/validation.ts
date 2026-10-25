@@ -66,6 +66,7 @@ export const accountAddressSchema = z.object({
 
 const orderItemSchema = z.object({
   productId: z.string().trim().min(1).max(80),
+  variantId: z.string().trim().max(80).optional(),
   quantity: z.coerce.number().int().min(1).max(10_000),
 });
 
@@ -118,6 +119,20 @@ const slug = z.string().trim().toLowerCase().min(2).max(120).regex(/^[a-z0-9]+(?
 const urlOrPath = z.string().trim().max(500).refine((v) => v.startsWith("/") || /^https:\/\//.test(v), "Use an HTTPS URL or local path");
 const httpsUrl = z.string().trim().url().max(500).refine((value) => value.startsWith("https://"), "Use an HTTPS URL");
 
+export const productVariantInputSchema = z.object({
+  id: z.string().trim().max(80).optional(),
+  label: text(1, 80),
+  sku: z.string().trim().toUpperCase().min(1).max(80).regex(/^[A-Z0-9._-]+$/),
+  price: z.coerce.number().nonnegative().max(100_000_000).multipleOf(0.01),
+  salePrice: z.coerce.number().nonnegative().max(100_000_000).multipleOf(0.01).nullable().optional(),
+  unitsPerCarton: z.coerce.number().int().min(0).max(1_000_000).default(1),
+  minimumOrderCartons: z.coerce.number().int().min(1).max(100_000).default(1),
+  stock: z.coerce.number().int().min(0).max(10_000_000).default(0),
+  imageUrl: urlOrPath.nullable().optional(),
+  sortOrder: z.coerce.number().int().default(0),
+  isActive: z.boolean().default(true),
+});
+
 export const productInputSchema = z
   .object({
     name: text(2, 160),
@@ -141,6 +156,7 @@ export const productInputSchema = z
     brandId: z.string().min(1).max(80).nullable().optional(),
     images: z.array(z.object({ url: urlOrPath, alt: optionalText(160) })).max(12).default([]),
     attributes: z.array(z.object({ name: text(1, 80), value: text(1, 240) })).max(30).default([]),
+    variants: z.array(productVariantInputSchema).max(50).default([]),
   })
   .refine((data) => data.salePrice == null || data.salePrice <= data.price, {
     path: ["salePrice"],

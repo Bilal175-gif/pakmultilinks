@@ -76,7 +76,11 @@ export function CheckoutForm() {
     const payload = {
       customer,
       paymentMethod,
-      items: cart.map(({ product, quantity }) => ({ productId: product.id, quantity })),
+      items: cart.map(({ product, quantity, variantId }) => ({
+        productId: product.id,
+        variantId: variantId || undefined,
+        quantity,
+      })),
     };
 
     setSubmitting(true);
@@ -263,12 +267,23 @@ export function CheckoutForm() {
       <aside className="rounded-3xl border border-line bg-surface p-6 shadow-sm lg:sticky lg:top-28">
         <h2 className="text-xl font-bold text-content">Review order</h2>
         <ul className="mt-5 space-y-4 border-b border-line pb-5">
-          {cart.map(({ product, quantity }) => (
-            <li key={product.id} className="flex justify-between gap-4 text-sm">
-              <span className="text-secondary"><span className="font-medium text-content">{product.name}</span> × {quantity} carton{quantity === 1 ? "" : "s"}</span>
-              <span className="shrink-0 font-semibold text-content">{product.priceOnRequest ? "Quote required" : formatPrice((product.salePrice ?? product.price) * quantity)}</span>
-            </li>
-          ))}
+          {cart.map(({ product, quantity, variantId, variantLabel, variantPrice }) => {
+            const unitPrice = variantPrice ?? (product.salePrice ?? product.price);
+            return (
+              <li key={`${product.id}:${variantId || ""}`} className="flex justify-between gap-4 text-sm">
+                <span className="text-secondary">
+                  <span className="font-medium text-content">{product.name}</span>
+                  {variantLabel && (
+                    <span className="ml-1 text-xs font-semibold text-accent">({variantLabel})</span>
+                  )}
+                  {" "}× {quantity} carton{quantity === 1 ? "" : "s"}
+                </span>
+                <span className="shrink-0 font-semibold text-content">
+                  {product.priceOnRequest ? "Quote required" : formatPrice(unitPrice * quantity)}
+                </span>
+              </li>
+            );
+          })}
         </ul>
         <dl className="mt-5 space-y-4 text-sm">
           <div className="flex justify-between gap-3"><dt className="text-secondary">Carton pricing</dt><dd className="font-bold text-content">{hasQuotePricing ? "Final quote required" : formatPrice(subtotal)}</dd></div>

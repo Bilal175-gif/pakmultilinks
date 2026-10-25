@@ -14,6 +14,21 @@ export type Category = {
   updatedAt?: string;
 };
 
+export type ProductVariant = {
+  id: string;
+  productId: string;
+  label: string;
+  sku: string;
+  price: number;
+  salePrice?: number;
+  unitsPerCarton: number;
+  minimumOrderCartons: number;
+  stock: number;
+  imageUrl?: string;
+  sortOrder: number;
+  isActive: boolean;
+};
+
 export type Product = {
   id: string;
   slug: string;
@@ -41,11 +56,17 @@ export type Product = {
   gallery: string[];
   updatedAt?: string;
   attributes: ProductAttribute[];
+  variants?: ProductVariant[];
 };
 
 export type CartItem = {
   product: Product;
   quantity: number;
+  variantId?: string;
+  variantLabel?: string;
+  variantSku?: string;
+  variantPrice?: number;
+  variantUnitsPerCarton?: number;
 };
 
 export type OrderStatus =

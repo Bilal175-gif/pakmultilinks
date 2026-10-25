@@ -57,8 +57,24 @@ export async function PATCH(request: NextRequest, context: Context) {
         brandId: data.brandId || null,
         images: { deleteMany: {}, create: data.images.map((image, sortOrder) => ({ ...image, alt: image.alt || null, sortOrder })) },
         attributes: { deleteMany: {}, create: data.attributes.map((attribute, sortOrder) => ({ ...attribute, sortOrder })) },
+        ...(data.variants ? {
+          variants: {
+            deleteMany: {},
+            create: data.variants.map((v, idx) => ({
+              label: v.label,
+              sku: v.sku,
+              price: v.price,
+              unitsPerCarton: v.unitsPerCarton ?? 1,
+              stock: v.stock ?? 0,
+              minimumOrderCartons: v.minimumOrderCartons ?? 1,
+              imageUrl: v.imageUrl || null,
+              sortOrder: v.sortOrder ?? idx,
+              isActive: v.isActive ?? true,
+            })),
+          },
+        } : {}),
       },
-      include: { category: true, brand: true, images: true, attributes: true },
+      include: { category: true, brand: true, images: true, attributes: true, variants: true },
     });
     // Best-effort cleanup of orphaned Vercel Blob images
     const removedUrls = oldImageUrls.filter((url) => !newImageUrls.includes(url));

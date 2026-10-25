@@ -37,6 +37,24 @@ const publicProductSelect = {
     orderBy: { sortOrder: "asc" as const },
     select: { name: true, value: true },
   },
+  variants: {
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" as const },
+    select: {
+      id: true,
+      productId: true,
+      label: true,
+      sku: true,
+      price: true,
+      salePrice: true,
+      unitsPerCarton: true,
+      minimumOrderCartons: true,
+      stock: true,
+      imageUrl: true,
+      sortOrder: true,
+      isActive: true,
+    },
+  },
 } satisfies Prisma.ProductSelect;
 
 type PublicProductRow = Prisma.ProductGetPayload<{
@@ -176,6 +194,20 @@ function mapProduct(row: PublicProductRow): Product {
     gallery: images,
     updatedAt: row.updatedAt.toISOString(),
     attributes: row.attributes,
+    variants: row.variants?.map((v) => ({
+      id: v.id,
+      productId: v.productId,
+      label: v.label,
+      sku: v.sku,
+      price: Number(v.price),
+      salePrice: v.salePrice == null ? undefined : Number(v.salePrice),
+      unitsPerCarton: v.unitsPerCarton,
+      minimumOrderCartons: v.minimumOrderCartons,
+      stock: v.stock,
+      imageUrl: v.imageUrl || undefined,
+      sortOrder: v.sortOrder,
+      isActive: v.isActive,
+    })) || [],
   };
 }
 

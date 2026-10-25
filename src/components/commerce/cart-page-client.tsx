@@ -50,26 +50,39 @@ export function CartPageClient() {
           </h2>
         </div>
         <ul className="divide-y divide-line">
-          {cart.map(({ product, quantity }) => {
-            const max = product.allowBackorder ? undefined : product.stock;
-            const atLimit = typeof max === "number" && quantity >= max;
-            const perPiece = getPerPiecePrice(product);
+          {cart.map((item) => {
+            const { product, quantity, variantId, variantLabel, variantSku, variantPrice, variantUnitsPerCarton } = item;
+            const stockLimit = product.allowBackorder ? undefined : product.stock;
+            const atLimit = typeof stockLimit === "number" && quantity >= stockLimit;
+            const unitPrice = variantPrice ?? getPrice(product);
+            const lineTotal = product.priceOnRequest ? null : unitPrice * quantity;
+            const itemKey = `${product.id}:${variantId || ""}`;
+            const packingText = variantUnitsPerCarton ? `${variantUnitsPerCarton} units per carton` : cartonPacking(product);
+            const skuText = variantSku || product.sku;
+            const perPiece = (variantPrice && variantUnitsPerCarton && variantUnitsPerCarton > 0)
+              ? Math.round(variantPrice / variantUnitsPerCarton)
+              : getPerPiecePrice(product);
 
             return (
-              <li key={product.id} className="cart-item p-5 sm:p-7">
+              <li key={itemKey} className="cart-item p-5 sm:p-7">
                 <div className="flex gap-4 sm:gap-6">
-                  <Link href={`/product/${product.slug}`} className="relative size-24 shrink-0 overflow-hidden rounded-2xl bg-accent-soft sm:size-32">
+                  <Link href={`/product/${product.slug}${variantSku ? `?variant=${variantSku.toLowerCase()}` : ""}`} className="relative size-24 shrink-0 overflow-hidden rounded-2xl bg-accent-soft sm:size-32">
                     {product.image ? <Image src={product.image} alt={product.imageAlt || product.name} fill unoptimized sizes="128px" className="object-contain p-3" /> : <ProductMediaPlaceholder compact />}
                   </Link>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase tracking-wide text-accent">{product.category}</p>
-                    <Link href={`/product/${product.slug}`} className="mt-1 block font-bold text-content hover:text-accent">
+                    <Link href={`/product/${product.slug}${variantSku ? `?variant=${variantSku.toLowerCase()}` : ""}`} className="mt-1 block font-bold text-content hover:text-accent">
                       {product.name}
+                      {variantLabel && (
+                        <span className="ml-2 inline-flex items-center rounded-md border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-extrabold text-[#dc2626] dark:border-red-900/60 dark:bg-red-950/40">
+                          {variantLabel}
+                        </span>
+                      )}
                     </Link>
-                    <p className="mt-1 text-sm text-muted">SKU: {product.sku}</p>
-                    <p className="mt-2 text-xs font-semibold text-accent">{cartonPacking(product)}</p>
+                    <p className="mt-1 text-sm text-muted">SKU: {skuText}</p>
+                    <p className="mt-2 text-xs font-semibold text-accent">{packingText}</p>
                     <div className="mt-2 flex flex-wrap items-baseline gap-2">
-                      <span className="font-bold text-content">{formatProductPrice(product)}</span>
+                      <span className="font-bold text-content">{product.priceOnRequest ? "Quote on request" : formatPrice(unitPrice)}</span>
                       {perPiece != null && (
                         <span className="rounded-md border border-red-300 bg-red-100/90 px-2 py-0.5 text-[11px] font-black text-red-950 dark:border-red-600 dark:bg-red-950 dark:text-red-100">
                           {formatPiecePrice(perPiece)}
@@ -78,7 +91,7 @@ export function CartPageClient() {
                     </div>
                   </div>
                   <p className="hidden text-right font-bold text-content sm:block">
-                    {product.priceOnRequest ? "Quoted after review" : formatPrice(getPrice(product) * quantity)}
+                    {product.priceOnRequest ? "Quoted after review" : formatPrice(lineTotal ?? 0)}
                   </p>
                 </div>
                 <div className="mt-5 flex flex-wrap items-center justify-between gap-4 pl-0 sm:pl-[9.5rem]">
@@ -86,26 +99,26 @@ export function CartPageClient() {
                     <QuantitySelector
                       value={quantity}
                       min={minimumCartons(product)}
-                      max={max}
+                      max={stockLimit}
                       label={`${product.name} cartons`}
-                      onChange={(next) => updateQuantity(product.id, next)}
+                      onChange={(next) => updateQuantity(product.id, next, variantId)}
                     />
                     {atLimit && !product.allowBackorder ? (
                       <p className="mt-2 text-xs font-medium text-warning" role="status">
-                        Maximum available stock ({product.stock} cartons) reached.
+                        Maximum available stock reached.
                       </p>
                     ) : null}
                   </div>
                   <button
                     type="button"
-                    onClick={() => removeFromCart(product.id)}
+                    onClick={() => removeFromCart(product.id, variantId)}
                     className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-danger transition hover:bg-danger-soft"
                     aria-label={`Remove ${product.name} from cart`}
                   >
                     <Trash2 aria-hidden="true" className="size-4" /> Remove
                   </button>
                   <p className="w-full text-right font-bold text-content sm:hidden">
-                    {product.priceOnRequest ? "Quoted after review" : formatPrice(getPrice(product) * quantity)}
+                    {product.priceOnRequest ? "Quoted after review" : formatPrice(lineTotal ?? 0)}
                   </p>
                 </div>
               </li>

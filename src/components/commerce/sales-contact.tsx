@@ -30,12 +30,13 @@ export function useSalesContactNumber() {
   return useContext(SalesContactContext);
 }
 
-export function SalesContactLink({ product, quantity, children = "WhatsApp to order", className = "" }: {
-  product?: Product; quantity?: number; children?: ReactNode; className?: string;
+export function SalesContactLink({ product, quantity, variantLabel, children = "WhatsApp to order", className = "" }: {
+  product?: Product; quantity?: number; variantLabel?: string; children?: ReactNode; className?: string;
 }) {
   const number = useContext(SalesContactContext);
+  const title = product ? (variantLabel ? `${product.name} — ${variantLabel}` : product.name) : "";
   const message = product
-    ? `Hello Pak Multilinks, I’m interested in ${product.name} (SKU: ${product.sku}). Quantity: ${quantity ?? minimumCartons(product)} carton(s). Please confirm price, packing, availability and delivery.`
+    ? `Hello Pak Multilinks, I’m interested in ${title} (SKU: ${product.sku}). Quantity: ${quantity ?? minimumCartons(product)} carton(s). Please confirm price, packing, availability and delivery.`
     : "Hello Pak Multilinks, I’d like to discuss products and bulk pricing. Please help me place an order.";
   return <a href={`https://wa.me/${number}?text=${encodeURIComponent(message)}`} target="_blank" rel="noreferrer"
     onClick={event => {
@@ -43,7 +44,7 @@ export function SalesContactLink({ product, quantity, children = "WhatsApp to or
       const url = product ? new URL(`/product/${product.slug}`, window.location.origin).href : window.location.href;
       event.currentTarget.href = `https://wa.me/${number}?text=${encodeURIComponent(`${message}\n${url}`)}`;
     }}
-    className={className} aria-label={product ? `WhatsApp about ${product.name}` : undefined}>
+    className={className} aria-label={product ? `WhatsApp about ${title}` : undefined}>
     <MessageCircle className="size-4 shrink-0" aria-hidden="true" />{children}
   </a>;
 }
