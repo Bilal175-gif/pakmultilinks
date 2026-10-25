@@ -15,7 +15,7 @@ export const BRAND_DATA: Record<string, BrandInfo> = {
     slug: "rose-petal",
     name: "Rose Petal",
     tagline: "Pakistan's #1 Tissue & Hygiene Brand",
-    metaTitle: "Rose Petal Wholesale Supplies & Carton Rates in Lahore | Pak Multilinks",
+    metaTitle: "Rose Petal Wholesale Supplies & Carton Rates in Lahore",
     metaDescription: "Buy original Rose Petal tissues, kitchen towels, napkins, and toilet rolls in bulk cartons at wholesale prices in Lahore. Fast delivery & GST invoicing.",
     introHeading: "Official Rose Petal Wholesale Supplies & Carton Rates in Lahore",
     introParagraphs: [
@@ -56,7 +56,7 @@ export const BRAND_DATA: Record<string, BrandInfo> = {
     slug: "nozomi",
     name: "Nozomi",
     tagline: "Commercial Grade Pure Soft Tissues",
-    metaTitle: "Nozomi Tissues Wholesale Carton Rates Lahore | Pak Multilinks",
+    metaTitle: "Nozomi Tissues Wholesale Carton Rates Lahore",
     metaDescription: "Order Nozomi commercial pop-up tissues, facial boxes, and soft packs in bulk cartons at direct wholesale rates in Lahore. Fast delivery & bulk discounts.",
     introHeading: "Nozomi Commercial Tissues Wholesale Supply in Lahore",
     introParagraphs: [
@@ -93,7 +93,7 @@ export const BRAND_DATA: Record<string, BrandInfo> = {
     slug: "fine-life",
     name: "Fine Life",
     tagline: "Everyday Essential Hygiene & Tissues",
-    metaTitle: "Fine Life Tissues Wholesale Rates in Lahore | Pak Multilinks",
+    metaTitle: "Fine Life Tissues Wholesale Rates in Lahore",
     metaDescription: "Wholesale Fine Life facial tissues, soft packs, and kitchen rolls in Lahore. Bulk carton orders, immediate dispatch, and wholesale rates for offices & homes.",
     introHeading: "Fine Life Tissues Wholesale Carton Supplies in Lahore",
     introParagraphs: [
@@ -126,7 +126,7 @@ export const BRAND_DATA: Record<string, BrandInfo> = {
     slug: "fresco",
     name: "Fresco",
     tagline: "Commercial Air Fresheners & Odour Control",
-    metaTitle: "Fresco Air Freshener Sprays Wholesale Lahore | Pak Multilinks",
+    metaTitle: "Fresco Air Freshener Sprays Wholesale Lahore",
     metaDescription: "Buy Fresco automatic spray refills, aerosol air fresheners, and body sprays by the carton at wholesale rates in Lahore. Fast commercial delivery.",
     introHeading: "Fresco Air Fresheners & Aerosol Refills Wholesale in Lahore",
     introParagraphs: [
@@ -159,7 +159,7 @@ export const BRAND_DATA: Record<string, BrandInfo> = {
     slug: "germi-cure",
     name: "Germi Cure",
     tagline: "Hospital Grade Phenyl & Disinfectants",
-    metaTitle: "Germi Cure Disinfectant Phenyl Wholesale in Lahore | Pak Multilinks",
+    metaTitle: "Germi Cure Disinfectant Phenyl Wholesale in Lahore",
     metaDescription: "Wholesale Germi Cure perfumed white phenyl and floor disinfectants in Lahore. High-strength commercial cleaning for hospitals, schools & offices.",
     introHeading: "Germi Cure Disinfectant Phenyl Wholesale Supply in Lahore",
     introParagraphs: [
@@ -186,7 +186,7 @@ export const BRAND_DATA: Record<string, BrandInfo> = {
     slug: "shine-well",
     name: "Shine Well",
     tagline: "Professional Hand Wash & Surface Care",
-    metaTitle: "Shine Well Liquid Hand Wash Wholesale in Lahore | Pak Multilinks",
+    metaTitle: "Shine Well Liquid Hand Wash Wholesale in Lahore",
     metaDescription: "Order Shine Well commercial liquid hand wash and surface care solutions in bulk cartons at wholesale prices in Lahore. Fast commercial delivery.",
     introHeading: "Shine Well Commercial Hand Wash & Cleaning Supplies in Lahore",
     introParagraphs: [
