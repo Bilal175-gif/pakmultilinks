@@ -166,9 +166,9 @@ export function Header() {
 
       <header ref={headerRef} onFocusCapture={() => setHeaderHidden(false)} className={`storefront-header sticky top-0 z-50 border-b border-line bg-surface transition-transform duration-300 ease-out motion-reduce:transition-none ${headerHidden ? "-translate-y-full" : "translate-y-0"}`}>
 
-        <div className="site-shell relative z-30 flex h-[72px] items-center justify-between gap-2 sm:h-20 md:h-[86px] md:gap-3 lg:gap-7">
-          {/* Brand Logo on LEFT (prominent, clear, matching Metro.pk) */}
-          <div className="flex items-center justify-start">
+        <div className="site-shell relative z-30 flex h-[70px] items-center justify-between gap-2 sm:h-20 md:gap-3 lg:gap-7">
+          {/* Brand Logo on LEFT (proportional, clear, matching Metro.pk) */}
+          <div className="flex items-center justify-start shrink-0 py-1">
             <BrandMark />
           </div>
 
