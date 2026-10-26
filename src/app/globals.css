@@ -731,7 +731,7 @@ summary::-webkit-details-marker {
 .admin-workspace .overflow-x-auto { overscroll-behavior-x: contain; }
 .admin-workspace dialog { color: var(--content); }
 @media (max-width: 767px) {
-  .storefront-header .brand-logo { width: clamp(140px, 42vw, 180px); }
+  .storefront-header .brand-logo { width: auto; max-height: 36px; max-width: 140px; }
   .storefront-header .site-shell { gap: 6px; }
   .storefront-header .commerce-icon-button { width: 40px; height: 44px; }
   .storefront-shell :is(input, select, textarea, button, a) { scroll-margin-top: 80px; }
