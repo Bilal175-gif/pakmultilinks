@@ -102,10 +102,7 @@ async function migrateFamily(tx, { masterSlug, masterName, masterSku, sourceSlug
 }
 
 if (!process.env.DATABASE_URL?.trim()) {
-  if (process.env.VERCEL_ENV === 'production') {
-    throw new Error('Production requires DATABASE_URL. Configure it in Vercel before deploying.');
-  }
-  console.log('No database configured; skipping schema migration.');
+  console.warn('⚠️ No database configured; skipping schema migration and continuing with static catalog.');
 } else {
   const db = new PrismaClient();
   try {
