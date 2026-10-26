@@ -91,7 +91,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "product-card group flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/90 dark:border-line bg-white dark:bg-surface p-3 sm:p-3.5 shadow-2xs transition-all duration-200 hover:border-[#17643a] hover:shadow-xs animate-page-enter",
+        "product-card group flex flex-col justify-between overflow-hidden rounded-xl border-0 bg-white dark:bg-surface p-3 sm:p-3.5 shadow-2xs transition-all duration-200 hover:shadow-md animate-page-enter",
         layout === "list" &&
           "product-card-list grid gap-0 sm:grid-cols-[210px_minmax(0,1fr)] lg:grid-cols-[230px_minmax(0,1fr)_220px]",
       )}

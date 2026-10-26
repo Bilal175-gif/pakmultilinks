@@ -42,7 +42,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
           role="region"
           aria-roledescription="carousel"
           aria-label="Current deals"
-          className="deals-slider-viewport relative isolate aspect-[2.1/1] sm:aspect-[2.3/1] md:aspect-[1024/434] w-full overflow-hidden rounded-xl md:rounded-none bg-surface-soft shadow-xs animate-scale-enter"
+          className="deals-slider-viewport relative isolate w-full overflow-hidden rounded-xl md:rounded-none bg-white dark:bg-surface shadow-xs animate-scale-enter"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onFocusCapture={() => setFocused(true)}
@@ -77,9 +77,9 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                 : "pointer-events-none -translate-x-full"
             }`}
           >
-            <div className="relative size-full">
-              {/* Mobile vertical image */}
-              <div className="relative block size-full md:hidden">
+            <div className="relative size-full overflow-hidden bg-white dark:bg-surface">
+              {/* Mobile banner image */}
+              <div className="relative size-full block md:hidden">
                 <Image
                   src={deal.mobileImageUrl || deal.imageUrl}
                   alt={deal.alt}
@@ -89,12 +89,12 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                   fetchPriority={index === 0 ? "high" : "low"}
                   unoptimized
                   sizes="100vw"
-                  className="object-cover object-center"
+                  className="size-full object-cover object-center"
                 />
               </div>
 
-              {/* Desktop horizontal image */}
-              <div className="relative hidden size-full md:block">
+              {/* Desktop banner image */}
+              <div className="relative size-full hidden md:block">
                 <Image
                   src={deal.imageUrl}
                   alt={deal.alt}
@@ -104,7 +104,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                   fetchPriority={index === 0 ? "high" : "low"}
                   unoptimized
                   sizes="(min-width: 768px) 100vw, 1920px"
-                  className="object-cover object-center"
+                  className="size-full object-cover object-center"
                 />
               </div>
             </div>
@@ -116,7 +116,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
         {deals.length > 1 && (
           <>
             <div
-              className="pointer-events-none absolute bottom-2.5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-md shadow-md sm:bottom-4"
+              className="pointer-events-none absolute bottom-2.5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 backdrop-blur-md shadow-md sm:bottom-4"
               aria-label="Offer controls"
             >
               {deals.map((deal, index) => (
@@ -141,7 +141,7 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
               ))}
             </div>
 
-            {/* Side Chevrons - available on both mobile and desktop */}
+            {/* Metro-style direct white Chevrons matching Metro.pk */}
             <button
               type="button"
               onClick={(e) => {
@@ -150,9 +150,9 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                 select(active - 1);
               }}
               aria-label="Previous offer"
-              className="focus-ring absolute left-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md transition hover:bg-black/60 sm:left-3 sm:size-10"
+              className="absolute left-1 sm:left-4 top-1/2 z-20 -translate-y-1/2 p-1.5 sm:p-2 text-white/90 hover:text-white hover:scale-110 active:scale-95 transition-all drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] focus:outline-none"
             >
-              <ChevronLeft className="size-4 sm:size-5" />
+              <ChevronLeft className="size-7 sm:size-11" strokeWidth={2.5} />
             </button>
             <button
               type="button"
@@ -162,9 +162,9 @@ export function DealsSlider({ deals }: { deals: PublicDealBanner[] }) {
                 select(active + 1);
               }}
               aria-label="Next offer"
-              className="focus-ring absolute right-2 top-1/2 z-20 grid size-8 -translate-y-1/2 place-items-center rounded-full bg-black/35 text-white backdrop-blur-md transition hover:bg-black/60 sm:right-3 sm:size-10"
+              className="absolute right-1 sm:right-4 top-1/2 z-20 -translate-y-1/2 p-1.5 sm:p-2 text-white/90 hover:text-white hover:scale-110 active:scale-95 transition-all drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] focus:outline-none"
             >
-              <ChevronRight className="size-4 sm:size-5" />
+              <ChevronRight className="size-7 sm:size-11" strokeWidth={2.5} />
             </button>
           </>
         )}

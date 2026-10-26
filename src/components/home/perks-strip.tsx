@@ -53,7 +53,7 @@ export function PerksStrip() {
             );
 
             const className =
-              "flex items-center gap-3 rounded-xl border border-line bg-surface px-3.5 py-3 shadow-2xs transition hover:border-line-strong hover:bg-surface-soft";
+              "flex items-center gap-3 rounded-xl border-0 bg-surface px-3.5 py-3 shadow-2xs transition hover:shadow-sm hover:bg-surface-soft";
 
             if (perk.href) {
               if (perk.external) {

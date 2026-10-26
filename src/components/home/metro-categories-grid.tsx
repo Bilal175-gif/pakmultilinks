@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useMemo } from "react";
 import type { Category, Product } from "@/lib/types";
-import { categoryArtwork } from "@/lib/catalog-visuals";
 import { cn } from "@/lib/utils";
 
 interface MetroCategoriesGridProps {
@@ -16,67 +15,55 @@ interface MetroCategoriesGridProps {
 interface CategoryTile {
   slug: string;
   name: string;
-  badge?: string;
   image: string;
 }
 
-const STATIC_METRO_TILES: Omit<CategoryTile, "image">[] = [
-  { slug: "tissue-paper-products", name: "Tissue & Paper", badge: "20% OFF" },
-  { slug: "washroom-supplies", name: "Washroom", badge: "15% OFF" },
-  { slug: "cleaning-products", name: "Cleaning", badge: "25% OFF" },
-  { slug: "garbage-bags", name: "Garbage Bags", badge: "18% OFF" },
-  { slug: "dispensers", name: "Dispensers", badge: "HOT" },
-  { slug: "cleaning-tools", name: "Mops & Tools", badge: "BULK" },
-  { slug: "soaps-sanitizers", name: "Soaps & Care", badge: "12% OFF" },
-  { slug: "wet-wipes-fresheners", name: "Air Fresheners", badge: "10% OFF" },
-  { slug: "all", name: "All Products", badge: "WHOLESALE" },
+// Curated high-resolution authentic product photography for prominent category tiles
+const CATEGORY_REAL_IMAGES: Record<string, string> = {
+  "tissue-paper-products": "/rate-products/rose-petal-pop-up.jpg",
+  "washroom-supplies": "/rate-products/germicure-toilet-cleaner.jpg",
+  "cleaning-products": "/rate-products/fresco-dish-wash-liquid.jpg",
+  "garbage-bags": "/images/products/garbage-bags-real.jpg",
+  "dispensers": "/rate-products/fresco-air-freshener-dispenser.jpg",
+  "cleaning-tools": "/images/products/mop-tools-real.jpg",
+  "soaps-sanitizers": "/rate-products/germicure-hand-wash.jpg",
+  "wet-wipes-fresheners": "/rate-products/air-energy-aerosol-refill.jpg",
+  "all": "/images/about-product-range.png",
+};
+
+const STATIC_METRO_TILES = [
+  { slug: "tissue-paper-products", name: "Tissue & Paper" },
+  { slug: "washroom-supplies", name: "Washroom" },
+  { slug: "cleaning-products", name: "Cleaning" },
+  { slug: "garbage-bags", name: "Garbage Bags" },
+  { slug: "dispensers", name: "Dispensers" },
+  { slug: "cleaning-tools", name: "Mops & Tools" },
+  { slug: "soaps-sanitizers", name: "Soaps & Care" },
+  { slug: "wet-wipes-fresheners", name: "Air Fresheners" },
+  { slug: "all", name: "All Products" },
 ];
 
 export function MetroCategoriesGrid({
-  categories,
-  products,
+  categories: _categories,
+  products: _products,
   selectedCategory,
   onSelectCategory,
 }: MetroCategoriesGridProps) {
   const tiles: CategoryTile[] = useMemo(() => {
     return STATIC_METRO_TILES.map((tile) => {
-      if (tile.slug === "all") {
-        return {
-          ...tile,
-          image: "/images/products/tissue.svg",
-        };
-      }
-
-      const foundCat = categories.find(
-        (c) => c.slug === tile.slug || c.id === tile.slug
-      );
-
-      let image = "/images/products/tissue.svg";
-      if (foundCat) {
-        image = categoryArtwork(foundCat, products);
-      } else {
-        // Fallback illustration map
-        if (tile.slug.includes("clean")) image = "/images/products/floor-cleaner.svg";
-        else if (tile.slug.includes("wash") || tile.slug.includes("soap")) image = "/images/products/hand-wash.svg";
-        else if (tile.slug.includes("bag")) image = "/images/products/garbage-bags.svg";
-        else if (tile.slug.includes("mop") || tile.slug.includes("tool")) image = "/images/products/mop.svg";
-        else if (tile.slug.includes("dispens")) image = "/images/products/dispenser.svg";
-        else if (tile.slug.includes("freshen") || tile.slug.includes("spray")) image = "/images/products/spray.svg";
-      }
-
+      const realImage = CATEGORY_REAL_IMAGES[tile.slug] || "/images/products/tissue.svg";
       return {
         slug: tile.slug,
         name: tile.name,
-        badge: tile.badge,
-        image,
+        image: realImage,
       };
     });
-  }, [categories, products]);
+  }, []);
 
   return (
-    <section className="w-full my-2 sm:my-4" aria-label="Shop by category">
-      {/* 3-column Metro-style grid */}
-      <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5">
+    <section className="w-full my-2 sm:my-3.5" aria-label="Shop by category">
+      {/* 3-column prominent picture-only grid */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
         {tiles.map((tile) => {
           const isSelected =
             selectedCategory === tile.slug ||
@@ -86,51 +73,33 @@ export function MetroCategoriesGrid({
             <button
               key={tile.slug}
               type="button"
+              title={tile.name}
+              aria-label={tile.name}
               onClick={() => onSelectCategory(tile.slug)}
               className={cn(
-                "group relative flex flex-col justify-between h-[70px] sm:h-[82px] p-1.5 sm:p-2 rounded-lg bg-white dark:bg-surface border text-left transition-all duration-200 active:scale-[0.98] shadow-2xs hover:shadow-xs overflow-hidden",
+                "group relative flex items-center justify-center h-[84px] sm:h-[96px] p-2 rounded-xl bg-white dark:bg-surface border-0 transition-all duration-200 active:scale-[0.97] shadow-2xs hover:shadow-md overflow-hidden",
                 isSelected
-                  ? "border-[#17643a] ring-2 ring-[#17643a]/25 bg-emerald-50/20 dark:bg-emerald-950/20"
-                  : "border-slate-200/90 dark:border-line hover:border-slate-300 dark:hover:border-slate-700"
+                  ? "ring-2 ring-[#17643a] bg-emerald-50/30 dark:bg-emerald-950/25"
+                  : "hover:bg-slate-50 dark:hover:bg-surface-soft"
               )}
             >
-              {/* Promo Pill Badge at Top-Left */}
-              {tile.badge && (
-                <span
-                  className={cn(
-                    "self-start rounded-xs px-1 py-0.2 text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-tight leading-none shadow-2xs",
-                    isSelected
-                      ? "bg-[#17643a] text-white"
-                      : "bg-[#17643a] text-white"
-                  )}
-                >
-                  {tile.badge}
-                </span>
-              )}
-
-              {/* Bottom row: Category Name on left, Product Artwork on right */}
-              <div className="flex items-end justify-between gap-1 w-full mt-auto">
-                <span
-                  className={cn(
-                    "text-[8.5px] sm:text-[10px] font-black uppercase leading-[1.1] line-clamp-2 max-w-[62%]",
-                    isSelected ? "text-[#17643a] dark:text-emerald-400" : "text-slate-800 dark:text-slate-200"
-                  )}
-                >
-                  {tile.name}
-                </span>
-
-                <div className="relative size-8 sm:size-10 shrink-0 ml-auto">
-                  <Image
-                    src={tile.image}
-                    alt={tile.name}
-                    width={48}
-                    height={48}
-                    loading="lazy"
-                    unoptimized
-                    className="size-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
+              {/* Prominent High-Visibility Product Picture Only */}
+              <div className="relative size-full flex items-center justify-center">
+                <Image
+                  src={tile.image}
+                  alt={tile.name}
+                  width={140}
+                  height={140}
+                  loading="lazy"
+                  unoptimized
+                  className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-108"
+                />
               </div>
+
+              {/* Active selection dot indicator */}
+              {isSelected && (
+                <span className="absolute bottom-1.5 right-1.5 size-2 rounded-full bg-[#17643a] ring-2 ring-white dark:ring-surface" />
+              )}
             </button>
           );
         })}

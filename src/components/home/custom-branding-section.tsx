@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 
-export function CustomBrandingSection() {
+export function CustomBrandingSection({ className = "" }: { className?: string } = {}) {
   return (
-    <section className="relative overflow-hidden border-t border-line bg-canvas py-12 sm:py-16 md:py-20" id="custom-branding-section">
+    <section className={`relative overflow-hidden border-b border-line bg-canvas py-12 sm:py-16 md:py-20 ${className}`} id="custom-branding-section">
       {/* Ambient background glow orb */}
       <div className="ambient-glow-orb absolute left-1/2 top-10 size-72 sm:size-96 -translate-x-1/2 rounded-full bg-emerald-500/15 blur-3xl pointer-events-none" />
 
