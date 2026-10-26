@@ -395,10 +395,11 @@ summary::-webkit-details-marker {
   height: 0 !important;
 }
 
-/* ── Hero Deals Slider Viewport ── */
+/* ── Hero Deals Slider Viewport (Metro.pk style flush banner) ── */
 .deals-slider-viewport {
   width: 100%;
   aspect-ratio: 1024 / 434;
+  max-height: 480px;
 }
 
 /* Dedicated Admin Sidebar scrollbar - invisible when idle, subtle 4px pill on hover */
@@ -538,14 +539,18 @@ summary::-webkit-details-marker {
     font-weight: 800;
   }
 
-  /* Product Cards on Mobile - Clean, Modern 2-Column E-Commerce Grid */
+  /* Product Cards on Mobile - Clean, Modern 2-Column E-Commerce Grid (No harsh borders) */
   .product-card {
     min-width: 0;
     padding: 10px;
-    border: 1px solid var(--line);
+    border: none !important;
     border-radius: 16px;
     background: var(--surface);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .product-card:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   }
   .product-card .product-card-image {
     border-radius: 12px;
@@ -674,8 +679,8 @@ summary::-webkit-details-marker {
   .product-page > div > section > div.rounded-md { padding: 16px; border-radius: 16px; }
   .product-page > div > section h2 { font-size: 18px; font-weight: 700; }
 
-  /* ── Mobile hero banner (vertical 3:4 portrait view for enhanced mobile immersion) ── */
-  .deals-slider-viewport { aspect-ratio: 3 / 4 !important; min-height: 480px; max-height: 600px; }
+  /* ── Mobile hero banner ── */
+  .deals-slider-viewport { aspect-ratio: 16 / 9; max-height: 340px; }
 
   /* ── Contact page mobile cards ── */
   .contact-card { border-radius: 20px !important; padding: 14px !important; }
@@ -726,8 +731,8 @@ summary::-webkit-details-marker {
 .admin-workspace .overflow-x-auto { overscroll-behavior-x: contain; }
 .admin-workspace dialog { color: var(--content); }
 @media (max-width: 767px) {
-  .storefront-header .brand-logo { width: clamp(100px, 32vw, 145px); }
-  .storefront-header .site-shell { gap: 4px; }
+  .storefront-header .brand-logo { width: clamp(160px, 48vw, 220px); }
+  .storefront-header .site-shell { gap: 6px; }
   .storefront-header .commerce-icon-button { width: 40px; height: 44px; }
   .storefront-shell :is(input, select, textarea, button, a) { scroll-margin-top: 80px; }
 

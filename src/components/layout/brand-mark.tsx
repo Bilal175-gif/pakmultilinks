@@ -22,11 +22,11 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         height={189}
         priority
         unoptimized
-        sizes={compact ? "145px" : light ? "250px" : "220px"}
+        sizes={compact ? "180px" : light ? "300px" : "290px"}
         className={cn(
-          "brand-logo brand-logo-light h-auto w-[190px] object-contain sm:w-[220px]",
-          compact && "w-[145px] sm:w-[160px]",
-          light && "w-[220px] sm:w-[250px]",
+          "brand-logo brand-logo-light h-auto w-[220px] object-contain sm:w-[260px] md:w-[290px]",
+          compact && "w-[170px] sm:w-[200px]",
+          light && "w-[260px] sm:w-[300px]",
         )}
       />
       <Image
@@ -36,11 +36,11 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         height={189}
         priority
         unoptimized
-        sizes={compact ? "145px" : light ? "250px" : "220px"}
+        sizes={compact ? "180px" : light ? "300px" : "290px"}
         className={cn(
-          "brand-logo brand-logo-dark h-auto w-[190px] object-contain sm:w-[220px]",
-          compact && "w-[145px] sm:w-[160px]",
-          light && "w-[220px] sm:w-[250px]",
+          "brand-logo brand-logo-dark h-auto w-[220px] object-contain sm:w-[260px] md:w-[290px]",
+          compact && "w-[170px] sm:w-[200px]",
+          light && "w-[260px] sm:w-[300px]",
         )}
       />
     </Link>

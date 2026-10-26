@@ -57,7 +57,7 @@ export default async function HomePage() {
           </div>
           <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-6 lg:grid-cols-4">
             {roots.map((category, idx) => (
-              <div key={category.id} className={`rounded-none border-t border-line-strong bg-transparent pt-5 animate-page-enter stagger-${Math.min(idx + 1, 4)}`}>
+              <div key={category.id} className={`rounded-xl bg-surface/60 p-4 shadow-2xs hover:bg-surface hover:shadow-xs transition animate-page-enter stagger-${Math.min(idx + 1, 4)}`}>
                 <Link href={`/shop/${category.slug}`} className="flex items-center justify-between gap-3 text-sm font-bold text-accent hover:text-action">
                   {category.name}<ArrowRight className="size-4 text-muted transition-transform group-hover:translate-x-1" />
                 </Link>
@@ -74,13 +74,18 @@ export default async function HomePage() {
             ))}
           </div>
         </section>
+
+        {/* Custom Branding Animated Tissue Box Showcase (Directly below Shop by category) */}
+        <CustomBrandingSection />
       </div>
 
       {/* Main Products Explorer: Shows ALL products with rates on site opening (prominently at top on mobile) */}
       <HomeProductsExplorer products={products} categories={categories} />
 
-      {/* Custom Branding Animated Tissue Box Showcase */}
-      <CustomBrandingSection />
+      {/* Custom Branding Showcase on Mobile (kept at bottom of page so mobile catalog remains prominent) */}
+      <div className="block md:hidden">
+        <CustomBrandingSection className="border-t" />
+      </div>
     </>
   );
 }

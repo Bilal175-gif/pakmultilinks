@@ -34,6 +34,10 @@
   --cream: var(--surface);
   --ink: var(--content);
   --white: var(--surface);
+  --background: var(--surface);
+  --foreground: var(--content);
+  --muted-foreground: var(--muted);
+  --border: var(--line);
 }
 
 @theme inline {
@@ -61,6 +65,10 @@
   --color-info-soft: var(--info-soft);
   --color-focus: var(--focus);
   --color-image-surface: var(--image-surface);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
 }
 
 .brand-logo-dark { display: none !important; }

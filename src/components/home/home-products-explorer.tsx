@@ -69,6 +69,23 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
     });
   }, [products, selectedCategory, searchQuery, categories]);
 
+  const activeCategoryName = useMemo(() => {
+    if (selectedCategory === "all") return null;
+    const match = categories.find((c) => c.slug === selectedCategory);
+    if (match) return match.name;
+    const fallbackMap: Record<string, string> = {
+      "tissue-paper-products": "Tissue & Paper",
+      "washroom-supplies": "Washroom",
+      "cleaning-products": "Cleaning",
+      "garbage-bags": "Garbage Bags",
+      "dispensers": "Dispensers",
+      "cleaning-tools": "Mops & Tools",
+      "soaps-sanitizers": "Soaps & Care",
+      "wet-wipes-fresheners": "Air Fresheners",
+    };
+    return fallbackMap[selectedCategory] || selectedCategory;
+  }, [selectedCategory, categories]);
+
   return (
     <section className="site-shell pt-2 pb-8 sm:py-12" id="products-catalog">
       {/* Header and Controls */}
@@ -90,14 +107,20 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
           </p>
         </div>
 
-        {/* Metro-style 3-Column Categories Grid on Mobile (exactly matching metro.pk) */}
+        {/* Metro-style 3-Column Categories Grid on Mobile (pure picture cards) */}
         <div className="block md:hidden">
           <div className="flex items-center justify-between mb-1.5 px-0.5">
             <span className="text-[12px] font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
               <span>Categories</span>
-              <span className="text-[10px] text-[#17643a] font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded-xs">
-                Metro Deals
-              </span>
+              {activeCategoryName ? (
+                <span className="text-[10px] text-[#17643a] font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded-xs">
+                  {activeCategoryName}
+                </span>
+              ) : (
+                <span className="text-[10px] text-[#17643a] font-bold bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.2 rounded-xs">
+                  All
+                </span>
+              )}
             </span>
             {selectedCategory !== "all" && (
               <button
@@ -126,7 +149,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by product name, brand or rate (e.g. Fresco, Rose Petal)..."
-              className="focus-ring h-10 w-full rounded-xl border border-line bg-surface pl-10 pr-9 text-xs font-medium text-content placeholder:text-muted/75 transition sm:text-sm"
+              className="focus-ring h-10 w-full rounded-xl border-0 bg-surface shadow-2xs pl-10 pr-9 text-xs font-medium text-content placeholder:text-muted/75 transition sm:text-sm"
             />
             {searchQuery && (
               <button
@@ -149,7 +172,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
             className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition shadow-2xs ${
               selectedCategory === "all"
                 ? "bg-[#17643a] text-white shadow-sm"
-                : "border border-line bg-surface text-secondary hover:border-[#17643a] hover:text-content"
+                : "border-0 bg-surface text-secondary hover:bg-slate-100 dark:hover:bg-surface-soft hover:text-content"
             }`}
           >
             <span>All Products</span>
@@ -173,7 +196,7 @@ export function HomeProductsExplorer({ products, categories }: HomeProductsExplo
                 className={`focus-ring inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold transition shadow-2xs ${
                   isSelected
                     ? "bg-[#17643a] text-white shadow-sm"
-                    : "border border-line bg-surface text-secondary hover:border-[#17643a] hover:text-content"
+                    : "border-0 bg-surface text-secondary hover:bg-slate-100 dark:hover:bg-surface-soft hover:text-content"
                 }`}
               >
                 <span>{cat.name.replace(/ Wholesale$/, "")}</span>

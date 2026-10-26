@@ -129,7 +129,7 @@ export function ShopByBrand() {
               href={brand.mainHref}
               title={brand.name}
               aria-label={`Shop ${brand.name} products`}
-              className={`shine-card group relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border border-line bg-white p-3 shadow-xs transition-all duration-300 hover:border-action hover:shadow-xl hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
+              className={`shine-card group relative flex aspect-square w-full items-center justify-center overflow-hidden rounded-2xl border-0 bg-white p-3 shadow-2xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 animate-page-enter stagger-${Math.min(idx + 1, 6)}`}
             >
               <Image
                 src={brand.image}

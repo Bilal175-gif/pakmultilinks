@@ -48,25 +48,10 @@ export function RateList({ products = [] }: RateListProps) {
       <div className="site-shell">
         <div className="max-w-3xl">
           <p className="eyebrow">Official rate list</p>
-          <h1 className="mt-3 text-3xl font-black tracking-[-.035em] text-content sm:text-4xl">
-            Wholesale rate list: tissue &amp; hygiene prices in Pakistan
+          <h1 className="mt-2 text-3xl font-black tracking-[-.035em] text-content sm:text-4xl">
+            Wholesale Rate List
           </h1>
-          <div className="mt-6 space-y-5 text-base leading-8 text-secondary">
-            <p>
-              This is the official {company.name} rate list: current wholesale carton rates for tissue paper products,
-              washroom supplies, cleaning products and disposable items, supplied from our Gulberg II, Lahore store to
-              offices, hotels, restaurants, hospitals, schools and businesses across Pakistan.
-            </p>
-            <p>
-              The minimum order is PKR 5,000 or one wholesale carton. Delivery is same-day or next-day across Lahore and
-              by cargo nationwide. Rates are confirmed on WhatsApp at {company.phone} before dispatch, and the{" "}
-              <a href="/rate-list.pdf" className="font-semibold text-accent hover:underline">
-                PDF catalogue
-              </a>{" "}
-              is available to download.
-            </p>
-          </div>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-5 flex flex-wrap gap-3">
             <a
               href={`https://wa.me/${company.whatsapp}`}
               target="_blank"
@@ -124,18 +109,8 @@ export function RateList({ products = [] }: RateListProps) {
           </div>
         ))}
 
-        <p className="mt-10 max-w-3xl text-sm leading-7 text-muted">
-          Showing {total} products. Prices are wholesale carton rates in Pakistani Rupees and can change with fresh
-          stock; the confirmed rate on WhatsApp at the time of ordering is final. For contract supply and scheduled
-          restocking, see{" "}
-          <Link href="/corporate-orders" className="font-semibold text-accent hover:underline">
-            corporate orders
-          </Link>{" "}
-          or read the{" "}
-          <Link href="/faq" className="font-semibold text-accent hover:underline">
-            frequently asked questions
-          </Link>
-          .
+        <p className="mt-8 text-xs text-muted">
+          Showing {total} wholesale products. Prices are confirmed on WhatsApp before dispatch.
         </p>
       </div>
     </section>
