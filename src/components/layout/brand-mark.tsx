@@ -22,11 +22,11 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         height={189}
         priority
         unoptimized
-        sizes={compact ? "145px" : light ? "240px" : "215px"}
+        sizes={compact ? "160px" : light ? "290px" : "280px"}
         className={cn(
-          "brand-logo brand-logo-light h-auto w-[150px] sm:w-[175px] md:w-[205px] max-h-[46px] sm:max-h-[50px] md:max-h-[56px] object-contain",
-          compact && "w-[125px] sm:w-[145px] max-h-[40px]",
-          light && "w-[180px] sm:w-[210px] max-h-[54px]",
+          "brand-logo brand-logo-light h-[56px] sm:h-[64px] md:h-[74px] lg:h-[80px] w-auto max-w-[185px] sm:max-w-[215px] md:max-w-[255px] lg:max-w-[280px] object-contain transition-transform duration-200 hover:scale-[1.02]",
+          compact && "!h-[44px] sm:!h-[48px] !w-auto !max-w-[155px]",
+          light && "!h-[68px] sm:!h-[76px] md:!h-[82px] !w-auto !max-w-[270px]",
         )}
       />
       <Image
@@ -36,11 +36,11 @@ export function BrandMark({ compact = false, light = false, onNavigate }: { comp
         height={189}
         priority
         unoptimized
-        sizes={compact ? "145px" : light ? "240px" : "215px"}
+        sizes={compact ? "160px" : light ? "290px" : "280px"}
         className={cn(
-          "brand-logo brand-logo-dark h-auto w-[150px] sm:w-[175px] md:w-[205px] max-h-[46px] sm:max-h-[50px] md:max-h-[56px] object-contain",
-          compact && "w-[125px] sm:w-[145px] max-h-[40px]",
-          light && "w-[180px] sm:w-[210px] max-h-[54px]",
+          "brand-logo brand-logo-dark h-[56px] sm:h-[64px] md:h-[74px] lg:h-[80px] w-auto max-w-[185px] sm:max-w-[215px] md:max-w-[255px] lg:max-w-[280px] object-contain transition-transform duration-200 hover:scale-[1.02]",
+          compact && "!h-[44px] sm:!h-[48px] !w-auto !max-w-[155px]",
+          light && "!h-[68px] sm:!h-[76px] md:!h-[82px] !w-auto !max-w-[270px]",
         )}
       />
     </Link>
