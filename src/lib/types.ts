@@ -122,3 +122,21 @@ export type QuoteRequest = {
   status: QuoteStatus;
   createdAt: string;
 };
+
+export type RateListFileRecord = {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string | null;
+  category: string;
+  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  pageCount?: number | null;
+  isPrimary: boolean;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+};
+

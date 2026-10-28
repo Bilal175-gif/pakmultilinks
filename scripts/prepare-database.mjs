@@ -252,6 +252,169 @@ if (!process.env.DATABASE_URL?.trim()) {
           return p.name.replace(/OK Detergent\s*/i, '').trim() || 'Standard';
         },
       });
+      // 5. RateListFile Table & Seeding
+      await tx.$executeRaw`
+        CREATE TABLE IF NOT EXISTS "RateListFile" (
+          "id" TEXT NOT NULL PRIMARY KEY,
+          "title" TEXT NOT NULL,
+          "slug" TEXT NOT NULL,
+          "description" TEXT,
+          "category" TEXT NOT NULL DEFAULT 'Master Rate List',
+          "fileUrl" TEXT NOT NULL,
+          "fileName" TEXT NOT NULL,
+          "fileSize" INTEGER NOT NULL DEFAULT 0,
+          "pageCount" INTEGER DEFAULT 1,
+          "isPrimary" BOOLEAN NOT NULL DEFAULT false,
+          "isActive" BOOLEAN NOT NULL DEFAULT true,
+          "sortOrder" INTEGER NOT NULL DEFAULT 0,
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `;
+      await tx.$executeRaw`CREATE UNIQUE INDEX IF NOT EXISTS "RateListFile_slug_key" ON "RateListFile"("slug")`;
+      await tx.$executeRaw`CREATE INDEX IF NOT EXISTS "RateListFile_isActive_sortOrder_idx" ON "RateListFile"("isActive", "sortOrder")`;
+      await tx.$executeRaw`CREATE INDEX IF NOT EXISTS "RateListFile_category_idx" ON "RateListFile"("category")`;
+      await tx.$executeRaw`CREATE INDEX IF NOT EXISTS "RateListFile_isPrimary_idx" ON "RateListFile"("isPrimary")`;
+      await tx.$executeRaw`CREATE INDEX IF NOT EXISTS "RateListFile_createdAt_idx" ON "RateListFile"("createdAt")`;
+
+      const defaultRateLists = [
+        {
+          id: 'rate-list-master',
+          title: 'Pak Multilinks Master Wholesale Rate List 2026',
+          slug: 'pak-multilinks-master-wholesale-rate-list-2026',
+          description: 'Official complete master rate list for tissue papers, detergents, washroom hygiene, dispensers, and institutional cleaning supplies across Pakistan.',
+          category: 'Master Rate List',
+          fileUrl: '/downloads/pak-multilinks-master-rate-list.pdf',
+          fileName: 'pak-multilinks-master-rate-list.pdf',
+          fileSize: 793843,
+          pageCount: 4,
+          isPrimary: true,
+          isActive: true,
+          sortOrder: 0,
+        },
+        {
+          id: 'rate-list-rose-petal',
+          title: 'Rose Petal Wholesale Rate List',
+          slug: 'rose-petal-wholesale-rate-list',
+          description: 'Complete wholesale carton pricing for Rose Petal Luxury, Pop-up, Party, Maxi Roll, and Facial Tissues.',
+          category: 'Rose Petal Tissues',
+          fileUrl: '/downloads/rose-petal-rate-list.pdf',
+          fileName: 'rose-petal-rate-list.pdf',
+          fileSize: 6113,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 1,
+        },
+        {
+          id: 'rate-list-fresco',
+          title: 'Fresco Aerosols & Fragrances Rate List',
+          slug: 'fresco-aerosols-fragrances-rate-list',
+          description: 'Automatic air freshener refill cans, body sprays, and perfume diffusers carton wholesale rates.',
+          category: 'Fresco & Aerosols',
+          fileUrl: '/downloads/fresco-rate-list.pdf',
+          fileName: 'fresco-rate-list.pdf',
+          fileSize: 4479,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 2,
+        },
+        {
+          id: 'rate-list-nozomi',
+          title: 'Nozomi Tissue & Commercial Paper Rate List',
+          slug: 'nozomi-tissue-commercial-paper-rate-list',
+          description: 'High-absorption Nozomi commercial towel rolls, m-fold hand towels, and napkins for businesses.',
+          category: 'Nozomi Tissues',
+          fileUrl: '/downloads/nozomi-rate-list.pdf',
+          fileName: 'nozomi-rate-list.pdf',
+          fileSize: 3736,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 3,
+        },
+        {
+          id: 'rate-list-germicure',
+          title: 'Germi Cure Dispensers & Sanitizers Rate List',
+          slug: 'germicure-dispensers-sanitizers-rate-list',
+          description: 'Hospital grade touchless sanitizers, manual soap dispensers, and surface disinfectants.',
+          category: 'Germi Cure',
+          fileUrl: '/downloads/germicure-rate-list.pdf',
+          fileName: 'germicure-rate-list.pdf',
+          fileSize: 2741,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 4,
+        },
+        {
+          id: 'rate-list-shinewell',
+          title: 'Shinewell Cleaning & Chemicals Rate List',
+          slug: 'shinewell-cleaning-chemicals-rate-list',
+          description: 'Industrial glass cleaners, floor cleaner concentrates, and heavy duty scouring solutions.',
+          category: 'Shine Well',
+          fileUrl: '/downloads/shinewell-rate-list.pdf',
+          fileName: 'shinewell-rate-list.pdf',
+          fileSize: 2546,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 5,
+        },
+        {
+          id: 'rate-list-sicura',
+          title: 'Sicura Food Grade Paper Cups Rate List',
+          slug: 'sicura-food-grade-paper-cups-rate-list',
+          description: 'Ripple wall hot cups, single wall paper tea cups, and takeaway drink lids.',
+          category: 'Paper & Disposables',
+          fileUrl: '/downloads/sicura-rate-list.pdf',
+          fileName: 'sicura-rate-list.pdf',
+          fileSize: 2752,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 6,
+        },
+        {
+          id: 'rate-list-softex',
+          title: 'Softex Commercial Paper Products Rate List',
+          slug: 'softex-commercial-paper-products-rate-list',
+          description: 'Economy toilet roll bundles, jumbo rolls, and bulk dining paper napkins.',
+          category: 'Paper & Disposables',
+          fileUrl: '/downloads/softex-supersoft-rate-list.pdf',
+          fileName: 'softex-supersoft-rate-list.pdf',
+          fileSize: 2999,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 7,
+        },
+        {
+          id: 'rate-list-glad',
+          title: 'Glad Hygiene & Wrap Products Rate List',
+          slug: 'glad-hygiene-wrap-products-rate-list',
+          description: 'Cling wrap films, aluminium foil rolls, and heavy-duty food protection disposables.',
+          category: 'Disposables',
+          fileUrl: '/downloads/glad-rate-list.pdf',
+          fileName: 'glad-rate-list.pdf',
+          fileSize: 2354,
+          pageCount: 1,
+          isPrimary: false,
+          isActive: true,
+          sortOrder: 8,
+        },
+      ];
+
+      for (const item of defaultRateLists) {
+        await tx.$executeRaw`
+          INSERT INTO "RateListFile" (
+            "id", "title", "slug", "description", "category", "fileUrl", "fileName", "fileSize", "pageCount", "isPrimary", "isActive", "sortOrder", "createdAt", "updatedAt"
+          ) VALUES (
+            ${item.id}, ${item.title}, ${item.slug}, ${item.description}, ${item.category}, ${item.fileUrl}, ${item.fileName}, ${item.fileSize}, ${item.pageCount}, ${item.isPrimary}, ${item.isActive}, ${item.sortOrder}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+          ) ON CONFLICT ("id") DO NOTHING;
+        `;
+      }
     }, { timeout: 45000, maxWait: 15000 });
     console.log('Database schema and variant migrations verified successfully.');
   } catch (error) {

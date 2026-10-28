@@ -3,12 +3,14 @@ import { MessageCircle } from "lucide-react";
 
 import { company } from "@/lib/company";
 import { VISUAL_CATEGORIES } from "@/lib/category-meta";
-import type { Product } from "@/lib/types";
+import type { Product, RateListFileRecord } from "@/lib/types";
 import { cartonPacking, formatProductPrice, minimumCartons } from "@/lib/utils";
 import { MetroCataloguesStrip } from "./metro-catalogues-strip";
+import { RateListFilesStrip } from "./rate-list-files-strip";
 
 interface RateListProps {
   products?: Product[];
+  rateListFiles?: RateListFileRecord[];
 }
 
 type RateGroup = {
@@ -37,7 +39,7 @@ function groupProducts(products: Product[]): RateGroup[] {
   });
 }
 
-export function RateList({ products = [] }: RateListProps) {
+export function RateList({ products = [], rateListFiles = [] }: RateListProps) {
   const groups = groupProducts(
     [...products].sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name)),
   );
@@ -67,10 +69,18 @@ export function RateList({ products = [] }: RateListProps) {
           </div>
         </div>
 
+        {/* Official PDF Downloads Section (Managed dynamically from Backend) */}
+        {rateListFiles.length > 0 && (
+          <div className="mt-12 sm:mt-16 border-t border-line pt-10 sm:pt-14">
+            <RateListFilesStrip files={rateListFiles} />
+          </div>
+        )}
+
         {/* Metro-style Catalogues Section (Reference Layout) */}
         <div className="mt-12 sm:mt-16 border-t border-line pt-10 sm:pt-14">
           <MetroCataloguesStrip products={products} />
         </div>
+
 
         {groups.map((group) => (
           <div key={group.slug} className="mt-12" id={`rates-${group.slug}`}>

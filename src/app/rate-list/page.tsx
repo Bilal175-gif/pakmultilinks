@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RateList } from "@/components/catalog/rate-list";
 import { isDevelopmentProduct, listPublicProducts } from "@/lib/catalog-server";
+import { listPublicRateLists } from "@/lib/rate-lists-server";
 
 export const metadata: Metadata = {
   title: "Wholesale Rate List: Tissue & Hygiene Prices in Pakistan",
@@ -19,6 +20,11 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function RateListPage() {
-  const products = (await listPublicProducts()).filter((product) => !isDevelopmentProduct(product));
-  return <RateList products={products} />;
+  const [products, rateListFiles] = await Promise.all([
+    listPublicProducts().then((items) => items.filter((product) => !isDevelopmentProduct(product))),
+    listPublicRateLists(),
+  ]);
+
+  return <RateList products={products} rateListFiles={rateListFiles} />;
 }
+

@@ -190,6 +190,33 @@ export const dealBannerInputSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+export const rateListFileInputSchema = z.object({
+  title: text(2, 140),
+  description: optionalText(500),
+  category: text(2, 80).default("Master Rate List"),
+  fileUrl: urlOrPath,
+  fileName: text(1, 140),
+  fileSize: z.coerce.number().int().min(0).max(100_000_000).default(0),
+  pageCount: z.coerce.number().int().min(1).max(5_000).nullable().optional(),
+  isPrimary: z.boolean().default(false),
+  isActive: z.boolean().default(true),
+  sortOrder: z.coerce.number().int().min(0).max(10_000).default(0),
+});
+
+export const rateListFileUpdateSchema = z.object({
+  title: text(2, 140).optional(),
+  description: optionalText(500),
+  category: text(2, 80).optional(),
+  fileUrl: urlOrPath.optional(),
+  fileName: text(1, 140).optional(),
+  fileSize: z.coerce.number().int().min(0).max(100_000_000).optional(),
+  pageCount: z.coerce.number().int().min(1).max(5_000).nullable().optional(),
+  isPrimary: z.boolean().optional(),
+  isActive: z.boolean().optional(),
+  sortOrder: z.coerce.number().int().min(0).max(10_000).optional(),
+});
+
+
 export const settingsInputSchema = z.object({
   businessName: text(2, 140),
   subtitle: text(2, 140),
