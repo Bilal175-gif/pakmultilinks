@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 import { products as seedProducts } from "@/lib/catalog";
-import { db, isDatabaseConfigured } from "@/lib/db";
+import { db, isDatabaseConfigured, withDatabaseRetry } from "@/lib/db";
 import { DemoNotice, EmptyState, PageHeading, panelClass, buttonClass } from "../../_components/ui";
 import { ProductActions } from "../../_components/product-actions";
 
@@ -27,14 +27,30 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
           }
         : undefined;
 
-      const rows = await db.product.findMany({
-        where: whereClause,
-        orderBy: { updatedAt: "desc" },
-        take: 100,
-        include: { category: { select: { name: true } } },
-      });
-      products = rows.map((item) => ({ id: item.id, name: item.name, sku: item.sku, category: item.category.name, price: Number(item.price), salePrice: item.salePrice == null ? null : Number(item.salePrice), priceOnRequest: item.priceOnRequest, unitsPerCarton: item.unitsPerCarton, minimumOrderCartons: item.minimumOrderCartons, stock: item.stock, threshold: item.lowStockThreshold, status: item.status }));
-    } catch {
+      const rows = await withDatabaseRetry(() =>
+        db.product.findMany({
+          where: whereClause,
+          orderBy: { updatedAt: "desc" },
+          take: 100,
+          include: { category: { select: { name: true } } },
+        })
+      );
+      products = rows.map((item) => ({
+        id: item.id,
+        name: item.name,
+        sku: item.sku,
+        category: item.category?.name || "General",
+        price: Number(item.price),
+        salePrice: item.salePrice == null ? null : Number(item.salePrice),
+        priceOnRequest: item.priceOnRequest,
+        unitsPerCarton: item.unitsPerCarton,
+        minimumOrderCartons: item.minimumOrderCartons,
+        stock: item.stock,
+        threshold: item.lowStockThreshold,
+        status: item.status,
+      }));
+    } catch (error) {
+      console.error("Failed to load products from database in admin:", error);
       connected = false;
     }
   }
@@ -48,6 +64,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
       })
       .map((item) => ({ id: item.id, name: item.name, sku: item.sku, category: item.category, price: item.price, salePrice: item.salePrice ?? null, priceOnRequest: item.priceOnRequest, unitsPerCarton: item.unitsPerCarton, minimumOrderCartons: item.minimumOrderCartons, stock: item.stock, threshold: item.lowStockThreshold, status: "DEMO" }));
   }
+
 
   return (
     <>

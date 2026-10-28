@@ -85,6 +85,23 @@ export function CatalogExplorer({
       .sort((a, b) => b.count - a.count);
   }, [products]);
 
+  const relevantCategories = useMemo(() => {
+    const counts = new Map<string, { name: string; count: number }>();
+    products.forEach((p) => {
+      const slug = p.categorySlug || p.category.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const existing = counts.get(slug);
+      if (existing) {
+        existing.count += 1;
+      } else {
+        counts.set(slug, { name: p.category, count: 1 });
+      }
+    });
+    return Array.from(counts.entries())
+      .map(([slug, info]) => ({ slug, name: info.name, count: info.count }))
+      .sort((a, b) => b.count - a.count);
+  }, [products]);
+
+
   const hasPublishedPrices = products.some((product) => !product.priceOnRequest);
   const priceCeiling = useMemo(() => {
     const highest = Math.max(...products.map((product) => getPrice(product)), 0);
@@ -243,30 +260,33 @@ export function CatalogExplorer({
           </div>
         )}
 
-        <div>
-          <label
-            htmlFor={`${idPrefix}-brand`}
-            className="mb-2 block text-sm font-bold text-accent"
-          >
-            Brand
-          </label>
-          <select
-            id={`${idPrefix}-brand`}
-            value={brand}
-            onChange={(event) => {
-              setBrand(event.target.value);
-              resetVisibleCount();
-            }}
-            className="min-h-11 w-full rounded-md border border-line bg-surface px-3 text-sm text-accent outline-none focus:border-focus focus:ring-2 focus:ring-focus/15"
-          >
-            <option value="">All brands</option>
-            {availableBrands.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
+        {availableBrands.length > 1 && (
+          <div>
+            <label
+              htmlFor={`${idPrefix}-brand`}
+              className="mb-2 block text-sm font-bold text-accent"
+            >
+              Brand
+            </label>
+            <select
+              id={`${idPrefix}-brand`}
+              value={brand}
+              onChange={(event) => {
+                setBrand(event.target.value);
+                resetVisibleCount();
+              }}
+              className="min-h-11 w-full rounded-md border border-line bg-surface px-3 text-sm text-accent outline-none focus:border-focus focus:ring-2 focus:ring-focus/15"
+            >
+              <option value="">All brands</option>
+              {availableBrands.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
 
         {hasPublishedPrices && <fieldset>
           <legend className="mb-2 text-sm font-bold text-accent">Price range</legend>
@@ -410,11 +430,11 @@ export function CatalogExplorer({
           <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
             <aside
               aria-label="Product filters"
-              className="sticky top-28 hidden h-fit rounded-md border border-line bg-surface p-5 lg:block"
+              className="sticky top-28 hidden h-fit rounded-2xl border border-line bg-surface p-5 shadow-xs lg:block"
             >
               <div className="mb-5 flex items-center gap-2 border-b border-line pb-4">
-                <SlidersHorizontal className="size-4 text-accent" aria-hidden="true" />
-                <h2 className="font-bold text-content">Filter products</h2>
+                <SlidersHorizontal className="size-4 text-action" aria-hidden="true" />
+                <h2 className="font-extrabold text-content">Filter products</h2>
                 {activeFilterCount > 0 && (
                   <span className="ml-auto inline-flex size-6 items-center justify-center rounded-full bg-action text-xs font-bold text-white">
                     {activeFilterCount}
@@ -425,79 +445,153 @@ export function CatalogExplorer({
             </aside>
 
             <div className="min-w-0">
-              {/* Brand Quick Selector Tabs */}
-              <div className="mb-5 flex items-center gap-2 overflow-x-auto rounded-2xl border border-line bg-surface p-2.5 pb-3 shadow-xs scrollbar-thin">
-                <span className="shrink-0 text-xs font-extrabold uppercase tracking-wider text-muted px-2 border-r border-line/60">
-                  Brands
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBrand("");
-                    resetVisibleCount();
-                  }}
-                  className={cn(
-                    "shrink-0 flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition",
-                    !brand
-                      ? "bg-action text-white shadow-xs"
-                      : "border border-line bg-surface-soft text-accent hover:border-action hover:bg-surface-hover"
-                  )}
-                >
-                  <span>All Brands</span>
-                  <span
+              {/* Contextual Quick Selector Tabs: Categories for brand pages, Brands for multi-brand shop */}
+              {brandList.length <= 1 && relevantCategories.length > 1 ? (
+                <div className="mb-5 flex items-center gap-2 overflow-x-auto rounded-2xl border border-line bg-surface p-2.5 shadow-xs scrollbar-thin">
+                  <span className="shrink-0 text-xs font-extrabold uppercase tracking-wider text-muted px-2 border-r border-line/60">
+                    Categories
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCategory("");
+                      resetVisibleCount();
+                    }}
                     className={cn(
-                      "rounded-full px-1.5 py-0.2 text-[10px] font-bold",
-                      !brand ? "bg-white/20 text-white" : "bg-line text-secondary"
+                      "shrink-0 flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition",
+                      !category
+                        ? "bg-action text-white shadow-xs"
+                        : "border border-line bg-surface-soft text-accent hover:border-action hover:bg-surface-hover"
                     )}
                   >
-                    {products.length}
-                  </span>
-                </button>
-
-                {brandList.map(({ name, count }) => {
-                  const isSelected = brand.toLowerCase() === name.toLowerCase();
-                  return (
-                    <button
-                      key={name}
-                      type="button"
-                      onClick={() => {
-                        setBrand(isSelected ? "" : name);
-                        resetVisibleCount();
-                      }}
+                    <span>All Products</span>
+                    <span
                       className={cn(
-                        "shrink-0 flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition",
-                        isSelected
-                          ? "bg-action text-white ring-2 ring-action/25 shadow-xs"
-                          : "border border-line bg-surface-soft text-accent hover:border-action hover:text-action hover:bg-surface-hover"
+                        "rounded-full px-1.5 py-0.2 text-[10px] font-bold",
+                        !category ? "bg-white/20 text-white" : "bg-line text-secondary"
                       )}
                     >
-                      <span>{name}</span>
-                      <span
+                      {products.length}
+                    </span>
+                  </button>
+                  {relevantCategories.map(({ slug, name, count }) => {
+                    const isSelected = category === slug;
+                    return (
+                      <button
+                        key={slug}
+                        type="button"
+                        onClick={() => {
+                          setCategory(isSelected ? "" : slug);
+                          resetVisibleCount();
+                        }}
                         className={cn(
-                          "rounded-full px-1.5 py-0.2 text-[10px] font-semibold",
-                          isSelected ? "bg-white/20 text-white" : "bg-line text-secondary"
+                          "shrink-0 flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition",
+                          isSelected
+                            ? "bg-action text-white ring-2 ring-action/25 shadow-xs"
+                            : "border border-line bg-surface-soft text-accent hover:border-action hover:text-action hover:bg-surface-hover"
                         )}
                       >
-                        {count}
-                      </span>
+                        <span>{name}</span>
+                        <span
+                          className={cn(
+                            "rounded-full px-1.5 py-0.2 text-[10px] font-semibold",
+                            isSelected ? "bg-white/20 text-white" : "bg-line text-secondary"
+                          )}
+                        >
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                  {category && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCategory("");
+                        resetVisibleCount();
+                      }}
+                      className="shrink-0 ml-auto inline-flex items-center gap-1 text-xs font-bold text-muted hover:text-danger px-2.5 py-1.5 rounded-lg hover:bg-danger-soft/30 transition"
+                    >
+                      <X className="size-3" />
+                      <span>Clear filter</span>
                     </button>
-                  );
-                })}
-
-                {brand && (
+                  )}
+                </div>
+              ) : brandList.length > 1 ? (
+                <div className="mb-5 flex items-center gap-2 overflow-x-auto rounded-2xl border border-line bg-surface p-2.5 pb-3 shadow-xs scrollbar-thin">
+                  <span className="shrink-0 text-xs font-extrabold uppercase tracking-wider text-muted px-2 border-r border-line/60">
+                    Brands
+                  </span>
                   <button
                     type="button"
                     onClick={() => {
                       setBrand("");
                       resetVisibleCount();
                     }}
-                    className="shrink-0 ml-auto inline-flex items-center gap-1 text-xs font-bold text-muted hover:text-danger px-2.5 py-1.5 rounded-lg hover:bg-danger-soft/30 transition"
+                    className={cn(
+                      "shrink-0 flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold transition",
+                      !brand
+                        ? "bg-action text-white shadow-xs"
+                        : "border border-line bg-surface-soft text-accent hover:border-action hover:bg-surface-hover"
+                    )}
                   >
-                    <X className="size-3" />
-                    <span>Clear filter</span>
+                    <span>All Brands</span>
+                    <span
+                      className={cn(
+                        "rounded-full px-1.5 py-0.2 text-[10px] font-bold",
+                        !brand ? "bg-white/20 text-white" : "bg-line text-secondary"
+                      )}
+                    >
+                      {products.length}
+                    </span>
                   </button>
-                )}
-              </div>
+
+                  {brandList.map(({ name, count }) => {
+                    const isSelected = brand.toLowerCase() === name.toLowerCase();
+                    return (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => {
+                          setBrand(isSelected ? "" : name);
+                          resetVisibleCount();
+                        }}
+                        className={cn(
+                          "shrink-0 flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition",
+                          isSelected
+                            ? "bg-action text-white ring-2 ring-action/25 shadow-xs"
+                            : "border border-line bg-surface-soft text-accent hover:border-action hover:text-action hover:bg-surface-hover"
+                        )}
+                      >
+                        <span>{name}</span>
+                        <span
+                          className={cn(
+                            "rounded-full px-1.5 py-0.2 text-[10px] font-semibold",
+                            isSelected ? "bg-white/20 text-white" : "bg-line text-secondary"
+                          )}
+                        >
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+
+                  {brand && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBrand("");
+                        resetVisibleCount();
+                      }}
+                      className="shrink-0 ml-auto inline-flex items-center gap-1 text-xs font-bold text-muted hover:text-danger px-2.5 py-1.5 rounded-lg hover:bg-danger-soft/30 transition"
+                    >
+                      <X className="size-3" />
+                      <span>Clear filter</span>
+                    </button>
+                  )}
+                </div>
+              ) : null}
+
 
               {searchResult?.correctedQuery &&
                 searchResult.correctedQuery.toLowerCase() !== deferredSearch.trim().toLowerCase() && (
@@ -595,8 +689,11 @@ export function CatalogExplorer({
                   id="product-results"
                   className={cn(
                     "catalog-products grid gap-3.5 sm:gap-5",
-                    view === "grid" ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" : "grid-cols-1",
+                    view === "grid"
+                      ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+                      : "grid-cols-1",
                   )}
+
                 >
                   {visibleProducts.map((product, index) => (
                     <div

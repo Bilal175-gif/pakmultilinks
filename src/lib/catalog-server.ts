@@ -8,8 +8,9 @@ import {
   getProduct as getDevelopmentProduct,
   products as developmentProducts,
 } from "@/lib/catalog";
-import { db, isDatabaseConfigured } from "@/lib/db";
+import { db, isDatabaseConfigured, withDatabaseRetry } from "@/lib/db";
 import type { Category, Product } from "@/lib/types";
+
 
 const publicProductSelect = {
   id: true,
@@ -218,13 +219,19 @@ function canUseDevelopmentFallback() {
 export async function listPublicProducts(): Promise<Product[]> {
   if (!isDatabaseConfigured) return developmentProducts;
   try {
-    const rows = await db.product.findMany({
-      where: { status: "ACTIVE", category: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] } },
-      orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
-      select: publicProductSelect,
-    });
+    const rows = await withDatabaseRetry(() =>
+      db.product.findMany({
+        where: {
+          status: "ACTIVE",
+          category: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] },
+        },
+        orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+        select: publicProductSelect,
+      })
+    );
     return rows.map(mapProduct);
   } catch (error) {
+    console.error("Failed to fetch public products from database:", error);
     if (!canUseDevelopmentFallback()) throw error;
     console.warn("Using the development catalog because PostgreSQL is unavailable.");
     return developmentProducts;
@@ -234,12 +241,19 @@ export async function listPublicProducts(): Promise<Product[]> {
 export async function getPublicProduct(slug: string): Promise<Product | undefined> {
   if (!isDatabaseConfigured) return getDevelopmentProduct(slug);
   try {
-    const row = await db.product.findFirst({
-      where: { slug, status: "ACTIVE", category: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] } },
-      select: publicProductSelect,
-    });
+    const row = await withDatabaseRetry(() =>
+      db.product.findFirst({
+        where: {
+          slug,
+          status: "ACTIVE",
+          category: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] },
+        },
+        select: publicProductSelect,
+      })
+    );
     return row ? mapProduct(row) : undefined;
   } catch (error) {
+    console.error(`Failed to fetch public product ${slug} from database:`, error);
     if (!canUseDevelopmentFallback()) throw error;
     return getDevelopmentProduct(slug);
   }
@@ -248,19 +262,22 @@ export async function getPublicProduct(slug: string): Promise<Product | undefine
 export async function listPublicCategories(): Promise<Category[]> {
   if (!isDatabaseConfigured) return developmentCategories;
   try {
-    const rows = await db.category.findMany({
-      where: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] },
-      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-      select: {
-        id: true,
-        parentId: true,
-        name: true,
-        slug: true,
-        description: true,
-        icon: true,
-        updatedAt: true,
-      },
-    });
+    const rows = await withDatabaseRetry(() =>
+      db.category.findMany({
+        where: { isActive: true, OR: [{ parentId: null }, { parent: { isActive: true } }] },
+        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        select: {
+          id: true,
+          parentId: true,
+          name: true,
+          slug: true,
+          description: true,
+          icon: true,
+          updatedAt: true,
+        },
+      })
+    );
+
 
     // If database only has a single generic category without subcategories, provide the rich curated taxonomy
     const hasSubcategories = rows.some((row) => row.parentId !== null);

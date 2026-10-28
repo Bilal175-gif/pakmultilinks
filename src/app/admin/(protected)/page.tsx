@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Boxes, CircleDollarSign, ShoppingCart, Users } from "lucide-react";
 import { OrderStatus, QuoteStatus } from "@prisma/client";
 import { products } from "@/lib/catalog";
-import { db, isDatabaseConfigured } from "@/lib/db";
+import { db, isDatabaseConfigured, withDatabaseRetry } from "@/lib/db";
 import { DemoNotice, EmptyState, PageHeading, panelClass, buttonClass } from "../_components/ui";
 
 const money = new Intl.NumberFormat("en-PK", { style: "currency", currency: "PKR", minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -31,30 +31,33 @@ export default async function AdminDashboard() {
     connected = true;
   } else if (connected) {
     try {
-      const [orderCount, revenue, productRows, customerCount, pendingOrders, quoteCount, recentOrders] = await Promise.all([
-        db.order.count(),
-        db.order.aggregate({ where: { status: { not: "CANCELLED" }, paymentStatus: "PAID" }, _sum: { total: true } }),
-        db.product.findMany({ where: { status: { not: "ARCHIVED" } }, select: { stock: true, lowStockThreshold: true } }),
-        db.user.count({ where: { role: "CUSTOMER" } }),
-        db.order.count({ where: { status: "PENDING" } }),
-        db.quoteRequest.count({ where: { status: { in: [QuoteStatus.NEW, QuoteStatus.CONTACTED] } } }),
-        db.order.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, orderNumber: true, customerName: true, total: true, status: true, createdAt: true } }),
-      ]);
-      data = {
-        totalOrders: orderCount,
-        totalRevenue: Number(revenue._sum.total || 0),
-        totalProducts: productRows.length,
-        customers: customerCount,
-        pendingOrders,
-        lowStock: productRows.filter((item) => item.stock <= item.lowStockThreshold).length,
-        quotes: quoteCount,
-        recentOrders: recentOrders.map((order) => ({ ...order, total: Number(order.total) })),
-      };
-    } catch {
+      const result = await withDatabaseRetry(async () => {
+        const orderCount = await db.order.count();
+        const revenue = await db.order.aggregate({ where: { status: { not: "CANCELLED" }, paymentStatus: "PAID" }, _sum: { total: true } });
+        const productRows = await db.product.findMany({ where: { status: { not: "ARCHIVED" } }, select: { stock: true, lowStockThreshold: true } });
+        const customerCount = await db.user.count({ where: { role: "CUSTOMER" } });
+        const pendingOrders = await db.order.count({ where: { status: "PENDING" } });
+        const quoteCount = await db.quoteRequest.count({ where: { status: { in: [QuoteStatus.NEW, QuoteStatus.CONTACTED] } } });
+        const recentOrders = await db.order.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, orderNumber: true, customerName: true, total: true, status: true, createdAt: true } });
+        return {
+          totalOrders: orderCount,
+          totalRevenue: Number(revenue._sum.total || 0),
+          totalProducts: productRows.length,
+          customers: customerCount,
+          pendingOrders,
+          lowStock: productRows.filter((item) => item.stock <= item.lowStockThreshold).length,
+          quotes: quoteCount,
+          recentOrders: recentOrders.map((order) => ({ ...order, total: Number(order.total) })),
+        };
+      });
+      data = result;
+    } catch (error) {
+      console.error("Failed to load dashboard metrics from database:", error);
       connected = false;
     }
     if (connected) dashboardCache = { data, ts: Date.now() };
   }
+
 
   const metrics = [
     { label: "Total orders", value: data.totalOrders.toLocaleString(), icon: ShoppingCart, tone: "bg-sky-50 text-sky-700" },

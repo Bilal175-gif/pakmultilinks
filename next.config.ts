@@ -4,7 +4,9 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.1.8"],
   experimental: {
     useTypeScriptCli: false,
+    cpus: 2,
   },
+
   images: {
     unoptimized: true,
     formats: ["image/avif", "image/webp"],

@@ -101,13 +101,35 @@ async function migrateFamily(tx, { masterSlug, masterName, masterSku, sourceSlug
   }
 }
 
+function getAugmentedDbUrl() {
+  const raw = process.env.DATABASE_URL?.trim();
+  if (!raw) return undefined;
+  try {
+    const url = new URL(raw);
+    const host = url.hostname.toLowerCase();
+    if (host.includes("neon.tech") || host.includes("pooler") || host.includes("aws")) {
+      if (!url.searchParams.has("connect_timeout")) url.searchParams.set("connect_timeout", "30");
+      if (!url.searchParams.has("pool_timeout")) url.searchParams.set("pool_timeout", "30");
+      if (host.includes("-pooler") && !url.searchParams.has("pgbouncer")) url.searchParams.set("pgbouncer", "true");
+      if (!url.searchParams.has("connection_limit")) url.searchParams.set("connection_limit", "5");
+    }
+    return url.toString();
+  } catch {
+    return raw;
+  }
+}
+
 if (!process.env.DATABASE_URL?.trim()) {
   console.warn('⚠️ No database configured; skipping schema migration and continuing with static catalog.');
 } else {
-  const db = new PrismaClient();
+  const resolvedUrl = getAugmentedDbUrl();
+  const db = new PrismaClient({
+    datasources: resolvedUrl ? { db: { url: resolvedUrl } } : undefined,
+  });
   try {
     await db.$transaction(async tx => {
       await tx.$executeRaw`SELECT pg_advisory_xact_lock(731245819)`;
+
 
       // 1. Category hierarchy
       await tx.$executeRaw`ALTER TABLE "Category" ADD COLUMN IF NOT EXISTS "parentId" TEXT`;
