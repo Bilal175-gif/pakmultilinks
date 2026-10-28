@@ -1,4 +1,4 @@
-import { db, isDatabaseConfigured } from "@/lib/db";
+import { db, isDatabaseConfigured, withDatabaseRetry } from "@/lib/db";
 import { products } from "@/lib/catalog";
 import { PricingEditor, type PricingRow } from "../../_components/pricing-editor";
 import { DemoNotice, PageHeading } from "../../_components/ui";
@@ -14,33 +14,36 @@ export default async function PricingPage() {
   }));
   if (connected)
     try {
-      const records = await db.product.findMany({
-        where: { status: { not: "ARCHIVED" } },
-        orderBy: { name: "asc" },
-        select: {
-          id: true,
-          name: true,
-          sku: true,
-          price: true,
-          salePrice: true,
-          priceOnRequest: true,
-          stock: true,
-          unitsPerCarton: true,
-          minimumOrderCartons: true,
-          updatedAt: true,
-          category: { select: { name: true } },
-          brand: { select: { name: true } },
-        },
-      });
+      const records = await withDatabaseRetry(() =>
+        db.product.findMany({
+          where: { status: { not: "ARCHIVED" } },
+          orderBy: { name: "asc" },
+          select: {
+            id: true,
+            name: true,
+            sku: true,
+            price: true,
+            salePrice: true,
+            priceOnRequest: true,
+            stock: true,
+            unitsPerCarton: true,
+            minimumOrderCartons: true,
+            updatedAt: true,
+            category: { select: { name: true } },
+            brand: { select: { name: true } },
+          },
+        }),
+      );
       rows = records.map((row) => ({
         ...row,
-        category: row.category.name,
+        category: row.category?.name || "General",
         brand: row.brand?.name,
         price: Number(row.price),
         salePrice: row.salePrice === null ? null : Number(row.salePrice),
         updatedAt: row.updatedAt.toISOString(),
       }));
-    } catch {
+    } catch (err) {
+      console.error("[PricingPage] Database query error:", err);
       connected = false;
     }
   return (

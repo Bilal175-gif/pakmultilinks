@@ -1,4 +1,4 @@
-import { db, isDatabaseConfigured } from "@/lib/db";
+import { db, isDatabaseConfigured, withDatabaseRetry } from "@/lib/db";
 import type { RateListFileRecord } from "@/lib/types";
 
 export const DEFAULT_RATE_LISTS: RateListFileRecord[] = [
@@ -169,13 +169,15 @@ export function slugifyTitle(raw: string): string {
 export async function listAllRateListFiles(): Promise<RateListFileRecord[]> {
   if (!isDatabaseConfigured) return DEFAULT_RATE_LISTS;
   try {
-    const rows = await db.rateListFile.findMany({
-      orderBy: [
-        { isPrimary: "desc" },
-        { sortOrder: "asc" },
-        { createdAt: "desc" },
-      ],
-    });
+    const rows = await withDatabaseRetry(() =>
+      db.rateListFile.findMany({
+        orderBy: [
+          { isPrimary: "desc" },
+          { sortOrder: "asc" },
+          { createdAt: "desc" },
+        ],
+      }),
+    );
     if (rows.length === 0) return DEFAULT_RATE_LISTS;
     return rows.map((r) => ({
       id: r.id,
@@ -202,14 +204,16 @@ export async function listAllRateListFiles(): Promise<RateListFileRecord[]> {
 export async function listPublicRateLists(): Promise<RateListFileRecord[]> {
   if (!isDatabaseConfigured) return DEFAULT_RATE_LISTS.filter((r) => r.isActive);
   try {
-    const rows = await db.rateListFile.findMany({
-      where: { isActive: true },
-      orderBy: [
-        { isPrimary: "desc" },
-        { sortOrder: "asc" },
-        { createdAt: "desc" },
-      ],
-    });
+    const rows = await withDatabaseRetry(() =>
+      db.rateListFile.findMany({
+        where: { isActive: true },
+        orderBy: [
+          { isPrimary: "desc" },
+          { sortOrder: "asc" },
+          { createdAt: "desc" },
+        ],
+      }),
+    );
     if (rows.length === 0) return DEFAULT_RATE_LISTS.filter((r) => r.isActive);
     return rows.map((r) => ({
       id: r.id,

@@ -1,4 +1,4 @@
-import { db, isDatabaseConfigured } from "@/lib/db";
+import { db, isDatabaseConfigured, withDatabaseRetry } from "@/lib/db";
 
 export type PublicDealBanner = {
   id: string;
@@ -64,9 +64,11 @@ export async function listPublicDeals(): Promise<PublicDealBanner[]> {
   if (!isDatabaseConfigured) return defaultDealBanners;
 
   try {
-    const rows = await db.dealBanner.findMany({
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-    });
+    const rows = await withDatabaseRetry(() =>
+      db.dealBanner.findMany({
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      }),
+    );
     const active = rows
       .filter((row) => row.isActive)
       .map((row) => ({
@@ -78,7 +80,8 @@ export async function listPublicDeals(): Promise<PublicDealBanner[]> {
         linkUrl: row.linkUrl || "/shop",
       }));
     return active.length > 0 ? active : defaultDealBanners;
-  } catch {
+  } catch (error) {
+    console.error("[listPublicDeals] Database error fetching deals:", error);
     return defaultDealBanners;
   }
 }
